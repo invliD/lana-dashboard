@@ -1,0 +1,3 @@
+[submodule "lana_dashboard/static/bootstrap"]
+	path = lana_dashboard/static/bootstrap
+	url = https://github.com/twbs/bootstrap.git
