@@ -1,0 +1,6 @@
+# Virtualenv
+/env/
+
+# Idea
+/.idea/
+/*.iml
