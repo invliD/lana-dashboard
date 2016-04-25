@@ -20,5 +20,5 @@ from lana_dashboard.main import views as main
 
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
-	url(r'^$', main.index),
+	url(r'^$', main.index, name='main-index'),
 ]

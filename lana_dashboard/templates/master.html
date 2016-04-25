@@ -9,7 +9,11 @@
 	<link rel="stylesheet" href="{% static 'scss/bootstrap.scss'|compile %}" />
 </head>
 <body>
-	<h1>Hello, world!</h1>
+	<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
+		<div class="container">
+			<a class="navbar-brand" href="{% url 'main-index' %}">LANA Dashboard</a>
+		</div>
+	</nav>
 
 	<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
