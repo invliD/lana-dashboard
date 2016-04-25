@@ -13,6 +13,15 @@
 	<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
 		<div class="container">
 			<a class="navbar-brand" href="{% url 'main-index' %}">LANA Dashboard</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item pull-xs-right">
+					{% if user.is_authenticated %}
+					<a class="nav-link" href="{% url 'usermanagement-logout' %}">Logout</a>
+					{% else %}
+					<a class="nav-link" href="{% url 'usermanagement-login' %}">Login</a>
+					{% endif %}
+				</li>
+			</ul>
 		</div>
 	</nav>
 	<div class="container">

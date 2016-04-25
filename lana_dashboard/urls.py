@@ -17,8 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from lana_dashboard.main import views as main
+from lana_dashboard.usermanagement import views as usermanagement
 
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 	url(r'^$', main.index, name='main-index'),
+	url(r'^login$', usermanagement.login, name='usermanagement-login'),
+	url(r'^logout$', usermanagement.logout, name='usermanagement-logout'),
 ]

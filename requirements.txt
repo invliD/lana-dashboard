@@ -1,2 +1,4 @@
 Django >=1.9,<1.10
+# django-crispy-forms >=1.6.0
+-e git://github.com/maraujop/django-crispy-forms.git#egg=dev
 django-static-precompiler >=1.3
