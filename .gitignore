@@ -10,3 +10,6 @@ db.sqlite3
 
 # SCSS
 .sass-cache
+
+# Static Files
+/lana_dashboard/staticfiles/
