@@ -4,3 +4,6 @@
 # Idea
 /.idea/
 /*.iml
+
+# SCSS
+.sass-cache
