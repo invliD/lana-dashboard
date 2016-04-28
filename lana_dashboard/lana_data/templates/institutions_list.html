@@ -1,0 +1,26 @@
+{% extends "master.html" %}
+{% block content %}
+	<h1>Institutions</h1>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Code</th>
+				<th>Name</th>
+				<th>Managed by</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for institution in institutions %}
+			<tr>
+				<td>{{ institution.code }}</td>
+				<td>{{ institution.name }}</td>
+				<td>
+					{% for owner in institution.owners.all %}
+					{{ owner.get_full_name }}{% if not forloop.last %}, {% endif %}
+					{% endfor %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
