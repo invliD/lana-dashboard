@@ -16,13 +16,13 @@
 			<a class="navbar-brand" href="{% url 'main-index' %}">LANA Dashboard</a>
 			<ul class="nav navbar-nav">
 				{% if user.is_authenticated %}
-				<li class="nav-item">
+				<li class="nav-item{% if header_active == 'institutions' %} active{% endif %}">
 					<a class="nav-link" href="{%  url 'lana_data:institutions' %}">Institutions</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item{% if header_active == 'autonomous_systems' %} active{% endif %}">
 					<a class="nav-link" href="{%  url 'lana_data:autonomous_systems' %}">Autonomous Systems</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item{% if header_active == 'ipv4' %} active{% endif %}">
 					<a class="nav-link" href="{%  url 'lana_data:ipv4' %}">IPv4</a>
 				</li>
 				{% endif %}
