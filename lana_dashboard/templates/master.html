@@ -22,6 +22,11 @@
 					<a class="nav-link" href="{% url 'usermanagement-login' %}">Login</a>
 					{% endif %}
 				</li>
+				{% if user.is_superuser %}
+				<li class="nav-item pull-xs-right" style="margin-right: 1rem;">
+					<a class="nav-link" href="{%  url 'admin:index' %}">Admin</a>
+				</li>
+				{% endif %}
 			</ul>
 		</div>
 	</nav>
