@@ -13,9 +13,10 @@ Including another URLconf
 	1. Import the include() function: from django.conf.urls import url, include
 	2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import include, url
 from django.contrib import admin
 
+from lana_dashboard.lana_data import urls as data_urls
 from lana_dashboard.main import views as main
 from lana_dashboard.usermanagement import views as usermanagement
 
@@ -24,4 +25,5 @@ urlpatterns = [
 	url(r'^$', main.index, name='main-index'),
 	url(r'^login$', usermanagement.login, name='usermanagement-login'),
 	url(r'^logout$', usermanagement.logout, name='usermanagement-logout'),
+	url(r'^lana/', include(data_urls, namespace='lana_data'))
 ]
