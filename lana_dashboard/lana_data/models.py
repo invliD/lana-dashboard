@@ -31,6 +31,9 @@ class AutonomousSystem(models.Model):
 		verbose_name = ungettext_lazy("Autonomous System", "Autonomous Systems", 1)
 		verbose_name_plural = ungettext_lazy("Autonomous System", "Autonomous Systems", 2)
 
+	def __str__(self):
+		return "AS{}".format(self.as_number)
+
 	def can_edit(self, user):
 		return self.institution.can_edit(user)
 
@@ -49,6 +52,9 @@ class IPv4Subnet(models.Model):
 		unique_together = (
 			('network_address', 'subnet_bits'),
 		)
+
+	def __str__(self):
+		return "{}/{}".format(self.network_address, self.subnet_bits)
 
 	def can_edit(self, user):
 		return self.institution.can_edit(user)
