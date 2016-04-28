@@ -12,7 +12,7 @@
 		<tbody>
 			{% for institution in institutions %}
 			<tr>
-				<td>{{ institution.code }}</td>
+				<td><a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a></td>
 				<td>{{ institution.name }}</td>
 				<td>
 					{% for owner in institution.owners.all %}

@@ -25,7 +25,7 @@ def create_institution(request):
 			institution.save()
 			institution.owners.add(request.user)
 			institution.save()
-			return HttpResponseRedirect(reverse('lana_data:institutions'))
+			return HttpResponseRedirect(reverse('lana_data:institution-details', kwargs={'code': institution.code}))
 	else:
 		form = InstitutionForm()
 
@@ -39,6 +39,15 @@ def create_institution(request):
 	return render(request, 'institutions_create.html', {
 		'header_active': 'institutions',
 		'form': form,
+	})
+
+
+def show_institution(request, code=None):
+	institution = Institution.objects.get(code=code)
+
+	return render(request, 'institutions_details.html', {
+		'header_active': 'institutions',
+		'institution': institution,
 	})
 
 
