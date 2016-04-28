@@ -97,13 +97,16 @@ def edit_autonomous_system(request, as_number=None):
 	else:
 		mode = 'create'
 		autonomous_system = AutonomousSystem()
+		institution_code = request.GET.get('institution', None)
+		if institution_code:
+			autonomous_system.institution = Institution.objects.get(code=institution_code)
 
 	if request.method == 'POST':
 		form = AutonomousSystemForm(instance=autonomous_system, data=request.POST)
 		if form.is_valid():
 			autonomous_system = form.instance
 			autonomous_system.save()
-			return HttpResponseRedirect(reverse('lana_data:autonomous_systems'))
+			return HttpResponseRedirect(reverse('lana_data:autonomous_system-details', kwargs={'as_number': autonomous_system.as_number}))
 	else:
 		form = AutonomousSystemForm(instance=autonomous_system)
 
@@ -123,6 +126,17 @@ def edit_autonomous_system(request, as_number=None):
 		'header_active': 'autonomous_systems',
 		'mode': mode,
 		'form': form,
+	})
+
+
+@login_required
+def show_autonomous_system(request, as_number=None):
+	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+
+	return render(request, 'autonomous_systems_details.html', {
+		'header_active': 'autonomous_systems',
+		'autonomous_system': autonomous_system,
+		'can_edit': autonomous_system.can_edit(request.user),
 	})
 
 

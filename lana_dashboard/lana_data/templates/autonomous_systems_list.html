@@ -3,17 +3,17 @@
 	<h1>Autonomous Systems</h1>
 	<table class="table table-striped">
 		<thead>
-		<tr>
-			<th>AS</th>
-			<th>FQDN</th>
-			<th>Institution</th>
-			<th>Comment</th>
-		</tr>
+			<tr>
+				<th>AS</th>
+				<th>FQDN</th>
+				<th>Institution</th>
+				<th>Comment</th>
+			</tr>
 		</thead>
 		<tbody>
 			{% for autonomous_system in autonomous_systems %}
 			<tr>
-				<td>{{ autonomous_system.as_number }}</td>
+				<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system.as_number }}</a></td>
 				<td>{{ autonomous_system.fqdn }}</td>
 				<td><a href="{% url 'lana_data:institution-details' autonomous_system.institution.code %}" title="{{ autonomous_system.institution.name }}">{{ autonomous_system.institution.code }}</a></td>
 				<td>{{ autonomous_system.comment }}</td>
