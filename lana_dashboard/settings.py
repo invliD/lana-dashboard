@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
 	'lana_dashboard.main',
 	'lana_dashboard.usermanagement',
+	'lana_dashboard.lana_data',
 ]
 
 MIDDLEWARE_CLASSES = [
