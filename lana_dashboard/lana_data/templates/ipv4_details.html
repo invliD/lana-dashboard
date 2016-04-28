@@ -16,6 +16,10 @@
 					<th>Comment:</th>
 					<td>{{ subnet.comment }}</td>
 				</tr>
+				<tr>
+					<th>Institution:</th>
+					<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}">{{ subnet.institution.name }}</a></td>
+				</tr>
 			</tbody>
 		</table>
 		{% if can_edit %}
