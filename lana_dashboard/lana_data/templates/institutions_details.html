@@ -84,5 +84,10 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		{% if can_edit %}
+		<p>
+			<a class="btn btn-primary" href="{% url 'lana_data:ipv4-create' %}?institution={{ institution.code }}">Create IPv4 Subnet</a>
+		</p>
+		{% endif %}
 	</div>
 {% endblock %}

@@ -25,4 +25,9 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if can_create %}
+	<p>
+		<a class="btn btn-primary" href="{% url 'lana_data:ipv4-create' %}">Create IPv4 Subnet</a>
+	</p>
+	{% endif %}
 {% endblock %}

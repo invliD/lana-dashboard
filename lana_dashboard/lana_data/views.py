@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm
+from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
 
@@ -147,8 +147,51 @@ def show_autonomous_system(request, as_number=None):
 @login_required
 def list_ipv4(request):
 	subnets = IPv4Subnet.objects.all()
+	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
 		'header_active': 'ipv4',
 		'subnets': subnets,
+		'can_create': can_create,
+	})
+
+
+@login_required
+def edit_ipv4(request, network_address=None, subnet_bits=None):
+	if network_address and subnet_bits:
+		mode = 'edit'
+		subnet = get_object_or_404(IPv4Subnet, network_address=network_address, subnet_bits=subnet_bits)
+		if not subnet.can_edit(request.user):
+			raise PermissionDenied
+	else:
+		mode = 'create'
+		subnet = IPv4Subnet()
+		institution_code = request.GET.get('institution', None)
+		if institution_code:
+			subnet.institution = Institution.objects.get(code=institution_code)
+
+	if request.method == 'POST':
+		form = IPv4SubnetForm(instance=subnet, data=request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect(reverse('lana_data:ipv4'))
+	else:
+		form = IPv4SubnetForm(instance=subnet)
+
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
+
+	form.helper = FormHelper()
+	form.helper.form_class = 'form-horizontal'
+	form.helper.label_class = 'col-md-2'
+	form.helper.field_class = 'col-md-4'
+	form.helper.html5_required = True
+	if mode == 'create':
+		form.helper.add_input(Submit("submit", "Create"))
+	else:
+		form.helper.add_input(Submit("submit", "Save"))
+
+	return render(request, 'ipv4_edit.html', {
+		'header_active': 'ipv4',
+		'mode': mode,
+		'form': form,
 	})

@@ -1,0 +1,6 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+	<h1>{% if mode == 'create' %}Create new IPv4 Subnet{% else %}Edit {{ form.instance.network_address }}/{{ form.instance.subnet_bits }}{% endif %}</h1>
+	{% crispy form %}
+{% endblock %}
