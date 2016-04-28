@@ -8,6 +8,9 @@ class Institution(models.Model):
 
 	owners = models.ManyToManyField(User, related_name='institutions')
 
+	def can_edit(self, user):
+		return self.owners.filter(id=user.id).exists()
+
 
 class AutonomousSystem(models.Model):
 	as_number = models.IntegerField(primary_key=True)
@@ -15,6 +18,9 @@ class AutonomousSystem(models.Model):
 	comment = models.CharField(max_length=255)
 
 	institution = models.ForeignKey(Institution, related_name='autonomous_systems')
+
+	def can_edit(self, user):
+		return self.institution.can_edit(user)
 
 
 class IPv4Subnet(models.Model):
@@ -29,3 +35,6 @@ class IPv4Subnet(models.Model):
 		unique_together = (
 			('network_address', 'subnet_bits'),
 		)
+
+	def can_edit(self, user):
+		return self.institution.can_edit(user)

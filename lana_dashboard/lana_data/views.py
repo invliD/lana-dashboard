@@ -1,13 +1,15 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from lana_dashboard.lana_data.forms import InstitutionForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
 
 
+@login_required
 def list_institutions(request):
 	institutions = Institution.objects.all()
 
@@ -17,10 +19,13 @@ def list_institutions(request):
 	})
 
 
+@login_required
 def edit_institution(request, code=None):
 	if code:
 		mode = 'edit'
 		institution = Institution.objects.get(code=code)
+		if not institution.can_edit(request.user):
+			return HttpResponseForbidden()
 	else:
 		mode = 'create'
 		institution = Institution()
@@ -30,9 +35,8 @@ def edit_institution(request, code=None):
 		if form.is_valid():
 			institution = form.instance
 			if mode == 'create':
-				# Only need to save if it doesn't have an ID yet.
 				institution.save()
-			institution.owners.add(request.user)
+				institution.owners.add(request.user)
 			institution.save()
 			return HttpResponseRedirect(reverse('lana_data:institution-details', kwargs={'code': institution.code}))
 	else:
@@ -55,15 +59,18 @@ def edit_institution(request, code=None):
 	})
 
 
+@login_required
 def show_institution(request, code=None):
 	institution = Institution.objects.get(code=code)
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
 		'institution': institution,
+		'can_edit': institution.can_edit(request.user),
 	})
 
 
+@login_required
 def list_autonomous_systems(request):
 	autonomous_systems = AutonomousSystem.objects.all()
 
@@ -73,6 +80,7 @@ def list_autonomous_systems(request):
 	})
 
 
+@login_required
 def list_ipv4(request):
 	subnets = IPv4Subnet.objects.all()
 
