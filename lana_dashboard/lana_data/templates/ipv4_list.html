@@ -11,14 +11,18 @@
 		</tr>
 		</thead>
 		<tbody>
-		{% for subnet in subnets %}
+			{% for subnet in subnets %}
 			<tr>
 				<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
 				<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}" title="{{ subnet.institution.name }}">{{ subnet.institution.code }}</a></td>
 				<td>{{ subnet.dns_server }}</td>
 				<td>{{ subnet.comment }}</td>
 			</tr>
-		{% endfor %}
+			{% empty %}
+			<tr>
+				<td colspan="4">There are currently no IPv4 Subnets.</td>
+			</tr>
+			{% endfor %}
 		</tbody>
 	</table>
 {% endblock %}

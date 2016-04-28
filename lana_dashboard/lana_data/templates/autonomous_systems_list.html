@@ -18,6 +18,10 @@
 				<td><a href="{% url 'lana_data:institution-details' autonomous_system.institution.code %}" title="{{ autonomous_system.institution.name }}">{{ autonomous_system.institution.code }}</a></td>
 				<td>{{ autonomous_system.comment }}</td>
 			</tr>
+			{% empty %}
+			<tr>
+				<td colspan="4">There are currently no Autonomous Systems.</td>
+			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
