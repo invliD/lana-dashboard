@@ -1,9 +1,10 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from lana_dashboard.lana_data.forms import InstitutionForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
@@ -23,9 +24,9 @@ def list_institutions(request):
 def edit_institution(request, code=None):
 	if code:
 		mode = 'edit'
-		institution = Institution.objects.get(code=code)
+		institution = get_object_or_404(Institution, code=code)
 		if not institution.can_edit(request.user):
-			return HttpResponseForbidden()
+			raise PermissionDenied
 	else:
 		mode = 'create'
 		institution = Institution()
@@ -61,7 +62,7 @@ def edit_institution(request, code=None):
 
 @login_required
 def show_institution(request, code=None):
-	institution = Institution.objects.get(code=code)
+	institution = get_object_or_404(Institution, code=code)
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
