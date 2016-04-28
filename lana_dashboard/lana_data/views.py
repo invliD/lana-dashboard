@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
 
 
 def list_institutions(request):
@@ -20,4 +20,8 @@ def list_autonomous_systems(request):
 
 
 def list_ipv4(request):
-	pass
+	subnets = IPv4Subnet.objects.all()
+
+	return render(request, 'ipv4_list.html', {
+		'subnets': subnets,
+	})

@@ -1,0 +1,24 @@
+{% extends "master.html" %}
+{% block content %}
+	<h1>IPv4 Subnets</h1>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>Subnet</th>
+			<th>Institution</th>
+			<th>DNS Server</th>
+			<th>Comment</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for subnet in subnets %}
+			<tr>
+				<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
+				<td>{{ subnet.institution.code }}</td>
+				<td>{{ subnet.dns_server }}</td>
+				<td>{{ subnet.comment }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
