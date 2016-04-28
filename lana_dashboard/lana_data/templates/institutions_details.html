@@ -1,29 +1,83 @@
 {% extends "master.html" %}
 {% block content %}
 	<h1>{{ institution.name }}</h1>
-	<table class="table">
-		<tbody>
-			<tr>
-				<th>Name:</th>
-				<td>{{ institution.name }}</td>
-			</tr>
-			<tr>
-				<th>Code:</th>
-				<td>{{ institution.code }}</td>
-			</tr>
-			<tr>
-				<th>Managers:</th>
-				<td>
-					{% for owner in institution.owners.all %}
+	<div class="col-md-6">
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>Name:</th>
+					<td>{{ institution.name }}</td>
+				</tr>
+				<tr>
+					<th>Code:</th>
+					<td>{{ institution.code }}</td>
+				</tr>
+				<tr>
+					<th>Managers:</th>
+					<td>
+						{% for owner in institution.owners.all %}
 						{{ owner.get_full_name }}{% if not forloop.last %}<br />{% endif %}
-					{% endfor %}
-				</td>
+						{% endfor %}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		{% if can_edit %}
+		<p>
+			<a class="btn btn-primary" href="{% url 'lana_data:institution-edit' institution.code %}">Edit institution</a>
+		</p>
+		{% endif %}
+	</div>
+
+	<h2>Autonomous Systems</h2>
+	<div class="col-md-8">
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>AS</th>
+				<th>FQDN</th>
+				<th>Comment</th>
 			</tr>
-		</tbody>
-	</table>
-	{% if can_edit %}
-	<p>
-		<a class="btn btn-primary" href="{% url 'lana_data:institution-edit' institution.code %}">Edit institution</a>
-	</p>
-	{% endif %}
+			</thead>
+			<tbody>
+				{% for autonomous_system in autonomous_systems %}
+				<tr>
+					<td>{{ autonomous_system.as_number }}</td>
+					<td>{{ autonomous_system.fqdn }}</td>
+					<td>{{ autonomous_system.comment }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="3">This institution does not have any Autonomous Systems.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<h2>IPv4 Subnets</h2>
+	<div class="col-md-8">
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>Subnet</th>
+				<th>DNS Server</th>
+				<th>Comment</th>
+			</tr>
+			</thead>
+			<tbody>
+				{% for subnet in ipv4_subnets %}
+				<tr>
+					<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
+					<td>{{ subnet.dns_server }}</td>
+					<td>{{ subnet.comment }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="3">This institution does not have any IPv4 subnets.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}

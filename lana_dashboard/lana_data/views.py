@@ -63,10 +63,14 @@ def edit_institution(request, code=None):
 @login_required
 def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
+	autonomous_systems = institution.autonomous_systems.all()
+	ipv4_subnets = institution.ipv4_subnets.all()
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
 		'institution': institution,
+		'autonomous_systems': autonomous_systems,
+		'ipv4_subnets': ipv4_subnets,
 		'can_edit': institution.can_edit(request.user),
 	})
 
