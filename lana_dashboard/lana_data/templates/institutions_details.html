@@ -73,7 +73,7 @@
 			<tbody>
 				{% for subnet in ipv4_subnets %}
 				<tr>
-					<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
+					<td><a href="{% url 'lana_data:ipv4-details' subnet.network_address subnet.subnet_bits %}">{{ subnet.network_address }}/{{ subnet.subnet_bits }}</a></td>
 					<td>{{ subnet.dns_server }}</td>
 					<td>{{ subnet.comment }}</td>
 				</tr>

@@ -12,5 +12,6 @@ urlpatterns = [
 	url(r'^autonomous-systems/(?P<as_number>.+)/edit$', views.edit_autonomous_system, name='autonomous_system-edit'),
 	url(r'^ipv4/$', views.list_ipv4, name='ipv4'),
 	url(r'^ipv4/create$', views.edit_ipv4, name='ipv4-create'),
+	url(r'^ipv4/(?P<network_address>.+)/(?P<subnet_bits>\d+)/$', views.show_ipv4, name='ipv4-details'),
 	url(r'^ipv4/(?P<network_address>.+)/(?P<subnet_bits>\d+)/edit$', views.edit_ipv4, name='ipv4-edit'),
 ]

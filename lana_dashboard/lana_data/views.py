@@ -173,8 +173,8 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 	if request.method == 'POST':
 		form = IPv4SubnetForm(instance=subnet, data=request.POST)
 		if form.is_valid():
-			form.save()
-			return HttpResponseRedirect(reverse('lana_data:ipv4'))
+			subnet = form.save()
+			return HttpResponseRedirect(reverse('lana_data:ipv4-details', kwargs={'network_address': subnet.network_address, 'subnet_bits': subnet.subnet_bits}))
 	else:
 		form = IPv4SubnetForm(instance=subnet)
 
@@ -194,4 +194,15 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 		'header_active': 'ipv4',
 		'mode': mode,
 		'form': form,
+	})
+
+
+@login_required
+def show_ipv4(request, network_address=None, subnet_bits=None):
+	subnet = get_object_or_404(IPv4Subnet, network_address=network_address, subnet_bits=subnet_bits)
+
+	return render(request, 'ipv4_details.html', {
+		'header_active': 'ipv4',
+		'subnet': subnet,
+		'can_edit': subnet.can_edit(request.user),
 	})
