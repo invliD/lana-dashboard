@@ -6,7 +6,12 @@ from lana_dashboard.lana_data.models import AutonomousSystem, Institution
 class InstitutionForm(ModelForm):
 	class Meta:
 		model = Institution
-		fields = ['code', 'name']
+		fields = ['code', 'name', 'owners']
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+
+		self.fields['owners'].required = False
 
 
 class AutonomousSystemForm(ModelForm):

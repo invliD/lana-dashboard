@@ -1,8 +1,10 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm
@@ -34,14 +36,17 @@ def edit_institution(request, code=None):
 	if request.method == 'POST':
 		form = InstitutionForm(instance=institution, data=request.POST)
 		if form.is_valid():
-			institution = form.instance
-			if mode == 'create':
-				institution.save()
-				institution.owners.add(request.user)
+			institution = form.save(commit=False)
+			institution.save()
+			form.save_m2m()
+
+			institution.owners.add(request.user)
 			institution.save()
 			return HttpResponseRedirect(reverse('lana_data:institution-details', kwargs={'code': institution.code}))
 	else:
 		form = InstitutionForm(instance=institution)
+
+	form.fields['owners'].queryset = get_user_model().objects.filter(~Q(id=request.user.id))
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
@@ -104,8 +109,7 @@ def edit_autonomous_system(request, as_number=None):
 	if request.method == 'POST':
 		form = AutonomousSystemForm(instance=autonomous_system, data=request.POST)
 		if form.is_valid():
-			autonomous_system = form.instance
-			autonomous_system.save()
+			form.save()
 			return HttpResponseRedirect(reverse('lana_data:autonomous_system-details', kwargs={'as_number': autonomous_system.as_number}))
 	else:
 		form = AutonomousSystemForm(instance=autonomous_system)
