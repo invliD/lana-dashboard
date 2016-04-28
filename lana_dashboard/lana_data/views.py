@@ -1,4 +1,9 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from lana_dashboard.lana_data.forms import InstitutionForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
 
@@ -9,6 +14,31 @@ def list_institutions(request):
 	return render(request, 'institutions_list.html', {
 		'header_active': 'institutions',
 		'institutions': institutions,
+	})
+
+
+def create_institution(request):
+	if request.method == 'POST':
+		form = InstitutionForm(data=request.POST)
+		if form.is_valid():
+			institution = form.instance
+			institution.save()
+			institution.owners.add(request.user)
+			institution.save()
+			return HttpResponseRedirect(reverse('lana_data:institutions'))
+	else:
+		form = InstitutionForm()
+
+	form.helper = FormHelper()
+	form.helper.form_class = 'form-horizontal'
+	form.helper.label_class = 'col-md-2'
+	form.helper.field_class = 'col-md-4'
+	form.helper.html5_required = True
+	form.helper.add_input(Submit("submit", "Create"))
+
+	return render(request, 'institutions_create.html', {
+		'header_active': 'institutions',
+		'form': form,
 	})
 
 
