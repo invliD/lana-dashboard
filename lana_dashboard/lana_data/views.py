@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from lana_dashboard.lana_data.models import Institution
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution
 
 
 def list_institutions(request):
@@ -12,7 +12,11 @@ def list_institutions(request):
 
 
 def list_autonomous_systems(request):
-	pass
+	autonomous_systems = AutonomousSystem.objects.all()
+
+	return render(request, 'autonomous_systems_list.html', {
+		'autonomous_systems': autonomous_systems,
+	})
 
 
 def list_ipv4(request):

@@ -1,0 +1,24 @@
+{% extends "master.html" %}
+{% block content %}
+	<h1>Autonomous Systems</h1>
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>AS</th>
+			<th>FQDN</th>
+			<th>Institution</th>
+			<th>Comment</th>
+		</tr>
+		</thead>
+		<tbody>
+			{% for autonomous_system in autonomous_systems %}
+			<tr>
+				<td>{{ autonomous_system.as_number }}</td>
+				<td>{{ autonomous_system.fqdn }}</td>
+				<td>{{ autonomous_system.institution.code }}</td>
+				<td>{{ autonomous_system.comment }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
