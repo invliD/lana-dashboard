@@ -1,0 +1,6 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+	<h1>{% if mode == 'create' %}Create new Institution{% else %}Edit &quot;{{ form.instance.name }}&quot;{% endif %}</h1>
+	{% crispy form %}
+{% endblock %}

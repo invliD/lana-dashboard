@@ -17,27 +17,40 @@ def list_institutions(request):
 	})
 
 
-def create_institution(request):
+def edit_institution(request, code=None):
+	if code:
+		mode = 'edit'
+		institution = Institution.objects.get(code=code)
+	else:
+		mode = 'create'
+		institution = Institution()
+
 	if request.method == 'POST':
-		form = InstitutionForm(data=request.POST)
+		form = InstitutionForm(instance=institution, data=request.POST)
 		if form.is_valid():
 			institution = form.instance
-			institution.save()
+			if mode == 'create':
+				# Only need to save if it doesn't have an ID yet.
+				institution.save()
 			institution.owners.add(request.user)
 			institution.save()
 			return HttpResponseRedirect(reverse('lana_data:institution-details', kwargs={'code': institution.code}))
 	else:
-		form = InstitutionForm()
+		form = InstitutionForm(instance=institution)
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
 	form.helper.label_class = 'col-md-2'
 	form.helper.field_class = 'col-md-4'
 	form.helper.html5_required = True
-	form.helper.add_input(Submit("submit", "Create"))
+	if mode == 'create':
+		form.helper.add_input(Submit("submit", "Create"))
+	else:
+		form.helper.add_input(Submit("submit", "Save"))
 
-	return render(request, 'institutions_create.html', {
+	return render(request, 'institutions_edit.html', {
 		'header_active': 'institutions',
+		'mode': mode,
 		'form': form,
 	})
 
