@@ -3,8 +3,8 @@ from django.db import models
 
 
 class Institution(models.Model):
-	name = models.CharField(max_length=255)
-	code = models.CharField(max_length=8)
+	name = models.CharField(max_length=255, unique=True)
+	code = models.CharField(max_length=8, unique=True)
 
 	owners = models.ManyToManyField(User, related_name='institutions')
 
