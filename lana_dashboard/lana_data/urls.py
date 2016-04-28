@@ -7,5 +7,7 @@ urlpatterns = [
 	url(r'^institutions/(?P<code>.+)/$', views.show_institution, name='institution-details'),
 	url(r'^institutions/(?P<code>.+)/edit$', views.edit_institution, name='institution-edit'),
 	url(r'^autonomous-systems/$', views.list_autonomous_systems, name='autonomous_systems'),
+	url(r'^autonomous-systems/create$', views.edit_autonomous_system, name='autonomous_system-create'),
+	url(r'^autonomous-systems/(?P<code>.+)/edit$', views.edit_autonomous_system, name='autonomous_system-edit'),
 	url(r'^ipv4/$', views.list_ipv4, name='ipv4'),
 ]

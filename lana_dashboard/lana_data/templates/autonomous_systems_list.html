@@ -21,4 +21,9 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if can_create %}
+	<p>
+		<a class="btn btn-primary" href="{% url 'lana_data:autonomous_system-create' %}">Create Autonomous System</a>
+	</p>
+	{% endif %}
 {% endblock %}

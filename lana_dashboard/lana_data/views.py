@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from lana_dashboard.lana_data.forms import InstitutionForm
+from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
 
@@ -78,10 +78,51 @@ def show_institution(request, code=None):
 @login_required
 def list_autonomous_systems(request):
 	autonomous_systems = AutonomousSystem.objects.all()
+	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'autonomous_systems_list.html', {
 		'header_active': 'autonomous_systems',
 		'autonomous_systems': autonomous_systems,
+		'can_create': can_create,
+	})
+
+
+@login_required
+def edit_autonomous_system(request, as_number=None):
+	if as_number:
+		mode = 'edit'
+		autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+		if not autonomous_system.can_edit(request.user):
+			raise PermissionDenied
+	else:
+		mode = 'create'
+		autonomous_system = AutonomousSystem()
+
+	if request.method == 'POST':
+		form = AutonomousSystemForm(instance=autonomous_system, data=request.POST)
+		if form.is_valid():
+			autonomous_system = form.instance
+			autonomous_system.save()
+			return HttpResponseRedirect(reverse('lana_data:autonomous_systems'))
+	else:
+		form = AutonomousSystemForm(instance=autonomous_system)
+
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
+
+	form.helper = FormHelper()
+	form.helper.form_class = 'form-horizontal'
+	form.helper.label_class = 'col-md-2'
+	form.helper.field_class = 'col-md-4'
+	form.helper.html5_required = True
+	if mode == 'create':
+		form.helper.add_input(Submit("submit", "Create"))
+	else:
+		form.helper.add_input(Submit("submit", "Save"))
+
+	return render(request, 'autonomous_systems_edit.html', {
+		'header_active': 'autonomous_systems',
+		'mode': mode,
+		'form': form,
 	})
 
 

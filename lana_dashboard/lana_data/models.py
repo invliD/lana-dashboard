@@ -8,6 +8,9 @@ class Institution(models.Model):
 
 	owners = models.ManyToManyField(User, related_name='institutions')
 
+	def __str__(self):
+		return self.name
+
 	def can_edit(self, user):
 		return self.owners.filter(id=user.id).exists()
 
