@@ -23,7 +23,7 @@ class Institution(models.Model):
 class AutonomousSystem(models.Model):
 	as_number = models.IntegerField(primary_key=True, verbose_name=_("AS Number"))
 	fqdn = models.CharField(max_length=255, verbose_name=_("FQDN"))
-	comment = models.CharField(max_length=255, verbose_name=_("Comment"))
+	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	institution = models.ForeignKey(Institution, related_name='autonomous_systems', verbose_name=_("Institution"))
 
@@ -41,8 +41,8 @@ class AutonomousSystem(models.Model):
 class IPv4Subnet(models.Model):
 	network_address = models.GenericIPAddressField(protocol='IPv4', verbose_name=_("Network Address"))
 	subnet_bits = models.IntegerField(verbose_name=_("Subnet Bits"))
-	dns_server = models.GenericIPAddressField(protocol='IPv4', verbose_name=_("DNS Server"))
-	comment = models.CharField(max_length=255, verbose_name=_("Comment"))
+	dns_server = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("DNS Server"))
+	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	institution = models.ForeignKey(Institution, related_name='ipv4_subnets', verbose_name=_("Institution"))
 

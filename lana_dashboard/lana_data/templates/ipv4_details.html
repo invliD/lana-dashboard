@@ -10,7 +10,7 @@
 				</tr>
 				<tr>
 					<th>DNS Server:</th>
-					<td>{{ subnet.dns_server }}</td>
+					<td>{{ subnet.dns_server|default:'<em>None</em>' }}</td>
 				</tr>
 				<tr>
 					<th>Comment:</th>
