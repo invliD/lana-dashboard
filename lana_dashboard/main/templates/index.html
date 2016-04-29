@@ -1,4 +1,9 @@
 {% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrums-index %}{% endblock %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Home</li>
+{% endblock %}
 {% block content %}
 <h1>LANA Dashboard</h1>
 <p>Welcome to the Local Assigned Numbers Authority's dashboard!</p>

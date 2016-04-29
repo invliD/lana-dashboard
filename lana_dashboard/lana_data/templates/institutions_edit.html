@@ -1,5 +1,14 @@
 {% extends "master.html" %}
 {% load crispy_forms_tags %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:institutions' %}">Institutions</a></li>
+{% if mode == 'create' %}
+<li class="breadcrumb-item active">New</li>
+{% else %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:institution-details' form.instance.code %}">{{ form.instance.name }}</a></li>
+<li class="breadcrumb-item active">Edit</li>
+{% endif %}
+{% endblock %}
 {% block content %}
 	<h1>{% if mode == 'create' %}Create new Institution{% else %}Edit &quot;{{ form.instance.name }}&quot;{% endif %}</h1>
 	{% crispy form %}

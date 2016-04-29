@@ -1,4 +1,8 @@
 {% extends "master.html" %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:ipv4' %}">IPv4 Subnets</a></li>
+<li class="breadcrumb-item active">{{ subnet.network_address }}/{{ subnet.subnet_bits }}</li>
+{% endblock %}
 {% block content %}
 	<h1>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</h1>
 	<div class="col-md-6">

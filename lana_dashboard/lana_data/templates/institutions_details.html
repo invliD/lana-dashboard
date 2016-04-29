@@ -1,4 +1,8 @@
 {% extends "master.html" %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:institutions' %}">Institutions</a></li>
+<li class="breadcrumb-item active">{{ institution.name }}</li>
+{% endblock %}
 {% block content %}
 	<h1>{{ institution.name }}</h1>
 	<div class="col-md-6">

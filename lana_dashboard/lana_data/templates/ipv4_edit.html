@@ -1,5 +1,14 @@
 {% extends "master.html" %}
 {% load crispy_forms_tags %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:ipv4' %}">IPv4 Subnets</a></li>
+{% if mode == 'create' %}
+<li class="breadcrumb-item active">New</li>
+{% else %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:ipv4-details' form.instance.network_address form.instance.subnet_bits %}">{{ form.instance.network_address }}/{{ form.instance.subnet_bits }}</a></li>
+<li class="breadcrumb-item active">Edit</li>
+{% endif %}
+{% endblock %}
 {% block content %}
 	<h1>{% if mode == 'create' %}Create new IPv4 Subnet{% else %}Edit {{ form.instance.network_address }}/{{ form.instance.subnet_bits }}{% endif %}</h1>
 	{% crispy form %}
