@@ -21,7 +21,7 @@ class Institution(models.Model):
 
 
 class AutonomousSystem(models.Model):
-	as_number = models.IntegerField(primary_key=True, verbose_name=_("AS Number"))
+	as_number = models.BigIntegerField(primary_key=True, verbose_name=_("AS Number"))
 	fqdn = models.CharField(max_length=255, verbose_name=_("FQDN"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
