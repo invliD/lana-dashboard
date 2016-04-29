@@ -14,7 +14,7 @@ from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4S
 
 @login_required
 def list_institutions(request):
-	institutions = Institution.objects.all()
+	institutions = Institution.objects.all().order_by('code')
 
 	return render(request, 'institutions_list.html', {
 		'header_active': 'institutions',
@@ -46,7 +46,7 @@ def edit_institution(request, code=None):
 	else:
 		form = InstitutionForm(instance=institution)
 
-	form.fields['owners'].queryset = get_user_model().objects.filter(~Q(id=request.user.id))
+	form.fields['owners'].queryset = get_user_model().objects.filter(~Q(id=request.user.id)).order_by('last_name', 'first_name')
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
@@ -68,8 +68,8 @@ def edit_institution(request, code=None):
 @login_required
 def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
-	autonomous_systems = institution.autonomous_systems.all()
-	ipv4_subnets = institution.ipv4_subnets.all()
+	autonomous_systems = institution.autonomous_systems.all().order_by('as_number')
+	ipv4_subnets = institution.ipv4_subnets.all().order_by('network_address', 'subnet_bits')
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
@@ -82,7 +82,7 @@ def show_institution(request, code=None):
 
 @login_required
 def list_autonomous_systems(request):
-	autonomous_systems = AutonomousSystem.objects.all()
+	autonomous_systems = AutonomousSystem.objects.all().order_by('as_number')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'autonomous_systems_list.html', {
@@ -114,7 +114,7 @@ def edit_autonomous_system(request, as_number=None):
 	else:
 		form = AutonomousSystemForm(instance=autonomous_system)
 
-	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id).order_by('code')
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
@@ -146,7 +146,7 @@ def show_autonomous_system(request, as_number=None):
 
 @login_required
 def list_ipv4(request):
-	subnets = IPv4Subnet.objects.all()
+	subnets = IPv4Subnet.objects.all().order_by('network_address', 'subnet_bits')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
@@ -178,7 +178,7 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 	else:
 		form = IPv4SubnetForm(instance=subnet)
 
-	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id).order_by('code')
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
