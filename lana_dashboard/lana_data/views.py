@@ -33,6 +33,12 @@ def edit_institution(request, code=None):
 		mode = 'create'
 		institution = Institution()
 
+	# model.is_valid() modifies model. :(
+	original = {
+		'code': institution.code,
+		'name': institution.name,
+	}
+
 	if request.method == 'POST':
 		form = InstitutionForm(instance=institution, data=request.POST)
 		if form.is_valid():
@@ -61,6 +67,7 @@ def edit_institution(request, code=None):
 	return render(request, 'institutions_edit.html', {
 		'header_active': 'institutions',
 		'mode': mode,
+		'original': original,
 		'form': form,
 	})
 
@@ -106,6 +113,11 @@ def edit_autonomous_system(request, as_number=None):
 		if institution_code:
 			autonomous_system.institution = Institution.objects.get(code=institution_code)
 
+	# model.is_valid() modifies model. :(
+	original = {
+		'as_number': autonomous_system.as_number,
+	}
+
 	if request.method == 'POST':
 		form = AutonomousSystemForm(instance=autonomous_system, data=request.POST)
 		if form.is_valid():
@@ -129,6 +141,7 @@ def edit_autonomous_system(request, as_number=None):
 	return render(request, 'autonomous_systems_edit.html', {
 		'header_active': 'autonomous_systems',
 		'mode': mode,
+		'original': original,
 		'form': form,
 	})
 
@@ -170,6 +183,12 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 		if institution_code:
 			subnet.institution = Institution.objects.get(code=institution_code)
 
+	# model.is_valid() modifies model. :(
+	original = {
+		'network_address': subnet.network_address,
+		'subnet_bits': subnet.subnet_bits,
+	}
+
 	if request.method == 'POST':
 		form = IPv4SubnetForm(instance=subnet, data=request.POST)
 		if form.is_valid():
@@ -193,6 +212,7 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 	return render(request, 'ipv4_edit.html', {
 		'header_active': 'ipv4',
 		'mode': mode,
+		'original': original,
 		'form': form,
 	})
 

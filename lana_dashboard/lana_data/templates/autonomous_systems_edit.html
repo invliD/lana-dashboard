@@ -5,11 +5,11 @@
 {% if mode == 'create' %}
 <li class="breadcrumb-item active">New</li>
 {% else %}
-<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_system-details' form.instance.as_number %}">AS{{ form.instance.as_number }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_system-details' original.as_number %}">AS{{ original.as_number }}</a></li>
 <li class="breadcrumb-item active">Edit</li>
 {% endif %}
 {% endblock %}
 {% block content %}
-	<h1>{% if mode == 'create' %}Create new Autonomous System{% else %}Edit AS{{ form.instance.as_number }}{% endif %}</h1>
+	<h1>{% if mode == 'create' %}Create new Autonomous System{% else %}Edit AS{{ original.as_number }}{% endif %}</h1>
 	{% crispy form %}
 {% endblock %}
