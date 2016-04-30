@@ -7,9 +7,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm
+from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
 
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
 
 
 @login_required
@@ -225,4 +225,91 @@ def show_ipv4(request, network_address=None, subnet_bits=None):
 		'header_active': 'ipv4',
 		'subnet': subnet,
 		'can_edit': subnet.can_edit(request.user),
+	})
+
+
+@login_required
+def list_tunnels(request):
+	tunnels = Tunnel.objects.all()
+	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
+
+	return render(request, 'tunnels_list.html', {
+		'header_active': 'tunnels',
+		'tunnels': tunnels,
+		'can_create': can_create,
+	})
+
+
+@login_required
+def edit_tunnel(request, as_number1=None, as_number2=None):
+	if as_number1 and as_number2:
+		mode = 'edit'
+		tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+		if not tunnel.can_edit(request.user):
+			raise PermissionDenied
+		original = {
+			'as_number1': tunnel.endpoint1.autonomous_system.as_number,
+			'as_number2': tunnel.endpoint2.autonomous_system.as_number,
+		}
+	else:
+		mode = 'create'
+		tunnel = Tunnel()
+		tunnel.endpoint1 = TunnelEndpoint()
+		tunnel.endpoint2 = TunnelEndpoint()
+		original = {}
+
+	if request.method == 'POST':
+		tunnel_form = TunnelForm(instance=tunnel, data=request.POST, prefix='tunnel')
+		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, data=request.POST, prefix='endpoint1')
+		endpoint2_form = TunnelEndpointForm(instance=tunnel.endpoint2, data=request.POST, prefix='endpoint2')
+		if tunnel_form.is_valid() and endpoint1_form.is_valid() and endpoint2_form.is_valid():
+			endpoint1 = endpoint1_form.save()
+			endpoint2 = endpoint2_form.save()
+			tunnel = tunnel_form.save(commit=False)
+			tunnel.endpoint1 = endpoint1
+			tunnel.endpoint2 = endpoint2
+			if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
+				tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
+			tunnel.save()
+			return HttpResponseRedirect(reverse('lana_data:tunnels'))
+	else:
+		tunnel_form = TunnelForm(instance=tunnel, prefix='tunnel')
+		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, prefix='endpoint1')
+		endpoint2_form = TunnelEndpointForm(instance=tunnel.endpoint2, prefix='endpoint2')
+
+	tunnel_form.helper = FormHelper()
+	tunnel_form.helper.form_tag = False
+	tunnel_form.helper.label_class = 'col-md-2'
+	tunnel_form.helper.field_class = 'col-md-4'
+	tunnel_form.helper.html5_required = True
+
+	helper = FormHelper()
+	helper.form_tag = False
+	helper.disable_csrf = True
+	helper.label_class = 'col-md-2'
+	helper.field_class = 'col-md-4'
+	helper.html5_required = True
+
+	endpoint1_form.helper = helper
+	endpoint2_form.helper = helper
+
+	return render(request, 'tunnels_edit.html', {
+		'header_active': 'tunnels',
+		'mode': mode,
+		'original': original,
+		'tunnel_form': tunnel_form,
+		'endpoint1_form': endpoint1_form,
+		'endpoint2_form': endpoint2_form,
+	})
+
+
+@login_required
+def show_tunnel(request, as_number1=None, as_number2=None):
+	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+
+	return render(request, 'tunnels_details.html', {
+		'header_active': 'tunnels',
+		'tunnel': tunnel,
+		'endpoints': [tunnel.endpoint1, tunnel.endpoint2],
+		'can_edit': tunnel.can_edit(request.user),
 	})

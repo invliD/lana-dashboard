@@ -58,3 +58,39 @@ class IPv4Subnet(models.Model):
 
 	def can_edit(self, user):
 		return self.institution.can_edit(user)
+
+
+class TunnelEndpoint(models.Model):
+	external_ipv4 = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("External IPv4 address"))
+	internal_ipv4 = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("Internal IPv4 address"))
+
+	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
+
+	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
+
+	def can_edit(self, user):
+		return self.autonomous_system.can_edit(user)
+
+
+class Tunnel(models.Model):
+	protocol = models.CharField(max_length=5, choices=(
+		('fastd', _("Fastd tunnel")),
+		('other', _("Other")),
+	), verbose_name=_("Protocol"))
+	mode = models.CharField(max_length=3, choices=(
+		('tun', 'tun'),
+		('tap', 'tap'),
+	), verbose_name=_("Mode"))
+	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
+
+	encryption_method = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Encryption method"))
+	mtu = models.IntegerField(blank=True, null=True, verbose_name=_("MTU"))
+
+	endpoint1 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel1', verbose_name=_("Endpoint 1"))
+	endpoint2 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel2', verbose_name=_("Endpoint 2"))
+
+	def __str__(self):
+		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
+
+	def can_edit(self, user):
+		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)

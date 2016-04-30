@@ -1,0 +1,26 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnels' %}">Tunnels</a></li>
+{% if mode == 'create' %}
+<li class="breadcrumb-item active">New</li>
+{% else %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnel-details' original.as_number1 original.as_number2 %}">AS{{ original.as_number1 }}-AS{{ original.as_number2 }}</a></li>
+<li class="breadcrumb-item active">Edit</li>
+{% endif %}
+{% endblock %}
+{% block content %}
+	<h1>{% if mode == 'create' %}Create new Tunnel{% else %}Edit AS{{ original.as_number1 }}-AS{{ original.as_number2 }}{% endif %}</h1>
+	<form class="form-horizontal" method="post">
+		{% crispy tunnel_form %}
+		<h2>Endpoint 1</h2>
+		{% crispy endpoint1_form %}
+		<h2>Endpoint 2</h2>
+		{% crispy endpoint2_form %}
+		<div class="form-group row">
+			<div class="controls col-md-4 offset-md-2">
+				<input type="submit" name="submit" value="{% if mode == 'create' %}Create{% else %}Save{% endif %}" class="btn btn-primary" />
+			</div>
+		</div>
+	</form>
+{% endblock %}

@@ -25,6 +25,9 @@
 				<li class="nav-item{% if header_active == 'ipv4' %} active{% endif %}">
 					<a class="nav-link" href="{%  url 'lana_data:ipv4' %}">IPv4</a>
 				</li>
+				<li class="nav-item{% if header_active == 'tunnels' %} active{% endif %}">
+					<a class="nav-link" href="{%  url 'lana_data:tunnels' %}">Tunnels</a>
+				</li>
 				{% endif %}
 				<li class="nav-item pull-xs-right">
 					{% if user.is_authenticated %}

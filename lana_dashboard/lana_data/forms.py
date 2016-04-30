@@ -1,6 +1,6 @@
 from django.forms import ModelForm, NumberInput
 
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
 
 
 class InstitutionForm(ModelForm):
@@ -30,3 +30,15 @@ class IPv4SubnetForm(ModelForm):
 		widgets = {
 			'subnet_bits': NumberInput(attrs={'min': 0, 'max': 32}),
 		}
+
+
+class TunnelForm(ModelForm):
+	class Meta:
+		model = Tunnel
+		fields = ['protocol', 'mode', 'comment', 'encryption_method', 'mtu']
+
+
+class TunnelEndpointForm(ModelForm):
+	class Meta:
+		model = TunnelEndpoint
+		fields = ['autonomous_system', 'external_ipv4', 'internal_ipv4', 'public_key']

@@ -1,0 +1,66 @@
+{% extends "master.html" %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnels' %}">Tunnels</a></li>
+	<li class="breadcrumb-item active">{{ tunnel }}</li>
+{% endblock %}
+{% block content %}
+	<h1>{{ tunnel }}</h1>
+	<div class="col-md-6">
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>Protocol:</th>
+					<td>{{ tunnel.get_protocol_display }}</td>
+				</tr>
+				<tr>
+					<th>Mode:</th>
+					<td>{{ tunnel.get_mode_display }}</td>
+				</tr>
+				<tr>
+					<th>Comment:</th>
+					<td>{{ tunnel.comment }}</td>
+				</tr>
+				<tr>
+					<th>Encryption method:</th>
+					<td>{{ tunnel.encryption_method|default:'<em>None</em>' }}</td>
+				</tr>
+				<tr>
+					<th>MTU:</th>
+					<td>{{ tunnel.mtu|default:'<em>None</em>' }}</td>
+				</tr>
+			</tbody>
+		</table>
+		{% if can_edit %}
+		<p>
+			<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Edit Tunnel</a>
+		</p>
+		{% endif %}
+	</div>
+	<h2>Endpoints</h2>
+	<div class="row">
+		{% for endpoint in endpoints %}
+		<div class="col-md-6">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>Autonomous System:</th>
+						<td><a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a></td>
+					</tr>
+					<tr>
+						<th>External IPv4:</th>
+						<td>{{ endpoint.external_ipv4|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>Internal IPv4:</th>
+						<td>{{ endpoint.internal_ipv4|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>Public key:</th>
+						<td style="word-break: break-all;">{{ endpoint.public_key|default:'<em>None</em>' }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}
