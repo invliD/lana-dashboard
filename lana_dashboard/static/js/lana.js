@@ -47,13 +47,21 @@ LANA.loadGeoJSON = function(map, url, completion) {
 };
 
 LANA.fitBoundsToSource = function(map, source_id) {
-	var bounds = new mapboxgl.LngLatBounds();
-
 	var geo = map.getSource(source_id)._data;
-	geo.features.forEach(function(feature) {
-		bounds.extend(feature.geometry.coordinates);
-	});
-	map.fitBounds(bounds, {
-		padding: 40
-	});
+	if (geo.features.length > 0) {
+		var bounds = new mapboxgl.LngLatBounds();
+		geo.features.forEach(function (feature) {
+			bounds.extend(feature.geometry.coordinates);
+		});
+		if (bounds.getNorth() == bounds.getSouth() && bounds.getWest() == bounds.getEast()) {
+			map.flyTo({
+				center: bounds.getCenter().toArray(),
+				zoom: 9
+			});
+		} else {
+			map.fitBounds(bounds, {
+				padding: 40
+			});
+		}
+	}
 };
