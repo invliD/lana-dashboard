@@ -13,3 +13,5 @@ db.sqlite3
 
 # Static Files
 /lana_dashboard/staticfiles/
+
+/lana_dashboard/localsettings.py
