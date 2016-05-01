@@ -262,16 +262,35 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 		tunnel_form = TunnelForm(instance=tunnel, data=request.POST, prefix='tunnel')
 		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, data=request.POST, prefix='endpoint1')
 		endpoint2_form = TunnelEndpointForm(instance=tunnel.endpoint2, data=request.POST, prefix='endpoint2')
+
 		if tunnel_form.is_valid() and endpoint1_form.is_valid() and endpoint2_form.is_valid():
-			endpoint1 = endpoint1_form.save()
-			endpoint2 = endpoint2_form.save()
-			tunnel = tunnel_form.save(commit=False)
-			tunnel.endpoint1 = endpoint1
-			tunnel.endpoint2 = endpoint2
-			if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
-				tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
-			tunnel.save()
-			return HttpResponseRedirect(reverse('lana_data:tunnels'))
+			endpoint1 = endpoint1_form.save(commit=False)
+			endpoint2 = endpoint2_form.save(commit=False)
+
+			lower_as_number = min(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
+			higher_as_number = max(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
+
+			error_message = None
+			if not tunnel.can_edit(request.user):
+				error_message = "You cannot create a tunnel between two Autonomous Systems you don't manage."
+			elif endpoint1.autonomous_system.as_number == endpoint2.autonomous_system.as_number:
+				error_message = "You cannot create a tunnel within one Autonomous System."
+			elif Tunnel.objects.all().filter(endpoint1__autonomous_system__as_number=lower_as_number, endpoint2__autonomous_system__as_number=higher_as_number).filter(~Q(id=tunnel.id)).exists():
+				error_message = "A tunnel between these two Autonomous Systems already exists."
+
+			if error_message:
+				endpoint1_form.add_error('autonomous_system', error_message)
+				endpoint2_form.add_error('autonomous_system', error_message)
+			else:
+				endpoint1.save()
+				endpoint2.save()
+				tunnel = tunnel_form.save(commit=False)
+				tunnel.endpoint1 = endpoint1
+				tunnel.endpoint2 = endpoint2
+				if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
+					tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
+				tunnel.save()
+				return HttpResponseRedirect(reverse('lana_data:tunnels'))
 	else:
 		tunnel_form = TunnelForm(instance=tunnel, prefix='tunnel')
 		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, prefix='endpoint1')
