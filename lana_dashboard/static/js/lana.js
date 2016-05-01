@@ -7,6 +7,8 @@ LANA.createMap = function(center_lat, center_lng, zoom) {
 		center: [center_lng, center_lat],
 		zoom: zoom
 	});
+	map.dragRotate.disable();
+	map.touchZoomRotate.disableRotation();
 	return map;
 };
 
