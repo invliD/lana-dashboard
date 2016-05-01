@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 	<h1>{{ institution.name }}</h1>
-	<div class="row" style="min-height: 350px;">
+	<div class="row">
 		<div class="col-md-6">
 			<table class="table">
 				<tbody>
@@ -34,7 +34,7 @@
 			{% endif %}
 		</div>
 		{% if show_map %}
-		<div class="col-md-6">
+		<div class="col-md-6" style="min-height: 350px;">
 			<div id="map"></div>
 		</div>
 		<script>
