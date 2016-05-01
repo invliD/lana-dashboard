@@ -32,4 +32,30 @@
 		</p>
 		{% endif %}
 	</div>
+
+	<h2>Tunnels</h2>
+	<div class="col-md-6">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Tunnel</th>
+					<th>Peer AS</th>
+					<th>Comment</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for tunnel in tunnels %}
+				<tr>
+					<td><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a></td>
+					<td><a href="{% url 'lana_data:autonomous_system-details' tunnel.peer_endpoint.autonomous_system.as_number %}">{{ tunnel.peer_endpoint.autonomous_system }}</a></td>
+					<td>{{ tunnel.comment }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="3">This Autonomous System does not participate in any Tunnels.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}

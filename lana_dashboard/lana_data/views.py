@@ -149,10 +149,18 @@ def edit_autonomous_system(request, as_number=None):
 @login_required
 def show_autonomous_system(request, as_number=None):
 	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+	tunnels = Tunnel.objects.all().filter(Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number))
+
+	for tunnel in tunnels:
+		if tunnel.endpoint1.autonomous_system.as_number == int(as_number):
+			tunnel.peer_endpoint = tunnel.endpoint2
+		else:
+			tunnel.peer_endpoint = tunnel.endpoint1
 
 	return render(request, 'autonomous_systems_details.html', {
 		'header_active': 'autonomous_systems',
 		'autonomous_system': autonomous_system,
+		'tunnels': tunnels,
 		'can_edit': autonomous_system.can_edit(request.user),
 	})
 
