@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
 
@@ -78,6 +78,7 @@ def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
 	autonomous_systems = institution.autonomous_systems.all().order_by('as_number')
 	ipv4_subnets = institution.ipv4_subnets.all().order_by('network_address', 'subnet_bits')
+	show_map = institution.autonomous_systems.all().exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
@@ -85,7 +86,23 @@ def show_institution(request, code=None):
 		'autonomous_systems': autonomous_systems,
 		'ipv4_subnets': ipv4_subnets,
 		'can_edit': institution.can_edit(request.user),
+		'show_map': show_map,
 	})
+
+
+@login_required
+def list_institution_autonomous_systems(request, code=None):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return list_institution_autonomous_systems_geojson(request, code=code)
+	else:
+		raise Http404
+
+
+def list_institution_autonomous_systems_geojson(request, code=None):
+	get_object_or_404(Institution, code=code)
+	autonomous_systems = AutonomousSystem.objects.all().filter(institution__code=code)
+	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
 
 
 @login_required

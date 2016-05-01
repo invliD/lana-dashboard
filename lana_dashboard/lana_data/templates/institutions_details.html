@@ -5,31 +5,46 @@
 {% endblock %}
 {% block content %}
 	<h1>{{ institution.name }}</h1>
-	<div class="col-md-6">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>Name:</th>
-					<td>{{ institution.name }}</td>
-				</tr>
-				<tr>
-					<th>Code:</th>
-					<td>{{ institution.code }}</td>
-				</tr>
-				<tr>
-					<th>Managers:</th>
-					<td>
-						{% for owner in institution.owners.all %}
-						{{ owner.get_full_name }}{% if not forloop.last %}<br />{% endif %}
-						{% endfor %}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		{% if can_edit %}
-		<p>
-			<a class="btn btn-primary" href="{% url 'lana_data:institution-edit' institution.code %}">Edit institution</a>
-		</p>
+	<div class="row" style="min-height: 350px;">
+		<div class="col-md-6">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>Name:</th>
+						<td>{{ institution.name }}</td>
+					</tr>
+					<tr>
+						<th>Code:</th>
+						<td>{{ institution.code }}</td>
+					</tr>
+					<tr>
+						<th>Managers:</th>
+						<td>
+							{% for owner in institution.owners.all %}
+							{{ owner.get_full_name }}{% if not forloop.last %}<br />{% endif %}
+							{% endfor %}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			{% if can_edit %}
+			<p>
+				<a class="btn btn-primary" href="{% url 'lana_data:institution-edit' institution.code %}">Edit institution</a>
+			</p>
+			{% endif %}
+		</div>
+		{% if show_map %}
+		<div class="col-md-6">
+			<div id="map"></div>
+		</div>
+		<script>
+			$(function() {
+				var map = LANA.createMap(51.133333, 10.416667, 4);
+				LANA.loadGeoJSON(map, '{% url 'lana_data:institution-autonomous_systems' institution.code %}', function() {
+					LANA.fitBoundsToSource(map, 'markers');
+				});
+			});
+		</script>
 		{% endif %}
 	</div>
 
