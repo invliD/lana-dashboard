@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
+from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems
 
 
 @login_required
@@ -148,6 +149,19 @@ def edit_autonomous_system(request, as_number=None):
 
 @login_required
 def show_autonomous_system(request, as_number=None):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return show_autonomous_system_geojson(request, as_number=as_number)
+	else:
+		return show_autonomous_system_web(request, as_number=as_number)
+
+
+def show_autonomous_system_geojson(request, as_number=None):
+	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+	return JsonResponse(geojson_from_autonomous_systems([autonomous_system]))
+
+
+def show_autonomous_system_web(request, as_number=None):
 	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
 	tunnels = Tunnel.objects.all().filter(Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number))
 

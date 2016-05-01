@@ -9,6 +9,8 @@
 	<title>LANA Dashboard</title>
 	<link rel="stylesheet" href="{% static 'scss/bootstrap.scss'|compile %}" />
 	<link rel="stylesheet" href="{% static 'scss/lana.scss'|compile %}" />
+	<link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.css" />
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
 </head>
 <body>
 	<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
@@ -53,7 +55,9 @@
 		</ol>
 {% block content %}{% endblock %}
 	</div>
-	<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.js'></script>
+	<script src="{% static 'js/lana.js' %}"></script>
+	<script src="{% url 'main-apis' %}"></script>
 </body>
 </html>

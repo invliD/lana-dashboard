@@ -4,3 +4,15 @@
 body {
 	padding-top: 4rem;
 }
+
+#map {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: $grid-gutter-width / 2;
+	right: $grid-gutter-width / 2;
+
+	canvas:focus {
+		outline: none;
+	}
+}

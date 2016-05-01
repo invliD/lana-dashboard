@@ -145,3 +145,8 @@ STATICFILES_FINDERS = [
 STATIC_PRECOMPILER_COMPILERS = [
 	'static_precompiler.compilers.SCSS',
 ]
+
+# LANA settings
+
+# You need to add a MapBox access token to see any maps.
+LANA_MAPBOX_API_KEY = ''
