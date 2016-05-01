@@ -238,7 +238,7 @@ def show_ipv4(request, network_address=None, subnet_bits=None):
 
 @login_required
 def list_tunnels(request):
-	tunnels = Tunnel.objects.all()
+	tunnels = Tunnel.objects.all().order_by('endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number')
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
 	return render(request, 'tunnels_list.html', {
