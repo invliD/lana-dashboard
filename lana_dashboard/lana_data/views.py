@@ -305,8 +305,8 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 	helper = FormHelper()
 	helper.form_tag = False
 	helper.disable_csrf = True
-	helper.label_class = 'col-md-2'
-	helper.field_class = 'col-md-4'
+	helper.label_class = 'col-md-4'
+	helper.field_class = 'col-md-8'
 	helper.html5_required = True
 
 	endpoint1_form.helper = helper
