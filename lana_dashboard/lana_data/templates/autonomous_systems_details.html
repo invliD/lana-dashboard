@@ -40,7 +40,7 @@
 		<script>
 			$(function() {
 				var map = LANA.createMap({{ autonomous_system.location_lat }}, {{ autonomous_system.location_lng }}, 9);
-				LANA.loadGeoJSON(map, '{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}');
+				LANA.loadGeoJSONPoints(map, '{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}');
 			});
 		</script>
 		{% endif %}

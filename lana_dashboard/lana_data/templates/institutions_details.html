@@ -40,9 +40,10 @@
 		<script>
 			$(function() {
 				var map = LANA.createMap(51.133333, 10.416667, 4);
-				LANA.loadGeoJSON(map, '{% url 'lana_data:institution-autonomous_systems' institution.code %}', function() {
+				LANA.loadGeoJSONPoints(map, '{% url 'lana_data:institution-autonomous_systems' institution.code %}', function() {
 					LANA.fitBoundsToSource(map, 'markers');
 				});
+				LANA.loadGeoJSONLines(map, '{% url 'lana_data:institution-tunnels' institution.code %}');
 			});
 		</script>
 		{% endif %}

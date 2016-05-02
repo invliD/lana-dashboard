@@ -12,7 +12,7 @@ LANA.createMap = function(center_lat, center_lng, zoom) {
 	return map;
 };
 
-LANA.loadGeoJSON = function(map, url, completion) {
+LANA.loadGeoJSONPoints = function(map, url, completion) {
 	map.on('load', function () {
 		$.ajax({
 			url: url,
@@ -43,6 +43,37 @@ LANA.loadGeoJSON = function(map, url, completion) {
 				}
 			}
 		});
+	});
+};
+
+LANA.loadGeoJSONLines = function(map, url) {
+	map.on('load', function() {
+		$.ajax({
+			url: url,
+			headers: {
+				'Accept': 'application/vnd.geo+json'
+			},
+			success: function(data) {
+				map.addSource('tunnels', {
+					'type': 'geojson',
+					'data': data
+				});
+
+				map.addLayer({
+					'id': 'tunnels',
+					'type': 'line',
+					'source': 'tunnels',
+					'layout': {
+						'line-join': 'round',
+						'line-cap': 'round'
+					},
+					'paint': {
+						'line-color': '#888',
+						'line-width': 2
+					}
+				}, 'markers');
+			}
+		})
 	});
 };
 

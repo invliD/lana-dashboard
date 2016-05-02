@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404
 from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
-from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems
+from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems, geojson_from_tunnels
 
 
 @login_required
@@ -103,6 +103,23 @@ def list_institution_autonomous_systems_geojson(request, code=None):
 	get_object_or_404(Institution, code=code)
 	autonomous_systems = AutonomousSystem.objects.all().filter(institution__code=code)
 	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
+
+
+@login_required
+def list_institution_tunnels(request, code=None):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return list_institution_tunnels_geojson(request, code=code)
+	else:
+		raise Http404
+
+
+def list_institution_tunnels_geojson(request, code=None):
+	get_object_or_404(Institution, code=code)
+	autonomous_systems = AutonomousSystem.objects.all().filter(institution__code=code)
+	as_ids = [autonomous_system.id for autonomous_system in autonomous_systems]
+	tunnels = Tunnel.objects.all().filter(endpoint1__autonomous_system__id__in=as_ids).filter(endpoint2__autonomous_system__id__in=as_ids)
+	return JsonResponse(geojson_from_tunnels(tunnels))
 
 
 @login_required
