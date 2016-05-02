@@ -7,4 +7,20 @@
 {% block content %}
 <h1>LANA Dashboard</h1>
 <p>Welcome to the Local Assigned Numbers Authority's dashboard!</p>
+{% if show_map %}
+<div class="row">
+	<div class="col-md-12" style="min-height: 550px;">
+		<div id="map"></div>
+	</div>
+	<script>
+		$(function() {
+			var map = LANA.createMap(51.133333, 10.416667, 4);
+			LANA.loadGeoJSONPoints(map, '{% url 'lana_data:autonomous_systems' %}', function() {
+				LANA.fitBoundsToSource(map, 'markers');
+			});
+			LANA.loadGeoJSONLines(map, '{% url 'lana_data:tunnels' %}');
+		});
+	</script>
+</div>
+{% endif %}
 {% endblock %}

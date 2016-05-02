@@ -124,6 +124,19 @@ def list_institution_tunnels_geojson(request, code=None):
 
 @login_required
 def list_autonomous_systems(request):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return list_autonomous_systems_geojson(request)
+	else:
+		return list_autonomous_systems_web(request)
+
+
+def list_autonomous_systems_geojson(request):
+	autonomous_systems = AutonomousSystem.objects.all().order_by('as_number')
+	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
+
+
+def list_autonomous_systems_web(request):
 	autonomous_systems = AutonomousSystem.objects.all().order_by('as_number')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
@@ -286,6 +299,19 @@ def show_ipv4(request, network_address=None, subnet_bits=None):
 
 @login_required
 def list_tunnels(request):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return list_tunnels_geojson(request)
+	else:
+		return list_tunnels_web(request)
+
+
+def list_tunnels_geojson(request):
+	tunnels = Tunnel.objects.all()
+	return JsonResponse(geojson_from_tunnels(tunnels))
+
+
+def list_tunnels_web(request):
 	tunnels = Tunnel.objects.all().order_by('endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number')
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
