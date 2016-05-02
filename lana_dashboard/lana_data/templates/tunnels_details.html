@@ -5,35 +5,51 @@
 {% endblock %}
 {% block content %}
 	<h1>{{ tunnel }}</h1>
-	<div class="col-md-6">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>Protocol:</th>
-					<td>{{ tunnel.get_protocol_display }}</td>
-				</tr>
-				<tr>
-					<th>Mode:</th>
-					<td>{{ tunnel.get_mode_display }}</td>
-				</tr>
-				<tr>
-					<th>Comment:</th>
-					<td>{{ tunnel.comment }}</td>
-				</tr>
-				<tr>
-					<th>Encryption method:</th>
-					<td>{{ tunnel.encryption_method|default:'<em>None</em>' }}</td>
-				</tr>
-				<tr>
-					<th>MTU:</th>
-					<td>{{ tunnel.mtu|default:'<em>None</em>' }}</td>
-				</tr>
-			</tbody>
-		</table>
-		{% if can_edit %}
-		<p>
-			<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Edit Tunnel</a>
-		</p>
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>Protocol:</th>
+						<td>{{ tunnel.get_protocol_display }}</td>
+					</tr>
+					<tr>
+						<th>Mode:</th>
+						<td>{{ tunnel.get_mode_display }}</td>
+					</tr>
+					<tr>
+						<th>Comment:</th>
+						<td>{{ tunnel.comment }}</td>
+					</tr>
+					<tr>
+						<th>Encryption method:</th>
+						<td>{{ tunnel.encryption_method|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>MTU:</th>
+						<td>{{ tunnel.mtu|default:'<em>None</em>' }}</td>
+					</tr>
+				</tbody>
+			</table>
+			{% if can_edit %}
+			<p>
+				<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Edit Tunnel</a>
+			</p>
+			{% endif %}
+		</div>
+		{% if show_map %}
+			<div class="col-md-6">
+				<div id="map"></div>
+			</div>
+			<script>
+				$(function() {
+					var map = LANA.createMap(51.133333, 10.416667, 4);
+					LANA.loadGeoJSONPoints(map, '{% url 'lana_data:tunnel-autonomous_systems' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}', function() {
+						LANA.fitBoundsToSource(map, 'markers');
+					});
+					LANA.loadGeoJSONLines(map, '{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}')
+				});
+			</script>
 		{% endif %}
 	</div>
 	<h2>Endpoints</h2>

@@ -380,11 +380,40 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 
 @login_required
 def show_tunnel(request, as_number1=None, as_number2=None):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return show_tunnel_geojson(request, as_number1=as_number1, as_number2=as_number2)
+	else:
+		return show_tunnel_web(request, as_number1=as_number1, as_number2=as_number2)
+
+
+def show_tunnel_geojson(request, as_number1=None, as_number2=None):
 	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	return JsonResponse(geojson_from_tunnels([tunnel]))
+
+
+def show_tunnel_web(request, as_number1=None, as_number2=None):
+	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	return render(request, 'tunnels_details.html', {
 		'header_active': 'tunnels',
 		'tunnel': tunnel,
 		'endpoints': [tunnel.endpoint1, tunnel.endpoint2],
 		'can_edit': tunnel.can_edit(request.user),
+		'show_map': show_map,
 	})
+
+
+@login_required
+def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
+	accept = request.META.get('HTTP_ACCEPT')
+	if accept == 'application/vnd.geo+json':
+		return list_tunnel_autonomous_systems_geojson(request, as_number1=as_number1, as_number2=as_number2)
+	else:
+		raise Http404
+
+
+def list_tunnel_autonomous_systems_geojson(request, as_number1=None, as_number2=None):
+	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	return JsonResponse(geojson_from_autonomous_systems([tunnel.endpoint1.autonomous_system, tunnel.endpoint2.autonomous_system]))
