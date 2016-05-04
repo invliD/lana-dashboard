@@ -5,31 +5,33 @@
 {% endblock %}
 {% block content %}
 	<h1>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</h1>
-	<div class="col-md-6">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>Subnet:</th>
-					<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
-				</tr>
-				<tr>
-					<th>DNS Server:</th>
-					<td>{{ subnet.dns_server|default:'<em>None</em>' }}</td>
-				</tr>
-				<tr>
-					<th>Comment:</th>
-					<td>{{ subnet.comment }}</td>
-				</tr>
-				<tr>
-					<th>Institution:</th>
-					<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}">{{ subnet.institution.name }}</a></td>
-				</tr>
-			</tbody>
-		</table>
-		{% if can_edit %}
-		<p>
-			<a class="btn btn-primary" href="{% url 'lana_data:ipv4-edit' subnet.network_address subnet.subnet_bits %}">Edit IPv4 Subnet</a>
-		</p>
-		{% endif %}
+	<div class="row">
+		<div class="col-xs-12 col-lg-6">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>Subnet:</th>
+						<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
+					</tr>
+					<tr>
+						<th>DNS Server:</th>
+						<td>{{ subnet.dns_server|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>Comment:</th>
+						<td>{{ subnet.comment }}</td>
+					</tr>
+					<tr>
+						<th>Institution:</th>
+						<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}">{{ subnet.institution.name }}</a></td>
+					</tr>
+				</tbody>
+			</table>
+			{% if can_edit %}
+			<p>
+				<a class="btn btn-primary" href="{% url 'lana_data:ipv4-edit' subnet.network_address subnet.subnet_bits %}">Edit IPv4 Subnet</a>
+			</p>
+			{% endif %}
+		</div>
 	</div>
 {% endblock %}

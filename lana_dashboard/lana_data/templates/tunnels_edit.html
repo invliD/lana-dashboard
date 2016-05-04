@@ -13,12 +13,14 @@
 	<h1>{% if mode == 'create' %}Create new Tunnel{% else %}Edit AS{{ original.as_number1 }}-AS{{ original.as_number2 }}{% endif %}</h1>
 	<form class="form-horizontal" method="post">
 		{% crispy tunnel_form %}
-		<h2>Endpoints</h2>
+		<h2 class="hidden-md-down">Endpoints</h2>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-xs-12 col-lg-6">
+				<h2 class="hidden-lg-up">Endpoint 1</h2>
 				{% crispy endpoint1_form %}
 			</div>
-			<div class="col-md-6">
+			<div class="col-xs-12 col-lg-6">
+				<h2 class="hidden-lg-up">Endpoint 2</h2>
 				{% crispy endpoint2_form %}
 			</div>
 		</div>

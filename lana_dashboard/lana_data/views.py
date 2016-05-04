@@ -57,8 +57,8 @@ def edit_institution(request, code=None):
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
-	form.helper.label_class = 'col-md-2'
-	form.helper.field_class = 'col-md-4'
+	form.helper.label_class = 'col-xs-4 col-md-3 col-lg-2'
+	form.helper.field_class = 'col-xs-8 col-md-6 col-lg-5 col-xl-4'
 	form.helper.html5_required = True
 	if mode == 'create':
 		form.helper.add_input(Submit("submit", "Create"))
@@ -178,8 +178,8 @@ def edit_autonomous_system(request, as_number=None):
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
-	form.helper.label_class = 'col-md-2'
-	form.helper.field_class = 'col-md-4'
+	form.helper.label_class = 'col-xs-4 col-md-3 col-lg-2'
+	form.helper.field_class = 'col-xs-8 col-md-6 col-lg-5 col-xl-4'
 	form.helper.html5_required = True
 	if mode == 'create':
 		form.helper.add_input(Submit("submit", "Create"))
@@ -270,8 +270,8 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
-	form.helper.label_class = 'col-md-2'
-	form.helper.field_class = 'col-md-4'
+	form.helper.label_class = 'col-xs-4 col-md-3 col-lg-2'
+	form.helper.field_class = 'col-xs-8 col-md-6 col-lg-5 col-xl-4'
 	form.helper.html5_required = True
 	if mode == 'create':
 		form.helper.add_input(Submit("submit", "Create"))
@@ -380,15 +380,15 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 
 	tunnel_form.helper = FormHelper()
 	tunnel_form.helper.form_tag = False
-	tunnel_form.helper.label_class = 'col-md-2'
-	tunnel_form.helper.field_class = 'col-md-4'
+	tunnel_form.helper.label_class = 'col-xs-4 col-lg-2'
+	tunnel_form.helper.field_class = 'col-xs-8 col-lg-5 col-xl-4'
 	tunnel_form.helper.html5_required = True
 
 	helper = FormHelper()
 	helper.form_tag = False
 	helper.disable_csrf = True
-	helper.label_class = 'col-md-4'
-	helper.field_class = 'col-md-8'
+	helper.label_class = 'col-xs-4'
+	helper.field_class = 'col-xs-8'
 	helper.html5_required = True
 
 	endpoint1_form.helper = helper
