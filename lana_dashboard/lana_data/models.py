@@ -6,6 +6,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 class Institution(models.Model):
 	name = models.CharField(max_length=255, unique=True, verbose_name=_("Name"))
 	code = models.CharField(max_length=8, unique=True, verbose_name=_("Code"))
+	abuse_email = models.EmailField(blank=True, verbose_name=_("Abuse Email"))
 
 	owners = models.ManyToManyField(User, related_name='institutions', verbose_name=_("Managers"))
 
