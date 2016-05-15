@@ -38,8 +38,13 @@
 					<a class="nav-link" href="{% url 'usermanagement-login' %}">Login</a>
 					{% endif %}
 				</li>
+				{% if user.is_authenticated %}
+				<li class="nav-item pull-xs-right">
+					<a class="nav-link" href="{% url 'usermanagement:profile' user.username %}">Profile</a>
+				</li>
+				{% endif %}
 				{% if user.is_superuser %}
-				<li class="nav-item pull-xs-right" style="margin-right: 1rem;">
+				<li class="nav-item pull-xs-right">
 					<a class="nav-link" href="{%  url 'admin:index' %}">Admin</a>
 				</li>
 				{% endif %}

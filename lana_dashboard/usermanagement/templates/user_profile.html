@@ -1,0 +1,82 @@
+{% extends "master.html" %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item">Users</li>
+	<li class="breadcrumb-item active">{{ profile.get_full_name }}</li>
+{% endblock %}
+{% block content %}
+	<h1>{{ profile.get_full_name }}</h1>
+	<div class="row">
+		<div class="col-xs-12 col-md-10 col-lg-8">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>User name:</th>
+						<td>{{ profile.username }}</td>
+					</tr>
+					{% if info and info.show_email %}
+					<tr>
+						<th>Email:</th>
+						<td><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></td>
+					</tr>
+					{% endif %}
+					{% if info and info.skype_user %}
+					<tr>
+						<th>Skype:</th>
+						<td><a href="skype:{{ info.skype_user }}?chat">{{ info.skype_user }}</a></td>
+					</tr>
+					{% endif %}
+					{% if info and info.xmpp_address %}
+					<tr>
+						<th>XMPP address:</th>
+						<td><a href="xmpp:{{ info.xmpp_address }}?message">{{ info.xmpp_address }}</a></td>
+					</tr>
+					{% endif %}
+					{% if info and info.additional_text %}
+					<tr>
+						<th>Additional information:</th>
+						<td>
+							{{ info.additional_text|linebreaks }}
+						</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<h2>Institutions</h2>
+	<div class="row">
+		<div class="col-xs-12 col-lg-8">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Managed by</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for institution in institutions %}
+					<tr>
+						<td><a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a></td>
+						<td>{{ institution.name }}</td>
+						<td>
+							{% for owner in institution.owners.all %}
+								{% if owner.username == profile.username %}
+								<strong>{{ owner.get_full_name }}</strong>{% if not forloop.last %}, {% endif %}
+								{% else %}
+								<a href="{% url 'usermanagement:profile' owner.username %}">{{ owner.get_full_name }}</a>{% if not forloop.last %}, {% endif %}
+								{% endif %}
+							{% endfor %}
+						</td>
+					</tr>
+					{% empty %}
+					<tr>
+						<td colspan="3">{{ profile.get_full_name }} does not manage any Institutions.</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

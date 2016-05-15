@@ -31,7 +31,7 @@
 						<th>Managers:</th>
 						<td>
 							{% for owner in institution.owners.all %}
-							{{ owner.get_full_name }}{% if not forloop.last %}<br />{% endif %}
+							<a href="{% url 'usermanagement:profile' owner.username %}">{{ owner.get_full_name }}</a>{% if not forloop.last %}<br />{% endif %}
 							{% endfor %}
 						</td>
 					</tr>
