@@ -41,6 +41,11 @@
 					{% endif %}
 				</tbody>
 			</table>
+			{% if profile.username == user.username %}
+			<p>
+				<a class="btn btn-primary" href="{% url 'usermanagement:profile-edit' profile.username %}">Edit user profile</a>
+			</p>
+			{% endif %}
 		</div>
 	</div>
 

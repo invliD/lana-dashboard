@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item">Users</li>
+	<li class="breadcrumb-item"><a href="{% url 'usermanagement:profile' profile.username %}">{{ profile.get_full_name }}</a></li>
+	<li class="breadcrumb-item active">Edit</li>
+{% endblock %}
+{% block content %}
+	<h1>{{ profile.get_full_name }}</h1>
+	{% crispy form %}
+{% endblock %}
