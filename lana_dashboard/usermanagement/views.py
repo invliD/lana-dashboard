@@ -56,19 +56,24 @@ def edit_user_profile(request, username):
 		raise PermissionDenied
 
 	instance = user.contact_information if hasattr(user, 'contact_information') else None
+	initial = {
+		'email': user.email,
+	}
 
 	if request.method == "POST":
-		form = ContactInformationForm(instance=instance, data=request.POST)
+		form = ContactInformationForm(instance=instance, initial=initial, data=request.POST)
 		if form.is_valid():
 			info = form.save(commit=False)
 			info.user = user
 			info.save()
+
+			user.email = form.cleaned_data['email']
 			if not instance:
 				user.contact_information = info
-				user.save()
+			user.save()
 			return HttpResponseRedirect(reverse('usermanagement:profile', kwargs={'username': user.username}))
 	else:
-		form = ContactInformationForm(instance=instance)
+		form = ContactInformationForm(instance=instance, initial=initial)
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'

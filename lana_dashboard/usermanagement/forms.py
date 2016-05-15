@@ -1,9 +1,12 @@
-from django.forms import ModelForm
+from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from lana_dashboard.usermanagement.models import ContactInformation
 
 
-class ContactInformationForm(ModelForm):
+class ContactInformationForm(forms.ModelForm):
+	email = forms.EmailField(label=_('Email address'))
+
 	class Meta:
 		model = ContactInformation
-		fields = ['show_email', 'skype_user', 'xmpp_address', 'additional_text']
+		fields = ['email', 'show_email', 'skype_user', 'xmpp_address', 'additional_text']
