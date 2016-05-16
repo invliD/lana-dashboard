@@ -6,7 +6,7 @@ from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4S
 class InstitutionForm(ModelForm):
 	class Meta:
 		model = Institution
-		fields = ['code', 'name', 'abuse_email', 'owners']
+		fields = ['code', 'name', 'color', 'abuse_email', 'owners']
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
