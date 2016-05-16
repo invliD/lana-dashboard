@@ -4,7 +4,10 @@
 <li class="breadcrumb-item active">{{ institution.name }}</li>
 {% endblock %}
 {% block content %}
-	<h1>{{ institution.name }}</h1>
+	<h1>
+		<div class="pull-xs-left institution-color-bubble-small" style="background: {{ institution.color }};"></div>
+		{{ institution.name }}
+	</h1>
 	<div class="row">
 		<div class="col-xs-12 col-lg-6">
 			<table class="table">
