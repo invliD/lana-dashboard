@@ -3,7 +3,7 @@ LANA = {};
 LANA.createMap = function(center_lat, center_lng, zoom) {
 	var map = new mapboxgl.Map({
 		container: 'map',
-		style: 'mapbox://styles/mapbox/streets-v8',
+		style: 'mapbox://styles/mapbox/streets-v9',
 		center: [center_lng, center_lat],
 		zoom: zoom
 	});

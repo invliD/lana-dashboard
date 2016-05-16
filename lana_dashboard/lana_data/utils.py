@@ -15,7 +15,7 @@ def geojson_from_autonomous_systems(autonomous_systems):
 			},
 			'properties': {
 				'title': str(autonomous_system),
-				'marker-symbol': 'marker',
+				'marker-symbol': 'circle',
 			}
 		})
 	return obj
