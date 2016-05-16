@@ -44,7 +44,7 @@ class AutonomousSystem(models.Model):
 
 class IPv4Subnet(models.Model):
 	network = netfields.CidrAddressField(unique=True, verbose_name=_("Network"))
-	dns_server = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("DNS Server"))
+	dns_server = netfields.InetAddressField(blank=True, null=True, verbose_name=_("DNS Server"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	institution = models.ForeignKey(Institution, related_name='ipv4_subnets', verbose_name=_("Institution"))
@@ -63,12 +63,14 @@ class IPv4Subnet(models.Model):
 
 
 class TunnelEndpoint(models.Model):
-	external_ipv4 = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("External IPv4 address"))
-	internal_ipv4 = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("Internal IPv4 address"))
+	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
+	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
 
 	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
 
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
+
+	objects = netfields.NetManager()
 
 	def can_edit(self, user):
 		return self.autonomous_system.can_edit(user)
