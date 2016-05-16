@@ -72,6 +72,10 @@
 						<td>{{ endpoint.internal_ipv4.ip|default:'<em>None</em>' }}</td>
 					</tr>
 					<tr>
+						<th>Port:</th>
+						<td>{{ endpoint.port|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
 						<th>Public key:</th>
 						<td style="word-break: break-all;">{{ endpoint.public_key|default:'<em>None</em>' }}</td>
 					</tr>

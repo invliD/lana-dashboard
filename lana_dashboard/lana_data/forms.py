@@ -43,4 +43,7 @@ class TunnelForm(ModelForm):
 class TunnelEndpointForm(ModelForm):
 	class Meta:
 		model = TunnelEndpoint
-		fields = ['autonomous_system', 'external_ipv4', 'internal_ipv4', 'public_key']
+		fields = ['autonomous_system', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
+		widgets = {
+			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
+		}

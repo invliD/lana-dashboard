@@ -70,6 +70,7 @@ class IPv4Subnet(models.Model):
 class TunnelEndpoint(models.Model):
 	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535 (Fastd only).'))
 
 	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
 
@@ -82,9 +83,12 @@ class TunnelEndpoint(models.Model):
 
 
 class Tunnel(models.Model):
+	PROTOCOL_FASTD = 'fastd'
+	PROTOCOL_OTHER = 'other'
+
 	protocol = models.CharField(max_length=5, choices=(
-		('fastd', _("Fastd tunnel")),
-		('other', _("Other")),
+		(PROTOCOL_FASTD, _("Fastd tunnel")),
+		(PROTOCOL_OTHER, _("Other")),
 	), verbose_name=_("Protocol"))
 	mode = models.CharField(max_length=3, choices=(
 		('tun', 'tun'),

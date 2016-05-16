@@ -363,6 +363,14 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 				endpoint1_form.add_error('autonomous_system', error_message)
 				endpoint2_form.add_error('autonomous_system', error_message)
 			else:
+				if tunnel.protocol == tunnel.PROTOCOL_FASTD:
+					as1 = endpoint1.autonomous_system.as_number
+					as2 = endpoint2.autonomous_system.as_number
+					if not endpoint1.port and as2 <= 65535:
+						endpoint1.port = as2
+					if not endpoint2.port and as1 <= 65535:
+						endpoint2.port = as1
+
 				endpoint1.save()
 				endpoint2.save()
 				tunnel = tunnel_form.save(commit=False)
