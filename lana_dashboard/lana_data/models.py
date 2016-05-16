@@ -12,6 +12,7 @@ class Institution(models.Model):
 	owners = models.ManyToManyField(User, related_name='institutions', verbose_name=_("Managers"))
 
 	class Meta:
+		ordering = ['code']
 		verbose_name = ungettext_lazy("Institution", "Institutions", 1)
 		verbose_name_plural = ungettext_lazy("Institution", "Institutions", 2)
 
@@ -32,6 +33,7 @@ class AutonomousSystem(models.Model):
 	institution = models.ForeignKey(Institution, related_name='autonomous_systems', verbose_name=_("Institution"))
 
 	class Meta:
+		ordering = ['as_number']
 		verbose_name = ungettext_lazy("Autonomous System", "Autonomous Systems", 1)
 		verbose_name_plural = ungettext_lazy("Autonomous System", "Autonomous Systems", 2)
 
@@ -52,6 +54,7 @@ class IPv4Subnet(models.Model):
 	objects = netfields.NetManager()
 
 	class Meta:
+		ordering = ['network']
 		verbose_name = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 1)
 		verbose_name_plural = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 2)
 
@@ -92,6 +95,9 @@ class Tunnel(models.Model):
 
 	endpoint1 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel1', verbose_name=_("Endpoint 1"))
 	endpoint2 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel2', verbose_name=_("Endpoint 2"))
+
+	class Meta:
+		ordering = ['endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number']
 
 	def __str__(self):
 		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)

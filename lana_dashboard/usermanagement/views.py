@@ -41,7 +41,7 @@ def logout(request):
 @login_required
 def show_user_profile(request, username):
 	user = get_object_or_404(get_user_model(), username=username)
-	institutions = Institution.objects.all().filter(owners__username=username).order_by('code')
+	institutions = Institution.objects.all().filter(owners__username=username)
 	return render(request, 'user_profile.html', {
 		'profile': user,
 		'info': user.contact_information if hasattr(user, 'contact_information') else None,

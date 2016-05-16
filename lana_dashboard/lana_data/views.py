@@ -15,7 +15,7 @@ from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems, geoj
 
 @login_required
 def list_institutions(request):
-	institutions = Institution.objects.all().order_by('code')
+	institutions = Institution.objects.all()
 
 	return render(request, 'institutions_list.html', {
 		'header_active': 'institutions',
@@ -76,8 +76,8 @@ def edit_institution(request, code=None):
 @login_required
 def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
-	autonomous_systems = institution.autonomous_systems.all().order_by('as_number')
-	ipv4_subnets = institution.ipv4_subnets.all().order_by('network')
+	autonomous_systems = institution.autonomous_systems.all()
+	ipv4_subnets = institution.ipv4_subnets.all()
 	show_map = institution.autonomous_systems.all().exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	return render(request, 'institutions_details.html', {
@@ -132,12 +132,12 @@ def list_autonomous_systems(request):
 
 
 def list_autonomous_systems_geojson(request):
-	autonomous_systems = AutonomousSystem.objects.all().order_by('as_number')
+	autonomous_systems = AutonomousSystem.objects.all()
 	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
 
 
 def list_autonomous_systems_web(request):
-	autonomous_systems = AutonomousSystem.objects.all().order_by('as_number')
+	autonomous_systems = AutonomousSystem.objects.all()
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'autonomous_systems_list.html', {
@@ -174,7 +174,7 @@ def edit_autonomous_system(request, as_number=None):
 	else:
 		form = AutonomousSystemForm(instance=autonomous_system)
 
-	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id).order_by('code')
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
@@ -228,7 +228,7 @@ def show_autonomous_system_web(request, as_number=None):
 
 @login_required
 def list_ipv4(request):
-	subnets = IPv4Subnet.objects.all().order_by('network')
+	subnets = IPv4Subnet.objects.all()
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
@@ -265,7 +265,7 @@ def edit_ipv4(request, network=None):
 	else:
 		form = IPv4SubnetForm(instance=subnet)
 
-	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id).order_by('code')
+	form.fields['institution'].queryset = Institution.objects.filter(owners=request.user.id)
 
 	form.helper = FormHelper()
 	form.helper.form_class = 'form-horizontal'
@@ -311,7 +311,7 @@ def list_tunnels_geojson(request):
 
 
 def list_tunnels_web(request):
-	tunnels = Tunnel.objects.all().order_by('endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number')
+	tunnels = Tunnel.objects.all()
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
 	return render(request, 'tunnels_list.html', {
