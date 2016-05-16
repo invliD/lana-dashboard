@@ -1,17 +1,17 @@
 {% extends "master.html" %}
 {% block breadcrumbs %}
 <li class="breadcrumb-item"><a href="{% url 'lana_data:ipv4' %}">IPv4 Subnets</a></li>
-<li class="breadcrumb-item active">{{ subnet.network_address }}/{{ subnet.subnet_bits }}</li>
+<li class="breadcrumb-item active">{{ subnet.network }}</li>
 {% endblock %}
 {% block content %}
-	<h1>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</h1>
+	<h1>{{ subnet.network }}</h1>
 	<div class="row">
 		<div class="col-xs-12 col-lg-6">
 			<table class="table">
 				<tbody>
 					<tr>
 						<th>Subnet:</th>
-						<td>{{ subnet.network_address }}/{{ subnet.subnet_bits }}</td>
+						<td>{{ subnet.network }}</td>
 					</tr>
 					<tr>
 						<th>DNS Server:</th>
@@ -29,7 +29,7 @@
 			</table>
 			{% if can_edit %}
 			<p>
-				<a class="btn btn-primary" href="{% url 'lana_data:ipv4-edit' subnet.network_address subnet.subnet_bits %}">Edit IPv4 Subnet</a>
+				<a class="btn btn-primary" href="{% url 'lana_data:ipv4-edit' subnet.network %}">Edit IPv4 Subnet</a>
 			</p>
 			{% endif %}
 		</div>

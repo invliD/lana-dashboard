@@ -77,7 +77,7 @@ def edit_institution(request, code=None):
 def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
 	autonomous_systems = institution.autonomous_systems.all().order_by('as_number')
-	ipv4_subnets = institution.ipv4_subnets.all().order_by('network_address', 'subnet_bits')
+	ipv4_subnets = institution.ipv4_subnets.all().order_by('network')
 	show_map = institution.autonomous_systems.all().exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	return render(request, 'institutions_details.html', {
@@ -228,7 +228,7 @@ def show_autonomous_system_web(request, as_number=None):
 
 @login_required
 def list_ipv4(request):
-	subnets = IPv4Subnet.objects.all().order_by('network_address', 'subnet_bits')
+	subnets = IPv4Subnet.objects.all().order_by('network')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
@@ -239,10 +239,10 @@ def list_ipv4(request):
 
 
 @login_required
-def edit_ipv4(request, network_address=None, subnet_bits=None):
-	if network_address and subnet_bits:
+def edit_ipv4(request, network=None):
+	if network:
 		mode = 'edit'
-		subnet = get_object_or_404(IPv4Subnet, network_address=network_address, subnet_bits=subnet_bits)
+		subnet = get_object_or_404(IPv4Subnet, network=network)
 		if not subnet.can_edit(request.user):
 			raise PermissionDenied
 	else:
@@ -254,15 +254,14 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 
 	# model.is_valid() modifies model. :(
 	original = {
-		'network_address': subnet.network_address,
-		'subnet_bits': subnet.subnet_bits,
+		'network': str(subnet.network),
 	}
 
 	if request.method == 'POST':
 		form = IPv4SubnetForm(instance=subnet, data=request.POST)
 		if form.is_valid():
 			subnet = form.save()
-			return HttpResponseRedirect(reverse('lana_data:ipv4-details', kwargs={'network_address': subnet.network_address, 'subnet_bits': subnet.subnet_bits}))
+			return HttpResponseRedirect(reverse('lana_data:ipv4-details', kwargs={'network': subnet.network}))
 	else:
 		form = IPv4SubnetForm(instance=subnet)
 
@@ -287,8 +286,8 @@ def edit_ipv4(request, network_address=None, subnet_bits=None):
 
 
 @login_required
-def show_ipv4(request, network_address=None, subnet_bits=None):
-	subnet = get_object_or_404(IPv4Subnet, network_address=network_address, subnet_bits=subnet_bits)
+def show_ipv4(request, network):
+	subnet = get_object_or_404(IPv4Subnet, network=network)
 
 	return render(request, 'ipv4_details.html', {
 		'header_active': 'ipv4',

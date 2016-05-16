@@ -12,7 +12,7 @@ class AutonomousSystemAdmin(admin.ModelAdmin):
 
 
 class IPv4SubnetAdmin(admin.ModelAdmin):
-	list_display = ('network_address', 'subnet_bits', 'dns_server', 'comment', 'institution')
+	list_display = ('network', 'dns_server', 'comment', 'institution')
 
 
 class TunnelAdmin(admin.ModelAdmin):

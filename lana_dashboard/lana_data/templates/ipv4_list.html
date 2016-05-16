@@ -16,7 +16,7 @@
 		<tbody>
 			{% for subnet in subnets %}
 			<tr>
-				<td><a href="{% url 'lana_data:ipv4-details' subnet.network_address subnet.subnet_bits %}">{{ subnet.network_address }}/{{ subnet.subnet_bits }}</a></td>
+				<td><a href="{% url 'lana_data:ipv4-details' subnet.network %}">{{ subnet.network}}</a></td>
 				<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}" title="{{ subnet.institution.name }}">{{ subnet.institution.code }}</a></td>
 				<td>{{ subnet.dns_server|default:'<em>None</em>' }}</td>
 				<td>{{ subnet.comment }}</td>

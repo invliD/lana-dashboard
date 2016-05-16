@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+import netfields
 
 
 class Institution(models.Model):
@@ -42,22 +43,20 @@ class AutonomousSystem(models.Model):
 
 
 class IPv4Subnet(models.Model):
-	network_address = models.GenericIPAddressField(protocol='IPv4', verbose_name=_("Network Address"))
-	subnet_bits = models.IntegerField(verbose_name=_("Subnet Bits"))
+	network = netfields.CidrAddressField(unique=True, verbose_name=_("Network"))
 	dns_server = models.GenericIPAddressField(protocol='IPv4', blank=True, null=True, verbose_name=_("DNS Server"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	institution = models.ForeignKey(Institution, related_name='ipv4_subnets', verbose_name=_("Institution"))
 
+	objects = netfields.NetManager()
+
 	class Meta:
 		verbose_name = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 1)
 		verbose_name_plural = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 2)
-		unique_together = (
-			('network_address', 'subnet_bits'),
-		)
 
 	def __str__(self):
-		return "{}/{}".format(self.network_address, self.subnet_bits)
+		return str(self.network)
 
 	def can_edit(self, user):
 		return self.institution.can_edit(user)

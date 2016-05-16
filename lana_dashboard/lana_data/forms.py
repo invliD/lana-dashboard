@@ -28,7 +28,7 @@ class AutonomousSystemForm(ModelForm):
 class IPv4SubnetForm(ModelForm):
 	class Meta:
 		model = IPv4Subnet
-		fields = ['network_address', 'subnet_bits', 'dns_server', 'comment', 'institution']
+		fields = ['network', 'dns_server', 'comment', 'institution']
 		widgets = {
 			'subnet_bits': NumberInput(attrs={'min': 0, 'max': 32}),
 		}
