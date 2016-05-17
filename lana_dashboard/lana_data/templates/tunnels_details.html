@@ -61,7 +61,10 @@
 				<tbody>
 					<tr>
 						<th>Autonomous System:</th>
-						<td><a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a></td>
+						<td>
+							<a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a>
+							(<a href="{% url 'lana_data:institution-details' endpoint.autonomous_system.institution.code %}">{{ endpoint.autonomous_system.institution.code }}</a>)
+						</td>
 					</tr>
 					<tr>
 						<th>External IPv4:</th>
