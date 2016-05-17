@@ -60,8 +60,8 @@
 			<table class="table">
 				<tbody>
 					<tr>
-						<th>Autonomous System:</th>
-						<td>
+						<th style="width: 45%;">Autonomous System:</th>
+						<td style="width: 55%;">
 							<a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a>
 							(<a href="{% url 'lana_data:institution-details' endpoint.autonomous_system.institution.code %}">{{ endpoint.autonomous_system.institution.code }}</a>)
 						</td>
