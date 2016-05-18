@@ -79,6 +79,7 @@ def show_institution(request, code=None):
 	institution = get_object_or_404(Institution, code=code)
 	autonomous_systems = institution.autonomous_systems.all()
 	ipv4_subnets = institution.ipv4_subnets.all()
+	tunnels = Tunnel.objects.filter(Q(endpoint1__autonomous_system__institution=institution) | Q(endpoint2__autonomous_system__institution=institution))
 	show_map = institution.autonomous_systems.all().exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	return render(request, 'institutions_details.html', {
@@ -86,6 +87,7 @@ def show_institution(request, code=None):
 		'institution': institution,
 		'autonomous_systems': autonomous_systems,
 		'ipv4_subnets': ipv4_subnets,
+		'tunnels': tunnels,
 		'can_edit': institution.can_edit(request.user),
 		'show_map': show_map,
 	})

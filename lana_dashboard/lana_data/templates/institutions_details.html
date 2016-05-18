@@ -82,4 +82,16 @@
 			{% endif %}
 		</div>
 	</div>
+
+	<h2>Tunnels</h2>
+	<div class="row">
+		<div class="col-xs-12 col-lg-8">
+			{% include 'tables/tunnel_list.html' with empty_message='This institution does not participate in any Tunnels.' %}
+			{% if can_edit %}
+			<p>
+				<a class="btn btn-primary" href="{% url 'lana_data:tunnel-create' %}">Create Tunnel</a>
+			</p>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}
