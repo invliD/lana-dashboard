@@ -27,15 +27,8 @@ body {
 }
 
 .institution-color-bubble {
-	width: 1.5em;
-	height: 1.5em;
-	border-radius: 50%;
-	margin: .15em;
-}
-
-.institution-color-bubble-small {
-	margin: .15em;
-	width: .8em;
-	height: .8em;
+	display: inline-block;
+	width: .75em;
+	height: .75em;
 	border-radius: 50%;
 }

@@ -9,10 +9,7 @@
 	<tbody>
 		{% for institution in institutions %}
 		<tr>
-			<td>
-				<div class="pull-xs-left institution-color-bubble" style="background: {{ institution.color }}; margin-right: .5em;"></div>
-				<a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a>
-			</td>
+			<td>{% include 'fragments/institution_code.html' %}</td>
 			<td>{{ institution.name }}</td>
 			<td>
 				{% for owner in institution.owners.all %}
