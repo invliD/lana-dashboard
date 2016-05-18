@@ -1,3 +1,5 @@
+from ipaddress import ip_interface
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth import get_user_model
@@ -454,3 +456,56 @@ def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
 def list_tunnel_autonomous_systems_geojson(request, as_number1=None, as_number2=None):
 	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	return JsonResponse(geojson_from_autonomous_systems([tunnel.endpoint1.autonomous_system, tunnel.endpoint2.autonomous_system]))
+
+
+@login_required
+def search(request, query=None):
+	if query is None:
+		query = request.GET.get('q')
+
+	results = {}
+	if query is not None and query != "":
+		result_urls = []
+
+		# Institutions
+		db_query = Q(name__icontains=query) | Q(code__icontains=query)
+		results['institutions'] = Institution.objects.filter(db_query)
+		if len(results['institutions']) == 1:
+			result_urls.append(reverse('lana_data:institution-details', kwargs={'code': results['institutions'][0].code}))
+
+		# Autonomous Systems
+		db_query = Q(fqdn__icontains=query) | Q(comment__icontains=query)
+
+		as_number = None
+		if query[:2].lower() == 'as':
+			part2 = query[2:]
+			if part2.isdigit():
+				as_number = int(part2)
+		if query.isdigit():
+			as_number = int(query)
+		if as_number is not None:
+			db_query |= Q(as_number=as_number)
+
+		results['autonomous_systems'] = AutonomousSystem.objects.filter(db_query)
+		if len(results['autonomous_systems']) == 1:
+			result_urls.append(reverse('lana_data:autonomous_system-details', kwargs={'as_number': results['autonomous_systems'][0].as_number}))
+
+		# IP addresses / subnets
+		db_query = Q(network__contains=query) | Q(comment__icontains=query)
+		try:
+			interface = ip_interface(query)
+			db_query |= Q(network__net_contains_or_equals=str(interface.network))
+		except ValueError:
+			pass
+		results['ipv4_subnets'] = IPv4Subnet.objects.filter(db_query)
+		if len(results['ipv4_subnets']) == 1:
+			result_urls.append(reverse('lana_data:ipv4-details', kwargs={'network': results['ipv4_subnets'][0].network}))
+
+		if len(result_urls) == 1:
+			return HttpResponseRedirect(result_urls[0])
+
+	return render(request, 'search.html', {
+		'query': query,
+		'results': results,
+		'total_results': sum(len(v) for k,v in results.items()),
+	})

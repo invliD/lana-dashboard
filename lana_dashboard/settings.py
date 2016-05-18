@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'colorfield',
 	'crispy_forms',
+	'netfields',
 	'static_precompiler',
 
 	'lana_dashboard.main',

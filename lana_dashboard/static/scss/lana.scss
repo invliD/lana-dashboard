@@ -1,8 +1,17 @@
 @import "variables";
 @import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins/breakpoints";
 
 body {
 	padding-top: 4rem;
+}
+
+@include media-breakpoint-up(sm) {
+	.lana-navbar-search {
+		.input-group input.form-control {
+			width: 250px;
+		}
+	}
 }
 
 #map {

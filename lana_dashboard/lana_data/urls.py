@@ -21,4 +21,5 @@ urlpatterns = [
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/$', views.show_tunnel, name='tunnel-details'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/edit$', views.edit_tunnel, name='tunnel-edit'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/autonomous_systems/$', views.list_tunnel_autonomous_systems, name='tunnel-autonomous_systems'),
+	url(r'^search/(.+)?$', views.search, name='search'),
 ]

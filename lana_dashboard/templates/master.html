@@ -49,6 +49,16 @@
 				</li>
 				{% endif %}
 			</ul>
+			{% if user.is_authenticated %}
+			<form action="{% url 'lana_data:search' %}" class="form-inline pull-sm-right lana-navbar-search">
+				<div class="input-group">
+					<input class="form-control" name="q" type="text" placeholder="Search">
+					<span class="input-group-btn">
+						<button class="btn btn-outline-success" type="submit">Search</button>
+					</span>
+				</div>
+			</form>
+			{% endif %}
 		</div>
 	</nav>
 	<div class="container">
