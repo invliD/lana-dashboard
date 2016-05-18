@@ -14,7 +14,7 @@
 		<tr>
 			<td><a href="{% url 'lana_data:ipv4-details' subnet.network %}">{{ subnet.network}}</a></td>
 			{% if not disable_institution %}
-			<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}" title="{{ subnet.institution.name }}">{{ subnet.institution.code }}</a></td>
+			<td>{% include 'fragments/institution_code.html' with institution=subnet.institution %}</td>
 			{% endif %}
 			<td>{{ subnet.dns_server.ip|default:'<em>None</em>' }}</td>
 			<td>{{ subnet.comment }}</td>

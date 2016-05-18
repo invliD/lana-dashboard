@@ -23,7 +23,7 @@
 					</tr>
 					<tr>
 						<th>Institution:</th>
-						<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}">{{ subnet.institution.name }}</a></td>
+						<td>{% include 'fragments/institution_name.html' with institution=subnet.institution %}</td>
 					</tr>
 				</tbody>
 			</table>
