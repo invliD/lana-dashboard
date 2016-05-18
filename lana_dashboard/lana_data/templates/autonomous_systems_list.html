@@ -4,6 +4,11 @@
 {% endblock %}
 {% block content %}
 	<h1>Autonomous Systems</h1>
+	{% if can_create %}
+	<p>
+		<a class="btn btn-primary" href="{% url 'lana_data:autonomous_system-create' %}">Create Autonomous System</a>
+	</p>
+	{% endif %}
 	{% include 'tables/autonomous_system_list.html' with empty_message='There are currently no Autonomous Systems.' %}
 	{% if can_create %}
 	<p>

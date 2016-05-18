@@ -4,6 +4,9 @@
 {% endblock %}
 {% block content %}
 	<h1>Institutions</h1>
+	<p>
+		<a class="btn btn-primary" href="{% url 'lana_data:institution-create' %}">Create institution</a>
+	</p>
 	{% include 'tables/institution_list.html' with empty_message='There are currently no Institutions.' %}
 	<p>
 		<a class="btn btn-primary" href="{% url 'lana_data:institution-create' %}">Create institution</a>
