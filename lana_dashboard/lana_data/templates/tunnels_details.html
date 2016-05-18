@@ -67,6 +67,10 @@
 						</td>
 					</tr>
 					<tr>
+						<th>External hostname:</th>
+						<td>{{ endpoint.external_hostname|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
 						<th>External IPv4:</th>
 						<td>{{ endpoint.external_ipv4.ip|default:'<em>None</em>' }}</td>
 					</tr>

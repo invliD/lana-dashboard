@@ -69,6 +69,7 @@ class IPv4Subnet(models.Model):
 
 
 class TunnelEndpoint(models.Model):
+	external_hostname = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("External hostname"))
 	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
 	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535 (Fastd only).'))
@@ -84,7 +85,10 @@ class TunnelEndpoint(models.Model):
 
 	def is_config_complete(self, protocol):
 		if protocol == Tunnel.PROTOCOL_FASTD:
-			return bool(self.external_ipv4) and bool(self.internal_ipv4) and bool(self.port) and bool(self.public_key)
+			return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
+				bool(self.internal_ipv4) and
+				bool(self.port) and
+				bool(self.public_key))
 		return False
 
 
