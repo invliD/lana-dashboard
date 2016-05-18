@@ -1,0 +1,16 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnels' %}">Tunnels</a></li>
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">{{ tunnel }}</a></li>
+	<li class="breadcrumb-item active">Generate Fastd config</li>
+{% endblock %}
+{% block content %}
+	<h1>Generate Fastd config</h1>
+	{% crispy form %}
+
+	{% if config %}
+		<h2>/etc/fastd/{{ form.cleaned_data.tunnel_name }}/fastd.conf</h2>
+		<textarea class="form-control" style="min-height: 350px;">{{ config }}</textarea>
+	{% endif %}
+{% endblock %}

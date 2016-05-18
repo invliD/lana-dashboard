@@ -82,6 +82,18 @@
 						<th>Public key:</th>
 						<td style="word-break: break-all;">{{ endpoint.public_key|default:'<em>None</em>' }}</td>
 					</tr>
+					{% if tunnel.supports_config_generation %}
+					<tr>
+						<th>Config:</th>
+						<td>
+							{% if tunnel.is_config_complete %}
+							<a class="btn btn-primary" href="{{ endpoint.config_generation_url }}">Generate</a>
+							{% else %}
+							<em>Incomplete</em>
+							{% endif %}
+						</td>
+					</tr>
+					{% endif %}
 				</tbody>
 			</table>
 		</div>

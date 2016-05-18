@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from colorfield.fields import ColorField
@@ -81,18 +82,26 @@ class TunnelEndpoint(models.Model):
 	def can_edit(self, user):
 		return self.autonomous_system.can_edit(user)
 
+	def is_config_complete(self, protocol):
+		if protocol == Tunnel.PROTOCOL_FASTD:
+			return bool(self.external_ipv4) and bool(self.internal_ipv4) and bool(self.port) and bool(self.public_key)
+		return False
+
 
 class Tunnel(models.Model):
 	PROTOCOL_FASTD = 'fastd'
 	PROTOCOL_OTHER = 'other'
+
+	MODE_TUN = 'tun'
+	MODE_TAP = 'tap'
 
 	protocol = models.CharField(max_length=5, choices=(
 		(PROTOCOL_FASTD, _("Fastd tunnel")),
 		(PROTOCOL_OTHER, _("Other")),
 	), verbose_name=_("Protocol"))
 	mode = models.CharField(max_length=3, choices=(
-		('tun', 'tun'),
-		('tap', 'tap'),
+		(MODE_TUN, 'tun'),
+		(MODE_TAP, 'tap'),
 	), verbose_name=_("Mode"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
@@ -110,3 +119,20 @@ class Tunnel(models.Model):
 
 	def can_edit(self, user):
 		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)
+
+	def supports_config_generation(self):
+		return self.protocol in [self.PROTOCOL_FASTD]
+
+	def is_config_complete(self):
+		if self.protocol == Tunnel.PROTOCOL_FASTD:
+			return bool(self.encryption_method) and bool(self.mtu) and self.endpoint1.is_config_complete(self.protocol) and self.endpoint2.is_config_complete(self.protocol)
+		return False
+
+	def get_config_generation_url(self, endpoint_number):
+		if self.protocol == Tunnel.PROTOCOL_FASTD:
+			return reverse('lana_generator:generate-fastd', kwargs={
+				'as_number1': self.endpoint1.autonomous_system.as_number,
+				'as_number2': self.endpoint2.autonomous_system.as_number,
+				'endpoint_number': endpoint_number,
+			})
+		return None

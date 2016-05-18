@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from lana_dashboard.lana_data import urls as data_urls
+from lana_dashboard.lana_generator import urls as generator_urls
 from lana_dashboard.main import views as main
 from lana_dashboard.usermanagement import urls as user_urls, views as usermanagement
 
@@ -27,5 +28,6 @@ urlpatterns = [
 	url(r'^login$', usermanagement.login, name='usermanagement-login'),
 	url(r'^logout$', usermanagement.logout, name='usermanagement-logout'),
 	url(r'^lana/', include(data_urls, namespace='lana_data')),
+	url(r'^config/', include(generator_urls, namespace='lana_generator')),
 	url(r'^users/', include(user_urls, namespace='usermanagement')),
 ]
