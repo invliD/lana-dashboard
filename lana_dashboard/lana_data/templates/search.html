@@ -14,76 +14,14 @@
 	</p>
 	{% if results.institutions %}
 	<h2>Institutions</h2>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Code</th>
-				<th>Name</th>
-				<th>Managed by</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for institution in results.institutions %}
-			<tr>
-				<td>
-					<div class="pull-xs-left institution-color-bubble" style="background: {{ institution.color }}; margin-right: .5em;"></div>
-					<a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a>
-				</td>
-				<td>{{ institution.name }}</td>
-				<td>
-					{% for owner in institution.owners.all %}
-						<a href="{% url 'usermanagement:profile' owner.username %}">{{ owner.get_full_name }}</a>{% if not forloop.last %}, {% endif %}
-					{% endfor %}
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/institution_list.html' with institutions=results.institutions %}
 	{% endif %}
 	{% if results.autonomous_systems %}
 	<h2>Autonomous Systems</h2>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>AS</th>
-				<th>FQDN</th>
-				<th>Institution</th>
-				<th>Comment</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for autonomous_system in results.autonomous_systems %}
-			<tr>
-				<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system.as_number }}</a></td>
-				<td>{{ autonomous_system.fqdn }}</td>
-				<td><a href="{% url 'lana_data:institution-details' autonomous_system.institution.code %}" title="{{ autonomous_system.institution.name }}">{{ autonomous_system.institution.code }}</a></td>
-				<td>{{ autonomous_system.comment }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/autonomous_system_list.html' with autonomous_systems=results.autonomous_systems %}
 	{% endif %}
 	{% if results.ipv4_subnets %}
 	<h2>IPv4 Subnets</h2>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Subnet</th>
-				<th>Institution</th>
-				<th>DNS Server</th>
-				<th>Comment</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for subnet in results.ipv4_subnets %}
-			<tr>
-				<td><a href="{% url 'lana_data:ipv4-details' subnet.network %}">{{ subnet.network}}</a></td>
-				<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}" title="{{ subnet.institution.name }}">{{ subnet.institution.code }}</a></td>
-				<td>{{ subnet.dns_server.ip|default:'<em>None</em>' }}</td>
-				<td>{{ subnet.comment }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/ipv4_subnet_list.html' with ipv4_subnets=results.ipv4_subnets %}
 	{% endif %}
 {% endblock %}

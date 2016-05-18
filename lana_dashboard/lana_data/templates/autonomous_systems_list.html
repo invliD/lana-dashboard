@@ -4,30 +4,7 @@
 {% endblock %}
 {% block content %}
 	<h1>Autonomous Systems</h1>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>AS</th>
-				<th>FQDN</th>
-				<th>Institution</th>
-				<th>Comment</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for autonomous_system in autonomous_systems %}
-			<tr>
-				<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system.as_number }}</a></td>
-				<td>{{ autonomous_system.fqdn }}</td>
-				<td><a href="{% url 'lana_data:institution-details' autonomous_system.institution.code %}" title="{{ autonomous_system.institution.name }}">{{ autonomous_system.institution.code }}</a></td>
-				<td>{{ autonomous_system.comment }}</td>
-			</tr>
-			{% empty %}
-			<tr>
-				<td colspan="4">There are currently no Autonomous Systems.</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/autonomous_system_list.html' with empty_message='There are currently no Autonomous Systems.' %}
 	{% if can_create %}
 	<p>
 		<a class="btn btn-primary" href="{% url 'lana_data:autonomous_system-create' %}">Create Autonomous System</a>

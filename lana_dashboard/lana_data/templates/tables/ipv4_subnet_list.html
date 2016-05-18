@@ -1,0 +1,28 @@
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Subnet</th>
+			{% if not disable_institution %}
+			<th>Institution</th>
+			{% endif %}
+			<th>DNS Server</th>
+			<th>Comment</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for subnet in ipv4_subnets %}
+		<tr>
+			<td><a href="{% url 'lana_data:ipv4-details' subnet.network %}">{{ subnet.network}}</a></td>
+			{% if not disable_institution %}
+			<td><a href="{% url 'lana_data:institution-details' subnet.institution.code %}" title="{{ subnet.institution.name }}">{{ subnet.institution.code }}</a></td>
+			{% endif %}
+			<td>{{ subnet.dns_server.ip|default:'<em>None</em>' }}</td>
+			<td>{{ subnet.comment }}</td>
+		</tr>
+		{% empty %}
+		<tr>
+			<td colspan="{% if disable_institution %}3{% else %}4{% endif %}">{{ empty_message }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

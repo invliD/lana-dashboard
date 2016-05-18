@@ -52,36 +52,7 @@
 	<h2>Institutions</h2>
 	<div class="row">
 		<div class="col-xs-12 col-lg-8">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Code</th>
-						<th>Name</th>
-						<th>Managed by</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for institution in institutions %}
-					<tr>
-						<td><a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a></td>
-						<td>{{ institution.name }}</td>
-						<td>
-							{% for owner in institution.owners.all %}
-								{% if owner.username == profile.username %}
-								<strong>{{ owner.get_full_name }}</strong>{% if not forloop.last %}, {% endif %}
-								{% else %}
-								<a href="{% url 'usermanagement:profile' owner.username %}">{{ owner.get_full_name }}</a>{% if not forloop.last %}, {% endif %}
-								{% endif %}
-							{% endfor %}
-						</td>
-					</tr>
-					{% empty %}
-					<tr>
-						<td colspan="3">{{ profile.get_full_name }} does not manage any Institutions.</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+			{% include 'tables/institution_list.html' with dont_link_username=profile.username empty_message=profile.get_full_name|add:' does not manage any Institutions.' %}
 		</div>
 	</div>
 {% endblock %}

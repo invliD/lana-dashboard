@@ -17,7 +17,7 @@ def list_ipv4(request):
 
 	return render(request, 'ipv4_list.html', {
 		'header_active': 'ipv4',
-		'subnets': subnets,
+		'ipv4_subnets': subnets,
 		'can_create': can_create,
 	})
 

@@ -4,35 +4,7 @@
 {% endblock %}
 {% block content %}
 	<h1>Institutions</h1>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Code</th>
-				<th>Name</th>
-				<th>Managed by</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for institution in institutions %}
-			<tr>
-				<td>
-					<div class="pull-xs-left institution-color-bubble" style="background: {{ institution.color }}; margin-right: .5em;"></div>
-					<a href="{% url 'lana_data:institution-details' institution.code %}">{{ institution.code }}</a>
-				</td>
-				<td>{{ institution.name }}</td>
-				<td>
-					{% for owner in institution.owners.all %}
-					<a href="{% url 'usermanagement:profile' owner.username %}">{{ owner.get_full_name }}</a>{% if not forloop.last %}, {% endif %}
-					{% endfor %}
-				</td>
-			</tr>
-			{% empty %}
-			<tr>
-				<td colspan="3">There are currently no Institutions.</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/institution_list.html' with empty_message='There are currently no Institutions.' %}
 	<p>
 		<a class="btn btn-primary" href="{% url 'lana_data:institution-create' %}">Create institution</a>
 	</p>

@@ -65,28 +65,7 @@
 	<h2>Autonomous Systems</h2>
 	<div class="row">
 		<div class="col-xs-12 col-lg-8">
-			<table class="table table-striped">
-				<thead>
-				<tr>
-					<th>AS</th>
-					<th>FQDN</th>
-					<th>Comment</th>
-				</tr>
-				</thead>
-				<tbody>
-					{% for autonomous_system in autonomous_systems %}
-					<tr>
-						<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system.as_number }}</a></td>
-						<td>{{ autonomous_system.fqdn }}</td>
-						<td>{{ autonomous_system.comment }}</td>
-					</tr>
-					{% empty %}
-					<tr>
-						<td colspan="3">This institution does not have any Autonomous Systems.</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+			{% include 'tables/autonomous_system_list.html' with disable_institution=True empty_message='This institution does not have any Autonomous Systems.' %}
 			{% if can_edit %}
 			<p>
 				<a class="btn btn-primary" href="{% url 'lana_data:autonomous_system-create' %}?institution={{ institution.code }}">Create Autonomous System</a>
@@ -98,28 +77,7 @@
 	<h2>IPv4 Subnets</h2>
 	<div class="row">
 		<div class="col-xs-12 col-lg-8">
-			<table class="table table-striped">
-				<thead>
-				<tr>
-					<th>Subnet</th>
-					<th>DNS Server</th>
-					<th>Comment</th>
-				</tr>
-				</thead>
-				<tbody>
-					{% for subnet in ipv4_subnets %}
-					<tr>
-						<td><a href="{% url 'lana_data:ipv4-details' subnet.network %}">{{ subnet.network }}</a></td>
-						<td>{{ subnet.dns_server|default:'<em>None</em>' }}</td>
-						<td>{{ subnet.comment }}</td>
-					</tr>
-					{% empty %}
-					<tr>
-						<td colspan="3">This institution does not have any IPv4 subnets.</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+			{% include 'tables/ipv4_subnet_list.html' with disable_institution=True empty_message='This institution does not have any IPv4 subnets.' %}
 			{% if can_edit %}
 			<p>
 				<a class="btn btn-primary" href="{% url 'lana_data:ipv4-create' %}?institution={{ institution.code }}">Create IPv4 Subnet</a>
