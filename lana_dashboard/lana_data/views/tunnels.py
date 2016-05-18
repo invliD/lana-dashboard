@@ -96,7 +96,10 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 				if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
 					tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
 				tunnel.save()
-				return HttpResponseRedirect(reverse('lana_data:tunnels'))
+				return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
+					'as_number1': tunnel.endpoint1.autonomous_system.as_number,
+					'as_number2': endpoint2.autonomous_system.as_number
+				}))
 	else:
 		tunnel_form = TunnelForm(instance=tunnel, prefix='tunnel')
 		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, prefix='endpoint1')
