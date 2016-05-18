@@ -9,36 +9,7 @@
 		<a class="btn btn-primary" href="{% url 'lana_data:tunnel-create' %}">Create Tunnel</a>
 	</p>
 	{% endif %}
-	<table class="table table-striped">
-		<thead>
-		<tr>
-			<th>Tunnel</th>
-			<th>AS 1 / Institution</th>
-			<th>AS 2 / Institution</th>
-			<th>Comment</th>
-		</tr>
-		</thead>
-		<tbody>
-		{% for tunnel in tunnels %}
-		<tr>
-			<td><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a></td>
-			<td>
-				<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint1.autonomous_system.as_number %}">{{ tunnel.endpoint1.autonomous_system }}</a>
-				{% include 'fragments/institution_code.html' with institution=tunnel.endpoint1.autonomous_system.institution %}
-			</td>
-			<td>
-				<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint2.autonomous_system.as_number %}">{{ tunnel.endpoint2.autonomous_system }}</a>
-				{% include 'fragments/institution_code.html' with institution=tunnel.endpoint2.autonomous_system.institution %}
-			</td>
-			<td>{{ tunnel.comment }}</td>
-		</tr>
-		{% empty %}
-		<tr>
-			<td colspan="4">There are currently no Tunnels.</td>
-		</tr>
-		{% endfor %}
-		</tbody>
-	</table>
+	{% include 'tables/tunnel_list.html' with empty_message='There are currently no Tunnels.' %}
 	{% if can_create %}
 	<p>
 		<a class="btn btn-primary" href="{% url 'lana_data:tunnel-create' %}">Create Tunnel</a>
