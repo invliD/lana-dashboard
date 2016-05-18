@@ -9,8 +9,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
+from django.views.decorators.vary import vary_on_headers
 
+from lana_dashboard.lana_data.forms import AutonomousSystemForm, InstitutionForm, IPv4SubnetForm, TunnelForm, TunnelEndpointForm
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
 from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems, geojson_from_tunnels
 
@@ -93,6 +94,7 @@ def show_institution(request, code=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def list_institution_autonomous_systems(request, code=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -108,6 +110,7 @@ def list_institution_autonomous_systems_geojson(request, code=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def list_institution_tunnels(request, code=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -125,6 +128,7 @@ def list_institution_tunnels_geojson(request, code=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def list_autonomous_systems(request):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -197,6 +201,7 @@ def edit_autonomous_system(request, as_number=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def show_autonomous_system(request, as_number=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -299,6 +304,7 @@ def show_ipv4(request, network):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def list_tunnels(request):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -414,6 +420,7 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def show_tunnel(request, as_number1=None, as_number2=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -445,6 +452,7 @@ def show_tunnel_web(request, as_number1=None, as_number2=None):
 
 
 @login_required
+@vary_on_headers('Content-Type')
 def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
