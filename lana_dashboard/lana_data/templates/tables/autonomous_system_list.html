@@ -12,7 +12,7 @@
 	<tbody>
 		{% for autonomous_system in autonomous_systems %}
 		<tr>
-			<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system.as_number }}</a></td>
+			<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system }}</a></td>
 			<td>{{ autonomous_system.fqdn }}</td>
 			{% if not disable_institution %}
 			<td><a href="{% url 'lana_data:institution-details' autonomous_system.institution.code %}" title="{{ autonomous_system.institution.name }}">{{ autonomous_system.institution.code }}</a></td>

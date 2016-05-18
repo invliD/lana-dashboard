@@ -1,10 +1,10 @@
 {% extends "master.html" %}
 {% block breadcrumbs %}
 <li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_systems' %}">Autonomous Systems</a></li>
-<li class="breadcrumb-item active">AS{{ autonomous_system.as_number }}</li>
+<li class="breadcrumb-item active">{{ autonomous_system }}</li>
 {% endblock %}
 {% block content %}
-	<h1>AS{{ autonomous_system.as_number }}</h1>
+	<h1>{{ autonomous_system }}</h1>
 	<div class="row">
 		<div class="col-xs-12 col-lg-6">
 			<table class="table">
