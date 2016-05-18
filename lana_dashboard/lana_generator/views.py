@@ -18,7 +18,7 @@ def generate_fastd(request, as_number1, as_number2, endpoint_number):
 		if form.is_valid():
 			local_endpoint = tunnel.endpoint1
 			remote_endpoint = tunnel.endpoint2
-			if endpoint_number == 2:
+			if int(endpoint_number) == 2:
 				local_endpoint, remote_endpoint = remote_endpoint, local_endpoint
 			config = render_to_string('fastd.conf', {
 				'tunnel': tunnel,
