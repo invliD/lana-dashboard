@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from colorfield.fields import ColorField
+from model_utils.managers import InheritanceManager
 import netfields
 
 
@@ -114,6 +115,8 @@ class Tunnel(models.Model):
 
 	endpoint1 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel1', verbose_name=_("Endpoint 1"))
 	endpoint2 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel2', verbose_name=_("Endpoint 2"))
+
+	objects = InheritanceManager()
 
 	class Meta:
 		ordering = ['endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number']

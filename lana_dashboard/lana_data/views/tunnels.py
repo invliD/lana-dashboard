@@ -9,7 +9,11 @@ from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import TunnelEndpointForm, TunnelForm
 from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel, TunnelEndpoint
-from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems, geojson_from_tunnels
+from lana_dashboard.lana_data.utils import (
+	geojson_from_autonomous_systems,
+	geojson_from_tunnels,
+	get_object_with_subclasses_or_404,
+)
 
 
 @login_required
@@ -42,7 +46,7 @@ def list_tunnels_web(request):
 def edit_tunnel(request, as_number1=None, as_number2=None):
 	if as_number1 and as_number2:
 		mode = 'edit'
-		tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+		tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 		if not tunnel.can_edit(request.user):
 			raise PermissionDenied
 		original = {
@@ -147,7 +151,7 @@ def show_tunnel_geojson(request, as_number1=None, as_number2=None):
 
 
 def show_tunnel_web(request, as_number1=None, as_number2=None):
-	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():

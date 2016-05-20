@@ -1,3 +1,19 @@
+from django.http import Http404
+
+
+def get_object_with_subclasses_or_404(klass, *args, **kwargs):
+	objs = klass.objects.filter(*args, **kwargs).select_subclasses()
+	num = len(objs)
+	if num == 1:
+		return objs.first()
+	if not num:
+		raise Http404('No %s matches the given query.' % klass._meta.object_name)
+	raise klass.MultipleObjectsReturned(
+		"get() returned more than one %s -- it returned %s!" %
+		(klass._meta.object_name, num)
+	)
+
+
 def geojson_from_autonomous_systems(autonomous_systems):
 	obj = {
 		'type': 'FeatureCollection',
