@@ -3,6 +3,7 @@ from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -51,6 +52,20 @@ def list_tunnels_web(request):
 		'tunnels': tunnels,
 		'can_create': can_create,
 	})
+
+
+@login_required
+def delete_tunnel(request, as_number1, as_number2):
+	if request.method != 'POST':
+		raise Http404
+	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	if not tunnel.can_edit(request.user):
+		raise PermissionDenied
+	with transaction.atomic():
+		tunnel.delete()
+		tunnel.endpoint1.delete()
+		tunnel.endpoint2.delete()
+	return HttpResponseRedirect(reverse('lana_data:tunnels'))
 
 
 @login_required

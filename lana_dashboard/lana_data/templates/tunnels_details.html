@@ -44,9 +44,11 @@
 				</tbody>
 			</table>
 			{% if can_edit %}
-			<p>
+			<div class="m-b-1">
 				<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Edit Tunnel</a>
-			</p>
+				{% url 'lana_data:tunnel-delete' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Tunnel' %}
+			</div>
 			{% endif %}
 		</div>
 		{% if show_map %}
