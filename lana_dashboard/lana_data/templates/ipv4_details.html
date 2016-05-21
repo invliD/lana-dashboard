@@ -28,9 +28,11 @@
 				</tbody>
 			</table>
 			{% if can_edit %}
-			<p>
+			<div class="m-b-1">
 				<a class="btn btn-primary" href="{% url 'lana_data:ipv4-edit' subnet.network %}">Edit IPv4 Subnet</a>
-			</p>
+				{% url 'lana_data:ipv4-delete' subnet.network as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='IPv4 Subnet' %}
+			</div>
 			{% endif %}
 		</div>
 	</div>

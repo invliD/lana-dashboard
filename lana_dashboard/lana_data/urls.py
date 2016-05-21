@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^ipv4/$', views.list_ipv4, name='ipv4'),
 	url(r'^ipv4/create$', views.edit_ipv4, name='ipv4-create'),
 	url(r'^ipv4/(?P<network>.+)/$', views.show_ipv4, name='ipv4-details'),
+	url(r'^ipv4/(?P<network>.+)/delete$', views.delete_ipv4, name='ipv4-delete'),
 	url(r'^ipv4/(?P<network>.+)/edit$', views.edit_ipv4, name='ipv4-edit'),
 
 	url(r'^tunnels/$', views.list_tunnels, name='tunnels'),

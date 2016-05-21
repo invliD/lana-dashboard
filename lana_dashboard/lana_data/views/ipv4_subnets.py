@@ -23,6 +23,18 @@ def list_ipv4(request):
 
 
 @login_required
+def delete_ipv4(request, network):
+	if request.method != 'POST':
+		raise PermissionDenied
+	subnet = get_object_or_404(IPv4Subnet, network=network)
+	if not subnet.can_edit(request.user):
+		raise PermissionDenied
+
+	subnet.delete()
+	return HttpResponseRedirect(reverse('lana_data:ipv4'))
+
+
+@login_required
 def edit_ipv4(request, network=None):
 	if network:
 		mode = 'edit'
