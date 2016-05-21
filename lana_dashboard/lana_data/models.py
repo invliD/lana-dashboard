@@ -105,6 +105,10 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 				bool(self.public_key))
 
 
+class VtunTunnelEndpoint(TunnelEndpoint):
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
+
+
 class Tunnel(models.Model):
 	MODE_TUN = 'tun'
 	MODE_TAP = 'tap'
@@ -208,3 +212,33 @@ class FastdTunnel(Tunnel):
 			'as_number2': self.endpoint2.autonomous_system.as_number,
 			'endpoint_number': endpoint_number,
 		})
+
+
+class VtunTunnel(Tunnel):
+	transport = models.CharField(max_length=3, choices=(
+		('udp', 'udp'),
+		('tcp', 'tcp')
+	), verbose_name=_("Transport protocol"))
+	compression = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Compression"))
+
+	@property
+	def protocol(self):
+		return 'vtun'
+
+	@property
+	def protocol_name(self):
+		return _('VTun tunnel')
+
+	@property
+	def real_endpoint1(self):
+		if isinstance(self.endpoint1, VtunTunnelEndpoint):
+			return self.endpoint1
+		else:
+			return self.endpoint1.vtuntunnelendpoint
+
+	@property
+	def real_endpoint2(self):
+		if isinstance(self.endpoint2, VtunTunnelEndpoint):
+			return self.endpoint2
+		else:
+			return self.endpoint2.vtuntunnelendpoint

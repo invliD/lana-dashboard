@@ -9,6 +9,8 @@ from lana_dashboard.lana_data.models import (
 	IPv4Subnet,
 	Tunnel,
 	TunnelEndpoint,
+	VtunTunnel,
+	VtunTunnelEndpoint,
 )
 
 
@@ -38,6 +40,7 @@ class TunnelProtocolForm(Form):
 	protocol = ChoiceField(choices=(
 		(None, '---------'),
 		('fastd', _("Fastd tunnel")),
+		('vtun', _("VTun tunnel")),
 		('other', _("Other")),
 	), required=False)
 
@@ -62,6 +65,12 @@ class FastdTunnelForm(TunnelForm):
 		model = FastdTunnel
 
 
+class VtunTunnelForm(TunnelForm):
+	class Meta(TunnelForm.Meta):
+		model = VtunTunnel
+		fields = ['transport', 'mode', 'comment', 'encryption_method', 'compression', 'mtu']
+
+
 class TunnelEndpointForm(ModelForm):
 	class Meta:
 		model = TunnelEndpoint
@@ -72,6 +81,15 @@ class FastdTunnelEndpointForm(TunnelEndpointForm):
 	class Meta(TunnelEndpointForm.Meta):
 		model = FastdTunnelEndpoint
 		fields = ['autonomous_system', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
+		widgets = {
+			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
+		}
+
+
+class VtunTunnelEndpointForm(TunnelEndpointForm):
+	class Meta(TunnelEndpointForm.Meta):
+		model = VtunTunnelEndpoint
+		fields = ['autonomous_system', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port']
 		widgets = {
 			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
 		}

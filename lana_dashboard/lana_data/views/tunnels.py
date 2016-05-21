@@ -15,6 +15,8 @@ from lana_dashboard.lana_data.forms import (
 	TunnelEndpointForm,
 	TunnelForm,
 	TunnelProtocolForm,
+	VtunTunnelEndpointForm,
+	VtunTunnelForm,
 )
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
@@ -169,6 +171,9 @@ def create_forms(protocol, tunnel=None, endpoint1=None, endpoint2=None, data=Non
 	if protocol == 'fastd':
 		tunnel_form_type = FastdTunnelForm
 		endpoint_form_type = FastdTunnelEndpointForm
+	elif protocol == 'vtun':
+		tunnel_form_type = VtunTunnelForm
+		endpoint_form_type = VtunTunnelEndpointForm
 	elif protocol == 'other':
 		tunnel_form_type = TunnelForm
 		endpoint_form_type = TunnelEndpointForm
