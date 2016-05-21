@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -10,7 +11,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import InstitutionForm
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, Tunnel
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel
 from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems, geojson_from_tunnels
 
 
@@ -22,6 +23,30 @@ def list_institutions(request):
 		'header_active': 'institutions',
 		'institutions': institutions,
 	})
+
+
+@login_required
+def delete_institution(request, code):
+	if request.method != 'POST':
+		raise PermissionDenied
+	institution = get_object_or_404(Institution, code=code)
+	if not institution.can_edit(request.user):
+		raise PermissionDenied
+
+	error = False
+	autonomous_systems = AutonomousSystem.objects.filter(institution=institution)
+	if autonomous_systems.exists():
+		messages.error(request, 'You cannot delete this Institution. There are still Autonomous Systems associated with it.')
+		error = True
+	ipv4_subnets = IPv4Subnet.objects.filter(institution=institution)
+	if ipv4_subnets.exists():
+		messages.error(request, 'You cannot delete this Institution. There are still IPv4 Subnets associated with it.')
+		error = True
+	if error:
+		return HttpResponseRedirect(reverse('lana_data:institution-details', kwargs={'code': institution.code}))
+
+	institution.delete()
+	return HttpResponseRedirect(reverse('lana_data:institutions'))
 
 
 @login_required

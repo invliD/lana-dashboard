@@ -38,9 +38,11 @@
 				</tbody>
 			</table>
 			{% if can_edit %}
-			<p>
+			<div class="m-b-1">
 				<a class="btn btn-primary" href="{% url 'lana_data:institution-edit' institution.code %}">Edit institution</a>
-			</p>
+				{% url 'lana_data:institution-delete' institution.code as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Institution' %}
+			</div>
 			{% endif %}
 		</div>
 		{% if show_map %}
