@@ -28,9 +28,11 @@
 				</tbody>
 			</table>
 			{% if can_edit %}
-			<p>
+			<div class="m-b-1">
 				<a class="btn btn-primary" href="{% url 'lana_data:autonomous_system-edit' autonomous_system.as_number %}">Edit Autonomous System</a>
-			</p>
+				{% url 'lana_data:autonomous_system-delete' autonomous_system.as_number as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Autonomous System' %}
+			</div>
 			{% endif %}
 		</div>
 		{% if autonomous_system.location_lat and autonomous_system.location_lng %}

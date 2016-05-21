@@ -11,6 +11,7 @@ urlpatterns = [
 	url(r'^autonomous-systems/$', views.list_autonomous_systems, name='autonomous_systems'),
 	url(r'^autonomous-systems/create$', views.edit_autonomous_system, name='autonomous_system-create'),
 	url(r'^autonomous-systems/(?P<as_number>.+)/$', views.show_autonomous_system, name='autonomous_system-details'),
+	url(r'^autonomous-systems/(?P<as_number>.+)/delete$', views.delete_autonomous_system, name='autonomous_system-delete'),
 	url(r'^autonomous-systems/(?P<as_number>.+)/edit$', views.edit_autonomous_system, name='autonomous_system-edit'),
 	url(r'^ipv4/$', views.list_ipv4, name='ipv4'),
 	url(r'^ipv4/create$', views.edit_ipv4, name='ipv4-create'),

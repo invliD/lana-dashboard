@@ -1,15 +1,16 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import AutonomousSystemForm
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, Tunnel
+from lana_dashboard.lana_data.models import AutonomousSystem, Institution, Tunnel, TunnelEndpoint
 from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems
 
 
@@ -37,6 +38,23 @@ def list_autonomous_systems_web(request):
 		'autonomous_systems': autonomous_systems,
 		'can_create': can_create,
 	})
+
+
+@login_required
+def delete_autonomous_system(request, as_number):
+	if request.method != 'POST':
+		raise Http404
+	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+	if not autonomous_system.can_edit(request.user):
+		raise PermissionDenied
+
+	tunnel_endpoints = TunnelEndpoint.objects.filter(autonomous_system=autonomous_system)
+	if tunnel_endpoints.exists():
+		messages.error(request, 'You cannot delete this Autonomous System. There are still Tunnels associated with it.')
+		return HttpResponseRedirect(reverse('lana_data:autonomous_system-details', kwargs={'as_number': autonomous_system.as_number}))
+
+	autonomous_system.delete()
+	return HttpResponseRedirect(reverse('lana_data:autonomous_systems'))
 
 
 @login_required
