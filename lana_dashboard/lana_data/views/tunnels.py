@@ -117,6 +117,7 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 					tunnel.endpoint2 = endpoint2
 					if tunnel.endpoint1.autonomous_system.as_number > tunnel.endpoint2.autonomous_system.as_number:
 						tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
+					tunnel.prepare_save()
 					tunnel.save()
 					return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
 						'as_number1': tunnel.endpoint1.autonomous_system.as_number,

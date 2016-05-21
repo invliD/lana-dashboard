@@ -94,7 +94,7 @@ class TunnelEndpoint(models.Model):
 
 
 class FastdTunnelEndpoint(TunnelEndpoint):
-	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535.'))
 
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
 
@@ -148,6 +148,9 @@ class Tunnel(models.Model):
 	def can_edit(self, user):
 		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)
 
+	def prepare_save(self):
+		pass
+
 	def supports_config_generation(self):
 		return False
 
@@ -179,6 +182,16 @@ class FastdTunnel(Tunnel):
 		if isinstance(self.endpoint2, FastdTunnelEndpoint):
 			return self.endpoint2
 		return self.endpoint2.fastdtunnelendpoint
+
+	def prepare_save(self):
+		as1 = self.endpoint1.autonomous_system.as_number
+		as2 = self.endpoint2.autonomous_system.as_number
+		if not self.real_endpoint1.port and as2 <= 65535:
+			self.real_endpoint1.port = as2
+			self.real_endpoint1.save()
+		if not self.real_endpoint2.port and as1 <= 65535:
+			self.real_endpoint2.port = as1
+			self.real_endpoint2.save()
 
 	def supports_config_generation(self):
 		return True
