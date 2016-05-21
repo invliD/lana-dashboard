@@ -73,7 +73,7 @@ class TunnelEndpoint(models.Model):
 	external_hostname = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("External hostname"))
 	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
-	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535 (Fastd only).'))
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
 
 	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
 
@@ -81,29 +81,31 @@ class TunnelEndpoint(models.Model):
 
 	objects = netfields.NetManager()
 
+	@property
+	def tunnel(self):
+		if hasattr(self, 'tunnel1'):
+			return self.tunnel1
+		if hasattr(self, 'tunnel2'):
+			return self.tunnel2
+		return None
+
 	def can_edit(self, user):
 		return self.autonomous_system.can_edit(user)
 
-	def is_config_complete(self, protocol):
-		if protocol == Tunnel.PROTOCOL_FASTD:
-			return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
-				bool(self.internal_ipv4) and
-				bool(self.port) and
-				bool(self.public_key))
+	def is_config_complete(self):
+		if self.tunnel is not None:
+			if isinstance(self.tunnel, FastdTunnel):
+				return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
+					bool(self.internal_ipv4) and
+					bool(self.port) and
+					bool(self.public_key))
 		return False
 
 
 class Tunnel(models.Model):
-	PROTOCOL_FASTD = 'fastd'
-	PROTOCOL_OTHER = 'other'
-
 	MODE_TUN = 'tun'
 	MODE_TAP = 'tap'
 
-	protocol = models.CharField(max_length=5, choices=(
-		(PROTOCOL_FASTD, _("Fastd tunnel")),
-		(PROTOCOL_OTHER, _("Other")),
-	), verbose_name=_("Protocol"))
 	mode = models.CharField(max_length=3, choices=(
 		(MODE_TUN, 'tun'),
 		(MODE_TAP, 'tap'),
@@ -124,22 +126,49 @@ class Tunnel(models.Model):
 	def __str__(self):
 		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
 
+	@property
+	def protocol(self):
+		return 'other'
+
+	@property
+	def protocol_name(self):
+		return _("Other")
+
 	def can_edit(self, user):
 		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)
 
 	def supports_config_generation(self):
-		return self.protocol in [self.PROTOCOL_FASTD]
+		return False
 
 	def is_config_complete(self):
-		if self.protocol == Tunnel.PROTOCOL_FASTD:
-			return bool(self.encryption_method) and bool(self.mtu) and self.endpoint1.is_config_complete(self.protocol) and self.endpoint2.is_config_complete(self.protocol)
 		return False
 
 	def get_config_generation_url(self, endpoint_number):
-		if self.protocol == Tunnel.PROTOCOL_FASTD:
-			return reverse('lana_generator:generate-fastd', kwargs={
-				'as_number1': self.endpoint1.autonomous_system.as_number,
-				'as_number2': self.endpoint2.autonomous_system.as_number,
-				'endpoint_number': endpoint_number,
-			})
 		return None
+
+
+class FastdTunnel(Tunnel):
+
+	@property
+	def protocol(self):
+		return 'fastd'
+
+	@property
+	def protocol_name(self):
+		return _("Fastd tunnel")
+
+	def supports_config_generation(self):
+		return True
+
+	def is_config_complete(self):
+		return (bool(self.encryption_method) and
+			bool(self.mtu) and
+			self.endpoint1.is_config_complete() and
+			self.endpoint2.is_config_complete())
+
+	def get_config_generation_url(self, endpoint_number):
+		return reverse('lana_generator:generate-fastd', kwargs={
+			'as_number1': self.endpoint1.autonomous_system.as_number,
+			'as_number2': self.endpoint2.autonomous_system.as_number,
+			'endpoint_number': endpoint_number,
+		})

@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^ipv4/(?P<network>.+)/edit$', views.edit_ipv4, name='ipv4-edit'),
 	url(r'^tunnels/$', views.list_tunnels, name='tunnels'),
 	url(r'^tunnels/create$', views.edit_tunnel, name='tunnel-create'),
+	url(r'^tunnels/create/form$', views.generate_tunnel_form, name='tunnel-create-form'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/$', views.show_tunnel, name='tunnel-details'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/edit$', views.edit_tunnel, name='tunnel-edit'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/autonomous_systems/$', views.list_tunnel_autonomous_systems, name='tunnel-autonomous_systems'),

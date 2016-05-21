@@ -12,22 +12,56 @@
 {% block content %}
 	<h1>{% if mode == 'create' %}Create new Tunnel{% else %}Edit AS{{ original.as_number1 }}-AS{{ original.as_number2 }}{% endif %}</h1>
 	<form class="form-horizontal" method="post">
-		{% crispy tunnel_form %}
-		<h2 class="hidden-md-down">Endpoints</h2>
-		<div class="row">
-			<div class="col-xs-12 col-lg-6">
-				<h2 class="hidden-lg-up">Endpoint 1</h2>
-				{% crispy endpoint1_form %}
-			</div>
-			<div class="col-xs-12 col-lg-6">
-				<h2 class="hidden-lg-up">Endpoint 2</h2>
-				{% crispy endpoint2_form %}
-			</div>
-		</div>
+		{% if protocol_form %}
+		{% crispy protocol_form %}
+		{% else %}
 		<div class="form-group row">
-			<div class="controls col-md-4 offset-md-2">
-				<input type="submit" name="submit" value="{% if mode == 'create' %}Create{% else %}Save{% endif %}" class="btn btn-primary" />
+			<div class="control-label col-xs-4 col-lg-2">Protocol</div>
+			<div class="controls col-xs-8 col-lg-5 col-xl-4">{{ original.protocol_name }}</div>
+		</div>
+		{% endif %}
+		<div id="tunnel-form">{% if tunnel_form %}{% crispy tunnel_form %}{% endif %}</div>
+		<div id="tunnel-detail-forms"{% if not endpoint1_form %} style="display:none;"{% endif %}>
+			<h2 class="hidden-md-down">Endpoints</h2>
+			<div class="row">
+				<div class="col-xs-12 col-lg-6">
+					<h2 class="hidden-lg-up">Endpoint 1</h2>
+					<div id="endpoint1-form">
+						{% if endpoint1_form %}{% crispy endpoint1_form %}{% endif %}
+					</div>
+				</div>
+				<div class="col-xs-12 col-lg-6">
+					<h2 class="hidden-lg-up">Endpoint 2</h2>
+					<div id="endpoint2-form">
+						{% if endpoint2_form %}{% crispy endpoint2_form %}{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="controls col-md-4 offset-md-2">
+					<input type="submit" name="submit" value="{% if mode == 'create' %}Create{% else %}Save{% endif %}" class="btn btn-primary" />
+				</div>
 			</div>
 		</div>
 	</form>
+	<script>
+		var protocol_select = $('#id_protocol-protocol');
+		protocol_select.on('change', function(event) {
+			if (protocol_select.val()) {
+				$.get('{% url 'lana_data:tunnel-create-form' %}', {
+					'protocol': protocol_select.val()
+				}, function(data) {
+					$('#tunnel-form').html(data.tunnel_form);
+					$('#endpoint1-form').html(data.endpoint1_form);
+					$('#endpoint2-form').html(data.endpoint2_form);
+					$('#tunnel-detail-forms').toggle(true);
+				});
+			} else {
+				$('#tunnel-detail-forms').toggle(false);
+				$('#tunnel-form').empty();
+				$('#endpoint1-form').empty();
+				$('#endpoint2-form').empty();
+			}
+		});
+	</script>
 {% endblock %}

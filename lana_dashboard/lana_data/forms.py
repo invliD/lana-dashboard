@@ -1,6 +1,14 @@
-from django.forms import ModelForm, NumberInput
+from django.forms import ChoiceField, Form, ModelForm, NumberInput
+from django.utils.translation import ugettext_lazy as _
 
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
+from lana_dashboard.lana_data.models import (
+	AutonomousSystem,
+	FastdTunnel,
+	Institution,
+	IPv4Subnet,
+	Tunnel,
+	TunnelEndpoint,
+)
 
 
 class InstitutionForm(ModelForm):
@@ -25,6 +33,14 @@ class AutonomousSystemForm(ModelForm):
 		}
 
 
+class TunnelProtocolForm(Form):
+	protocol = ChoiceField(choices=(
+		(None, '---------'),
+		('fastd', _("Fastd tunnel")),
+		('other', _("Other")),
+	), required=False)
+
+
 class IPv4SubnetForm(ModelForm):
 	class Meta:
 		model = IPv4Subnet
@@ -37,7 +53,12 @@ class IPv4SubnetForm(ModelForm):
 class TunnelForm(ModelForm):
 	class Meta:
 		model = Tunnel
-		fields = ['protocol', 'mode', 'comment', 'encryption_method', 'mtu']
+		fields = ['mode', 'comment', 'encryption_method', 'mtu']
+
+
+class FastdTunnelForm(TunnelForm):
+	class Meta(TunnelForm.Meta):
+		model = FastdTunnel
 
 
 class TunnelEndpointForm(ModelForm):

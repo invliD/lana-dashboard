@@ -1,14 +1,16 @@
 from crispy_forms.helper import FormHelper
+from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.template.context_processors import csrf
 from django.views.decorators.vary import vary_on_headers
 
-from lana_dashboard.lana_data.forms import TunnelEndpointForm, TunnelForm
-from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel, TunnelEndpoint
+from lana_dashboard.lana_data.forms import FastdTunnelForm, TunnelEndpointForm, TunnelForm, TunnelProtocolForm
+from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
 from lana_dashboard.lana_data.utils import (
 	geojson_from_autonomous_systems,
 	geojson_from_tunnels,
@@ -49,66 +51,123 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 		tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 		if not tunnel.can_edit(request.user):
 			raise PermissionDenied
+		endpoint1 = tunnel.endpoint1
+		endpoint2 = tunnel.endpoint2
+		protocol = tunnel.protocol
 		original = {
+			'protocol_name': tunnel.protocol_name,
 			'as_number1': tunnel.endpoint1.autonomous_system.as_number,
 			'as_number2': tunnel.endpoint2.autonomous_system.as_number,
 		}
 	else:
 		mode = 'create'
-		tunnel = Tunnel()
-		tunnel.endpoint1 = TunnelEndpoint()
-		tunnel.endpoint2 = TunnelEndpoint()
+		tunnel = None
+		endpoint1 = None
+		endpoint2 = None
 		original = {}
 
+	protocol_form = None
+	tunnel_form = None
+	endpoint1_form = None
+	endpoint2_form = None
 	if request.method == 'POST':
-		tunnel_form = TunnelForm(instance=tunnel, data=request.POST, prefix='tunnel')
-		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, data=request.POST, prefix='endpoint1')
-		endpoint2_form = TunnelEndpointForm(instance=tunnel.endpoint2, data=request.POST, prefix='endpoint2')
-
-		if tunnel_form.is_valid() and endpoint1_form.is_valid() and endpoint2_form.is_valid():
-			endpoint1 = endpoint1_form.save(commit=False)
-			endpoint2 = endpoint2_form.save(commit=False)
-
-			lower_as_number = min(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
-			higher_as_number = max(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
-
-			error_message = None
-			if not tunnel.can_edit(request.user):
-				error_message = "You cannot create a tunnel between two Autonomous Systems you don't manage."
-			elif endpoint1.autonomous_system.as_number == endpoint2.autonomous_system.as_number:
-				error_message = "You cannot create a tunnel within one Autonomous System."
-			elif Tunnel.objects.all().filter(endpoint1__autonomous_system__as_number=lower_as_number, endpoint2__autonomous_system__as_number=higher_as_number).filter(~Q(id=tunnel.id)).exists():
-				error_message = "A tunnel between these two Autonomous Systems already exists."
-
-			if error_message:
-				endpoint1_form.add_error('autonomous_system', error_message)
-				endpoint2_form.add_error('autonomous_system', error_message)
+		if mode == 'create':
+			protocol_form = TunnelProtocolForm(data=request.POST, prefix='protocol')
+			if protocol_form.is_valid():
+				protocol = protocol_form.cleaned_data['protocol']
 			else:
-				if tunnel.protocol == tunnel.PROTOCOL_FASTD:
-					as1 = endpoint1.autonomous_system.as_number
-					as2 = endpoint2.autonomous_system.as_number
-					if not endpoint1.port and as2 <= 65535:
-						endpoint1.port = as2
-					if not endpoint2.port and as1 <= 65535:
-						endpoint2.port = as1
+				protocol = None
 
-				endpoint1.save()
-				endpoint2.save()
-				tunnel = tunnel_form.save(commit=False)
-				tunnel.endpoint1 = endpoint1
-				tunnel.endpoint2 = endpoint2
-				if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
-					tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
-				tunnel.save()
-				return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
-					'as_number1': tunnel.endpoint1.autonomous_system.as_number,
-					'as_number2': endpoint2.autonomous_system.as_number
-				}))
+		if protocol is not None:
+			tunnel_form, endpoint1_form, endpoint2_form = create_forms(protocol, tunnel, endpoint1, endpoint2, request.POST)
+
+			if tunnel_form.is_valid() and endpoint1_form.is_valid() and endpoint2_form.is_valid():
+				endpoint1 = endpoint1_form.save(commit=False)
+				endpoint2 = endpoint2_form.save(commit=False)
+
+				lower_as_number = min(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
+				higher_as_number = max(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
+
+				error_message = None
+				exists_filter = Q(endpoint1__autonomous_system__as_number=lower_as_number, endpoint2__autonomous_system__as_number=higher_as_number)
+				if tunnel is not None:
+					exists_filter &= ~Q(id=tunnel.id)
+				if not endpoint1.autonomous_system.can_edit(request.user) and not endpoint2.autonomous_system.can_edit(request.user):
+					error_message = "You cannot create a tunnel between two Autonomous Systems you don't manage."
+				elif endpoint1.autonomous_system.as_number == endpoint2.autonomous_system.as_number:
+					error_message = "You cannot create a tunnel within one Autonomous System."
+				elif Tunnel.objects.filter(exists_filter).exists():
+					error_message = "A tunnel between these two Autonomous Systems already exists."
+
+				if error_message:
+					endpoint1_form.add_error('autonomous_system', error_message)
+					endpoint2_form.add_error('autonomous_system', error_message)
+				else:
+					endpoint1.save()
+					endpoint2.save()
+					tunnel = tunnel_form.save(commit=False)
+					tunnel.endpoint1 = endpoint1
+					tunnel.endpoint2 = endpoint2
+					if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
+						tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
+					tunnel.save()
+					return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
+						'as_number1': tunnel.endpoint1.autonomous_system.as_number,
+						'as_number2': tunnel.endpoint2.autonomous_system.as_number
+					}))
 	else:
-		tunnel_form = TunnelForm(instance=tunnel, prefix='tunnel')
-		endpoint1_form = TunnelEndpointForm(instance=tunnel.endpoint1, prefix='endpoint1')
-		endpoint2_form = TunnelEndpointForm(instance=tunnel.endpoint2, prefix='endpoint2')
+		if mode == 'create':
+			protocol_form = TunnelProtocolForm(prefix='protocol')
+		else:
+			tunnel_form, endpoint1_form, endpoint2_form = create_forms(tunnel.protocol, tunnel, endpoint1, endpoint2)
 
+	if protocol_form is not None:
+		protocol_form.helper = FormHelper()
+		protocol_form.helper.form_tag = False
+		protocol_form.helper.label_class = 'col-xs-4 col-lg-2'
+		protocol_form.helper.field_class = 'col-xs-8 col-lg-5 col-xl-4'
+		protocol_form.helper.html5_required = True
+
+	return render(request, 'tunnels_edit.html', {
+		'header_active': 'tunnels',
+		'mode': mode,
+		'protocol_form': protocol_form,
+		'original': original,
+		'tunnel_form': tunnel_form,
+		'endpoint1_form': endpoint1_form,
+		'endpoint2_form': endpoint2_form,
+	})
+
+
+@login_required
+def generate_tunnel_form(request):
+	protocol = request.GET.get('protocol')
+	tunnel_form, endpoint1_form, endpoint2_form = create_forms(protocol)
+
+	context = {}
+	context.update(csrf(request))
+	tunnel_html = render_crispy_form(tunnel_form, context=context)
+	endpoint1_html = render_crispy_form(endpoint1_form, context=context)
+	endpoint2_html = render_crispy_form(endpoint2_form, context=context)
+
+	return JsonResponse({
+		'tunnel_form': tunnel_html,
+		'endpoint1_form': endpoint1_html,
+		'endpoint2_form': endpoint2_html,
+	})
+
+
+def create_forms(protocol, tunnel=None, endpoint1=None, endpoint2=None, data=None):
+	if protocol == 'fastd':
+		tunnel_form_type = FastdTunnelForm
+		endpoint_form_type = TunnelEndpointForm
+	elif protocol == 'other':
+		tunnel_form_type = TunnelForm
+		endpoint_form_type = TunnelEndpointForm
+	else:
+		raise Http404
+
+	tunnel_form = tunnel_form_type(instance=tunnel, data=data, prefix='tunnel')
 	tunnel_form.helper = FormHelper()
 	tunnel_form.helper.form_tag = False
 	tunnel_form.helper.label_class = 'col-xs-4 col-lg-2'
@@ -122,17 +181,12 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 	helper.field_class = 'col-xs-8'
 	helper.html5_required = True
 
+	endpoint1_form = endpoint_form_type(instance=endpoint1, data=data, prefix='endpoint1')
+	endpoint2_form = endpoint_form_type(instance=endpoint2, data=data, prefix='endpoint2')
 	endpoint1_form.helper = helper
 	endpoint2_form.helper = helper
 
-	return render(request, 'tunnels_edit.html', {
-		'header_active': 'tunnels',
-		'mode': mode,
-		'original': original,
-		'tunnel_form': tunnel_form,
-		'endpoint1_form': endpoint1_form,
-		'endpoint2_form': endpoint2_form,
-	})
+	return tunnel_form, endpoint1_form, endpoint2_form
 
 
 @login_required
