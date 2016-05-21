@@ -9,7 +9,14 @@ from django.shortcuts import render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.decorators.vary import vary_on_headers
 
-from lana_dashboard.lana_data.forms import FastdTunnelForm, TunnelEndpointForm, TunnelForm, TunnelProtocolForm
+from lana_dashboard.lana_data.forms import (
+	FastdTunnelEndpointForm,
+	FastdTunnelForm,
+	TunnelEndpointForm,
+	TunnelForm,
+	TunnelProtocolForm,
+)
+
 from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
 from lana_dashboard.lana_data.utils import (
 	geojson_from_autonomous_systems,
@@ -51,8 +58,8 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 		tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 		if not tunnel.can_edit(request.user):
 			raise PermissionDenied
-		endpoint1 = tunnel.endpoint1
-		endpoint2 = tunnel.endpoint2
+		endpoint1 = tunnel.real_endpoint1
+		endpoint2 = tunnel.real_endpoint2
 		protocol = tunnel.protocol
 		original = {
 			'protocol_name': tunnel.protocol_name,
@@ -108,7 +115,7 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 					tunnel = tunnel_form.save(commit=False)
 					tunnel.endpoint1 = endpoint1
 					tunnel.endpoint2 = endpoint2
-					if endpoint1.autonomous_system.as_number > endpoint2.autonomous_system.as_number:
+					if tunnel.endpoint1.autonomous_system.as_number > tunnel.endpoint2.autonomous_system.as_number:
 						tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
 					tunnel.save()
 					return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
@@ -160,7 +167,7 @@ def generate_tunnel_form(request):
 def create_forms(protocol, tunnel=None, endpoint1=None, endpoint2=None, data=None):
 	if protocol == 'fastd':
 		tunnel_form_type = FastdTunnelForm
-		endpoint_form_type = TunnelEndpointForm
+		endpoint_form_type = FastdTunnelEndpointForm
 	elif protocol == 'other':
 		tunnel_form_type = TunnelForm
 		endpoint_form_type = TunnelEndpointForm
@@ -209,13 +216,13 @@ def show_tunnel_web(request, as_number1=None, as_number2=None):
 	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
-		tunnel.endpoint1.config_generation_url = tunnel.get_config_generation_url(1)
-		tunnel.endpoint2.config_generation_url = tunnel.get_config_generation_url(2)
+		tunnel.real_endpoint1.config_generation_url = tunnel.get_config_generation_url(1)
+		tunnel.real_endpoint2.config_generation_url = tunnel.get_config_generation_url(2)
 
 	return render(request, 'tunnels_details.html', {
 		'header_active': 'tunnels',
 		'tunnel': tunnel,
-		'endpoints': [tunnel.endpoint1, tunnel.endpoint2],
+		'endpoints': [tunnel.real_endpoint1, tunnel.real_endpoint2],
 		'can_edit': tunnel.can_edit(request.user),
 		'show_map': show_map,
 	})

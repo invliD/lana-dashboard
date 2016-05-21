@@ -73,11 +73,8 @@ class TunnelEndpoint(models.Model):
 	external_hostname = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("External hostname"))
 	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
-	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
 
 	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
-
-	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
 
 	objects = netfields.NetManager()
 
@@ -93,13 +90,19 @@ class TunnelEndpoint(models.Model):
 		return self.autonomous_system.can_edit(user)
 
 	def is_config_complete(self):
-		if self.tunnel is not None:
-			if isinstance(self.tunnel, FastdTunnel):
-				return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
-					bool(self.internal_ipv4) and
-					bool(self.port) and
-					bool(self.public_key))
 		return False
+
+
+class FastdTunnelEndpoint(TunnelEndpoint):
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
+
+	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
+
+	def is_config_complete(self):
+		return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
+				bool(self.internal_ipv4) and
+				bool(self.port) and
+				bool(self.public_key))
 
 
 class Tunnel(models.Model):
@@ -134,6 +137,14 @@ class Tunnel(models.Model):
 	def protocol_name(self):
 		return _("Other")
 
+	@property
+	def real_endpoint1(self):
+		return self.endpoint1
+
+	@property
+	def real_endpoint2(self):
+		return self.endpoint2
+
 	def can_edit(self, user):
 		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)
 
@@ -157,14 +168,26 @@ class FastdTunnel(Tunnel):
 	def protocol_name(self):
 		return _("Fastd tunnel")
 
+	@property
+	def real_endpoint1(self):
+		if isinstance(self.endpoint1, FastdTunnelEndpoint):
+			return self.endpoint1
+		return self.endpoint1.fastdtunnelendpoint
+
+	@property
+	def real_endpoint2(self):
+		if isinstance(self.endpoint2, FastdTunnelEndpoint):
+			return self.endpoint2
+		return self.endpoint2.fastdtunnelendpoint
+
 	def supports_config_generation(self):
 		return True
 
 	def is_config_complete(self):
 		return (bool(self.encryption_method) and
 			bool(self.mtu) and
-			self.endpoint1.is_config_complete() and
-			self.endpoint2.is_config_complete())
+			self.real_endpoint1.is_config_complete() and
+			self.real_endpoint2.is_config_complete())
 
 	def get_config_generation_url(self, endpoint_number):
 		return reverse('lana_generator:generate-fastd', kwargs={

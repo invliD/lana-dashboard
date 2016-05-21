@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from lana_dashboard.lana_data.models import (
 	AutonomousSystem,
 	FastdTunnel,
+	FastdTunnelEndpoint,
 	Institution,
 	IPv4Subnet,
 	Tunnel,
@@ -64,6 +65,12 @@ class FastdTunnelForm(TunnelForm):
 class TunnelEndpointForm(ModelForm):
 	class Meta:
 		model = TunnelEndpoint
+		fields = ['autonomous_system', 'external_hostname', 'external_ipv4', 'internal_ipv4']
+
+
+class FastdTunnelEndpointForm(TunnelEndpointForm):
+	class Meta(TunnelEndpointForm.Meta):
+		model = FastdTunnelEndpoint
 		fields = ['autonomous_system', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
 		widgets = {
 			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
