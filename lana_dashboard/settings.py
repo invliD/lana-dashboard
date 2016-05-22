@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
 	'lana_dashboard.main',
 	'lana_dashboard.usermanagement',
+	'lana_dashboard.lana_api',
 	'lana_dashboard.lana_data',
 	'lana_dashboard.lana_generator',
 ]
