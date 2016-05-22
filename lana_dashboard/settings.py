@@ -159,6 +159,7 @@ REST_FRAMEWORK = {
 	'DEFAULT_PERMISSION_CLASSES': (
 		'rest_framework.permissions.IsAuthenticated',
 	),
+	'VIEW_NAME_FUNCTION': 'lana_dashboard.lana_api.views.get_view_name',
 }
 
 # LANA settings
