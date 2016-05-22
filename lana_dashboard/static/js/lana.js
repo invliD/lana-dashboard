@@ -11,6 +11,35 @@ Array.prototype.unique = function() {
 
 LANA = {};
 
+// Django CSRF protection for AJAX
+LANA.getCookie = function (name) {
+	var cookieValue = null;
+	if (document.cookie && document.cookie != '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = jQuery.trim(cookies[i]);
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) == (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+};
+LANA.ajax = {};
+LANA.ajax.csrfSafeMethod = function(method) {
+	// these HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+};
+$.ajaxSetup({
+	beforeSend: function(xhr, settings) {
+		if (!LANA.ajax.csrfSafeMethod(settings.type) && !this.crossDomain) {
+			xhr.setRequestHeader("X-CSRFToken", LANA.getCookie('csrftoken'));
+		}
+	}
+});
+
 LANA.createMap = function(center_lat, center_lng, zoom) {
 	var map = new mapboxgl.Map({
 		container: 'map',
