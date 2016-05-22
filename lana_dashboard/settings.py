@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 	'colorfield',
 	'crispy_forms',
 	'netfields',
+	'rest_framework',
 	'static_precompiler',
 
 	'lana_dashboard.main',
@@ -148,6 +149,16 @@ STATICFILES_FINDERS = [
 STATIC_PRECOMPILER_COMPILERS = [
 	'static_precompiler.compilers.SCSS',
 ]
+
+REST_FRAMEWORK = {
+	'DEFAULT_AUTHENTICATION_CLASSES': (
+		'rest_framework.authentication.BasicAuthentication',
+		'rest_framework.authentication.SessionAuthentication',
+	),
+	'DEFAULT_PERMISSION_CLASSES': (
+		'rest_framework.permissions.IsAuthenticated',
+	),
+}
 
 # LANA settings
 
