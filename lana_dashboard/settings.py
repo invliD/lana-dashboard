@@ -166,3 +166,6 @@ REST_FRAMEWORK = {
 
 # You need to add a MapBox access token to see any maps.
 LANA_MAPBOX_API_KEY = ''
+
+# This token grants access to the whois API endpoint if set.
+LANA_WHOIS_API_TOKEN = None
