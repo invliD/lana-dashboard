@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from lana_dashboard.lana_api import views
 
 router = DefaultRouter(trailing_slash=False)
+router.register(r'whois', views.WhoisViewSet, base_name='whois')
 
 urlpatterns = [
 	url(r'^', include(router.urls)),
