@@ -81,19 +81,25 @@ LANA.loadGeoJSONPoints = function(map, url, completion) {
 					'data': data
 				});
 
-				colors = data.features.map(function(x) {
+				var stops = [];
+				data.features.map(function(x) {
 					return x.properties.color;
 				}).unique().forEach(function (color) {
-					map.addLayer({
-						'id': 'markers-circle-' + color,
-						'type': 'circle',
-						'source': 'markers',
-						'filter': ["==", "color", color],
-						'paint': {
-							'circle-radius': 7,
-							'circle-color': color,
+					stops.push([color, color]);
+				});
+
+				map.addLayer({
+					'id': 'markers-circle',
+					'type': 'circle',
+					'source': 'markers',
+					'paint': {
+						'circle-radius': 6,
+						'circle-color': {
+							'property': 'color',
+							'type': 'categorical',
+							'stops': stops
 						}
-					});
+					}
 				});
 
 				map.addLayer({
