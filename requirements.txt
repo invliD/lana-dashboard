@@ -1,8 +1,7 @@
-Django >=1.9,<1.10
-# django-crispy-forms >=1.6.0
--e git://github.com/maraujop/django-crispy-forms.git#egg=dev
-django-static-precompiler >=1.3
-django-model-utils >= 2.5
-django-netfields >=0.5
-django-colorfield >=0.1.10
-djangorestframework >= 3.3.0
+Django ==1.9.6
+-e git://github.com/maraujop/django-crispy-forms.git@b1f68af959d790794b035c3239eb654114e6b32c#egg=django_crispy_forms-dev
+django-static-precompiler ==1.4
+django-model-utils == 2.5
+django-netfields ==0.5.3
+django-colorfield ==0.1.10
+djangorestframework ==3.3.3
