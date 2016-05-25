@@ -1,12 +1,11 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.template.context_processors import csrf
 from django.views.decorators.vary import vary_on_headers
 
@@ -24,7 +23,9 @@ from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
 from lana_dashboard.lana_data.utils import (
 	geojson_from_autonomous_systems,
 	geojson_from_tunnels,
-	get_object_with_subclasses_or_404,
+	get_object_for_edit_or_40x,
+	get_object_for_view_or_404,
+	list_objects_for_view,
 )
 
 
@@ -39,12 +40,12 @@ def list_tunnels(request):
 
 
 def list_tunnels_geojson(request):
-	tunnels = Tunnel.objects.all()
+	tunnels = list_objects_for_view(Tunnel, request)
 	return JsonResponse(geojson_from_tunnels(tunnels))
 
 
 def list_tunnels_web(request):
-	tunnels = Tunnel.objects.all()
+	tunnels = list_objects_for_view(Tunnel, request)
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
 	return render(request, 'tunnels_list.html', {
@@ -58,9 +59,7 @@ def list_tunnels_web(request):
 def delete_tunnel(request, as_number1, as_number2):
 	if request.method != 'POST':
 		raise Http404
-	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
-	if not tunnel.can_edit(request.user):
-		raise PermissionDenied
+	tunnel = get_object_for_edit_or_40x(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	with transaction.atomic():
 		tunnel.delete()
 		tunnel.endpoint1.delete()
@@ -72,9 +71,7 @@ def delete_tunnel(request, as_number1, as_number2):
 def edit_tunnel(request, as_number1=None, as_number2=None):
 	if as_number1 and as_number2:
 		mode = 'edit'
-		tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
-		if not tunnel.can_edit(request.user):
-			raise PermissionDenied
+		tunnel = get_object_for_edit_or_40x(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 		endpoint1 = tunnel.real_endpoint1
 		endpoint2 = tunnel.real_endpoint2
 		protocol = tunnel.protocol
@@ -228,12 +225,12 @@ def show_tunnel(request, as_number1=None, as_number2=None):
 
 
 def show_tunnel_geojson(request, as_number1=None, as_number2=None):
-	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	return JsonResponse(geojson_from_tunnels([tunnel]))
 
 
 def show_tunnel_web(request, as_number1=None, as_number2=None):
-	tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
@@ -260,5 +257,5 @@ def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
 
 
 def list_tunnel_autonomous_systems_geojson(request, as_number1=None, as_number2=None):
-	tunnel = get_object_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	return JsonResponse(geojson_from_autonomous_systems([tunnel.endpoint1.autonomous_system, tunnel.endpoint2.autonomous_system]))

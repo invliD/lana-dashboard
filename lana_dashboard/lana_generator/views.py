@@ -5,12 +5,12 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from lana_dashboard.lana_data.models import FastdTunnel, Tunnel
-from lana_dashboard.lana_data.utils import get_object_with_subclasses_or_404
+from lana_dashboard.lana_data.utils import get_object_for_view_or_404
 from lana_dashboard.lana_generator.forms import FastdGeneratorForm
 
 
 def generate_fastd(request, as_number1, as_number2, endpoint_number):
-	tunnel = get_object_with_subclasses_or_404(Tunnel, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	if not isinstance(tunnel, FastdTunnel) or not tunnel.is_config_complete():
 		raise Http404
 	config = None

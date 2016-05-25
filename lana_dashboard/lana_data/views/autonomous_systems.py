@@ -2,16 +2,20 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import AutonomousSystemForm
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, Tunnel, TunnelEndpoint
-from lana_dashboard.lana_data.utils import geojson_from_autonomous_systems
+from lana_dashboard.lana_data.utils import (
+	geojson_from_autonomous_systems,
+	get_object_for_edit_or_40x,
+	get_object_for_view_or_404,
+	list_objects_for_view,
+)
 
 
 @login_required
@@ -25,12 +29,12 @@ def list_autonomous_systems(request):
 
 
 def list_autonomous_systems_geojson(request):
-	autonomous_systems = AutonomousSystem.objects.all()
+	autonomous_systems = list_objects_for_view(AutonomousSystem, request)
 	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
 
 
 def list_autonomous_systems_web(request):
-	autonomous_systems = AutonomousSystem.objects.all()
+	autonomous_systems = list_objects_for_view(AutonomousSystem, request)
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'autonomous_systems_list.html', {
@@ -44,9 +48,7 @@ def list_autonomous_systems_web(request):
 def delete_autonomous_system(request, as_number):
 	if request.method != 'POST':
 		raise Http404
-	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
-	if not autonomous_system.can_edit(request.user):
-		raise PermissionDenied
+	autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, as_number=as_number)
 
 	tunnel_endpoints = TunnelEndpoint.objects.filter(autonomous_system=autonomous_system)
 	if tunnel_endpoints.exists():
@@ -61,9 +63,7 @@ def delete_autonomous_system(request, as_number):
 def edit_autonomous_system(request, as_number=None):
 	if as_number:
 		mode = 'edit'
-		autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
-		if not autonomous_system.can_edit(request.user):
-			raise PermissionDenied
+		autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, as_number=as_number)
 	else:
 		mode = 'create'
 		autonomous_system = AutonomousSystem()
@@ -115,13 +115,13 @@ def show_autonomous_system(request, as_number=None):
 
 
 def show_autonomous_system_geojson(request, as_number=None):
-	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
+	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, as_number=as_number)
 	return JsonResponse(geojson_from_autonomous_systems([autonomous_system]))
 
 
 def show_autonomous_system_web(request, as_number=None):
-	autonomous_system = get_object_or_404(AutonomousSystem, as_number=as_number)
-	tunnels = Tunnel.objects.all().filter(Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number))
+	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, as_number=as_number)
+	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number))
 
 	for tunnel in tunnels:
 		if tunnel.endpoint1.autonomous_system.as_number == int(as_number):

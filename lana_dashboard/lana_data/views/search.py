@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
+from lana_dashboard.lana_data.utils import list_objects_for_view
 
 
 @login_required
@@ -20,7 +21,7 @@ def search(request, query=None):
 
 		# Institutions
 		db_query = Q(name__icontains=query) | Q(code__icontains=query)
-		results['institutions'] = Institution.objects.filter(db_query)
+		results['institutions'] = list_objects_for_view(Institution, request, db_query)
 		if len(results['institutions']) == 1:
 			result_urls.append(reverse('lana_data:institution-details', kwargs={'code': results['institutions'][0].code}))
 
@@ -32,12 +33,12 @@ def search(request, query=None):
 			part2 = query[2:]
 			if part2.isdigit():
 				as_number = int(part2)
-		if query.isdigit():
+		elif query.isdigit():
 			as_number = int(query)
 		if as_number is not None:
 			db_query |= Q(as_number=as_number)
 
-		results['autonomous_systems'] = AutonomousSystem.objects.filter(db_query)
+		results['autonomous_systems'] = list_objects_for_view(AutonomousSystem, request, db_query)
 		if len(results['autonomous_systems']) == 1:
 			result_urls.append(reverse('lana_data:autonomous_system-details', kwargs={'as_number': results['autonomous_systems'][0].as_number}))
 
@@ -48,7 +49,7 @@ def search(request, query=None):
 			db_query |= Q(network__net_contains_or_equals=str(interface.network))
 		except ValueError:
 			pass
-		results['ipv4_subnets'] = IPv4Subnet.objects.filter(db_query)
+		results['ipv4_subnets'] = list_objects_for_view(IPv4Subnet, request, db_query)
 		if len(results['ipv4_subnets']) == 1:
 			result_urls.append(reverse('lana_data:ipv4-details', kwargs={'network': results['ipv4_subnets'][0].network}))
 

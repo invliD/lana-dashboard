@@ -15,6 +15,7 @@ from lana_dashboard.lana_api.auth import (
 
 from lana_dashboard.lana_api.serializers import IPv4SubnetSerializer
 from lana_dashboard.lana_data.models import IPv4Subnet
+from lana_dashboard.lana_data.utils import list_objects_for_view
 
 
 def get_view_name(view_cls, suffix=None):
@@ -42,7 +43,7 @@ class WhoisViewSet(ViewSet):
 	def retrieve(self, request, pk=None, format=None):
 		try:
 			interface = ip_interface(pk)
-			subnets = IPv4Subnet.objects.filter(network__net_contains_or_equals=str(interface.network)).order_by('-network')[:1].select_related('institution')
+			subnets = list_objects_for_view(IPv4Subnet, request, network__net_contains_or_equals=str(interface.network)).order_by('-network')[:1].select_related('institution')
 			if not subnets.exists():
 				raise Http404
 			subnet = subnets.first()

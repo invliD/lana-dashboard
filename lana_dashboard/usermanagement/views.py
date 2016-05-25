@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
 from lana_dashboard.lana_data.models import Institution
+from lana_dashboard.lana_data.utils import list_objects_for_view
 from lana_dashboard.usermanagement.forms import ContactInformationForm
 
 
@@ -41,7 +42,7 @@ def logout(request):
 @login_required
 def show_user_profile(request, username):
 	user = get_object_or_404(get_user_model(), username=username)
-	institutions = Institution.objects.all().filter(owners__username=username)
+	institutions = list_objects_for_view(Institution, request, owners=user)
 	return render(request, 'user_profile.html', {
 		'profile': user,
 		'info': user.contact_information if hasattr(user, 'contact_information') else None,

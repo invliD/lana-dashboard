@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.shortcuts import render
+
 from lana_dashboard.lana_data.models import AutonomousSystem
+from lana_dashboard.lana_data.utils import list_objects_for_view
 
 
 def index(request):
-	show_map = request.user.is_authenticated() and AutonomousSystem.objects.all().exclude(location_lat=None, location_lng=None)
+	show_map = request.user.is_authenticated() and list_objects_for_view(AutonomousSystem, request, location_lat__isnull=False, location_lng__isnull=False).exists()
 	return render(request, 'index.html', {
 		'show_map': show_map,
 	})

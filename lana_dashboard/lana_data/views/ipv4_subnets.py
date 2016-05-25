@@ -4,15 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 from lana_dashboard.lana_data.forms import IPv4SubnetForm
 from lana_dashboard.lana_data.models import Institution, IPv4Subnet
+from lana_dashboard.lana_data.utils import (
+	get_object_for_edit_or_40x,
+	get_object_for_view_or_404,
+	list_objects_for_view,
+)
 
 
 @login_required
 def list_ipv4(request):
-	subnets = IPv4Subnet.objects.all()
+	subnets = list_objects_for_view(IPv4Subnet, request)
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
@@ -26,9 +31,7 @@ def list_ipv4(request):
 def delete_ipv4(request, network):
 	if request.method != 'POST':
 		raise PermissionDenied
-	subnet = get_object_or_404(IPv4Subnet, network=network)
-	if not subnet.can_edit(request.user):
-		raise PermissionDenied
+	subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
 
 	subnet.delete()
 	return HttpResponseRedirect(reverse('lana_data:ipv4'))
@@ -38,9 +41,7 @@ def delete_ipv4(request, network):
 def edit_ipv4(request, network=None):
 	if network:
 		mode = 'edit'
-		subnet = get_object_or_404(IPv4Subnet, network=network)
-		if not subnet.can_edit(request.user):
-			raise PermissionDenied
+		subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
 	else:
 		mode = 'create'
 		subnet = IPv4Subnet()
@@ -83,7 +84,7 @@ def edit_ipv4(request, network=None):
 
 @login_required
 def show_ipv4(request, network):
-	subnet = get_object_or_404(IPv4Subnet, network=network)
+	subnet = get_object_for_view_or_404(IPv4Subnet, request, network=network)
 
 	return render(request, 'ipv4_details.html', {
 		'header_active': 'ipv4',

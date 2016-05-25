@@ -20,6 +20,10 @@ class Institution(models.Model):
 		verbose_name = ungettext_lazy("Institution", "Institutions", 1)
 		verbose_name_plural = ungettext_lazy("Institution", "Institutions", 2)
 
+	@classmethod
+	def get_view_qs(cls, user):
+		return cls.objects
+
 	def __str__(self):
 		return self.name
 
@@ -41,6 +45,10 @@ class AutonomousSystem(models.Model):
 		verbose_name = ungettext_lazy("Autonomous System", "Autonomous Systems", 1)
 		verbose_name_plural = ungettext_lazy("Autonomous System", "Autonomous Systems", 2)
 
+	@classmethod
+	def get_view_qs(cls, user):
+		return cls.objects
+
 	def __str__(self):
 		return "AS{}".format(self.as_number)
 
@@ -61,6 +69,10 @@ class IPv4Subnet(models.Model):
 		ordering = ['network']
 		verbose_name = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 1)
 		verbose_name_plural = ungettext_lazy("IPv4 Subnet", "IPv4 Subnets", 2)
+
+	@classmethod
+	def get_view_qs(cls, user):
+		return cls.objects
 
 	def __str__(self):
 		return str(self.network)
@@ -129,6 +141,10 @@ class Tunnel(models.Model):
 
 	class Meta:
 		ordering = ['endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number']
+
+	@classmethod
+	def get_view_qs(cls, user):
+		return cls.objects
 
 	def __str__(self):
 		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
