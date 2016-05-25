@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from colorfield.fields import ColorField
 from model_utils.managers import InheritanceManager
@@ -38,6 +39,7 @@ class AutonomousSystem(models.Model):
 	location_lat = models.FloatField(blank=True, null=True, verbose_name=_("Latitude"))
 	location_lng = models.FloatField(blank=True, null=True, verbose_name=_("Longitude"))
 
+	private = models.BooleanField(default=False, verbose_name=_("Private"))
 	institution = models.ForeignKey(Institution, related_name='autonomous_systems', verbose_name=_("Institution"))
 
 	class Meta:
@@ -47,7 +49,7 @@ class AutonomousSystem(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects
+		return cls.objects.filter(Q(private=False) | Q(institution__owners=user))
 
 	def __str__(self):
 		return "AS{}".format(self.as_number)
@@ -61,6 +63,7 @@ class IPv4Subnet(models.Model):
 	dns_server = netfields.InetAddressField(blank=True, null=True, verbose_name=_("DNS Server"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
+	private = models.BooleanField(default=False, verbose_name=_("Private"))
 	institution = models.ForeignKey(Institution, related_name='ipv4_subnets', verbose_name=_("Institution"))
 
 	objects = netfields.NetManager()
@@ -72,7 +75,7 @@ class IPv4Subnet(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects
+		return cls.objects.filter(Q(private=False) | Q(institution__owners=user))
 
 	def __str__(self):
 		return str(self.network)
@@ -134,6 +137,7 @@ class Tunnel(models.Model):
 	encryption_method = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Encryption method"))
 	mtu = models.IntegerField(blank=True, null=True, verbose_name=_("MTU"))
 
+	private = models.BooleanField(default=False, verbose_name=_("Private"))
 	endpoint1 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel1', verbose_name=_("Endpoint 1"))
 	endpoint2 = models.OneToOneField(TunnelEndpoint, on_delete=models.CASCADE, related_name='tunnel2', verbose_name=_("Endpoint 2"))
 
@@ -144,7 +148,7 @@ class Tunnel(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects
+		return cls.objects.filter(Q(private=False) | Q(endpoint1__autonomous_system__institution__owners=user) | Q(endpoint2__autonomous_system__institution__owners=user))
 
 	def __str__(self):
 		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
