@@ -45,7 +45,12 @@ def list_tunnels_geojson(request):
 
 
 def list_tunnels_web(request):
-	tunnels = list_objects_for_view(Tunnel, request)
+	tunnels = list_objects_for_view(Tunnel, request).select_related(
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+		'endpoint1__autonomous_system__institution',
+		'endpoint2__autonomous_system__institution'
+	)
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
 	return render(request, 'tunnels_list.html', {
