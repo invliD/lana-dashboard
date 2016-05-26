@@ -151,7 +151,7 @@ class Tunnel(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects.filter(Q(private=False) | Q(endpoint1__autonomous_system__institution__owners=user) | Q(endpoint2__autonomous_system__institution__owners=user))
+		return cls.objects.filter(Q(private=False) | Q(endpoint1__autonomous_system__institution__owners=user) | Q(endpoint2__autonomous_system__institution__owners=user)).distinct('endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number')
 
 	def __str__(self):
 		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
