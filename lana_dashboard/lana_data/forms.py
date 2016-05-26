@@ -28,7 +28,7 @@ class InstitutionForm(ModelForm):
 class AutonomousSystemForm(ModelForm):
 	class Meta:
 		model = AutonomousSystem
-		fields = ['as_number', 'fqdn', 'comment', 'institution', 'location_lat', 'location_lng']
+		fields = ['as_number', 'fqdn', 'comment', 'institution', 'location_lat', 'location_lng', 'private']
 		widgets = {
 			'as_number': NumberInput(attrs={'min': 0, 'max': 4294967296}),
 			'location_lat': NumberInput(attrs={'min': -90, 'max': 90}),
@@ -48,7 +48,7 @@ class TunnelProtocolForm(Form):
 class IPv4SubnetForm(ModelForm):
 	class Meta:
 		model = IPv4Subnet
-		fields = ['network', 'dns_server', 'comment', 'institution']
+		fields = ['network', 'dns_server', 'comment', 'institution', 'private']
 		widgets = {
 			'subnet_bits': NumberInput(attrs={'min': 0, 'max': 32}),
 		}
@@ -57,7 +57,7 @@ class IPv4SubnetForm(ModelForm):
 class TunnelForm(ModelForm):
 	class Meta:
 		model = Tunnel
-		fields = ['mode', 'comment', 'encryption_method', 'mtu']
+		fields = ['mode', 'comment', 'encryption_method', 'mtu', 'private']
 
 
 class FastdTunnelForm(TunnelForm):
@@ -68,7 +68,7 @@ class FastdTunnelForm(TunnelForm):
 class VtunTunnelForm(TunnelForm):
 	class Meta(TunnelForm.Meta):
 		model = VtunTunnel
-		fields = ['transport', 'mode', 'comment', 'encryption_method', 'compression', 'mtu']
+		fields = ['transport', 'mode', 'comment', 'encryption_method', 'compression', 'mtu', 'private']
 
 
 class TunnelEndpointForm(ModelForm):
