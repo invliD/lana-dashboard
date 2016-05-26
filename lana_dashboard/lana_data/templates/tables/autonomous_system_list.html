@@ -12,7 +12,10 @@
 	<tbody>
 		{% for autonomous_system in autonomous_systems %}
 		<tr>
-			<td><a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system }}</a></td>
+			<td>
+				<a href="{% url 'lana_data:autonomous_system-details' autonomous_system.as_number %}">{{ autonomous_system }}</a>
+				{% if autonomous_system.private %}<span class="tag tag-default">Private</span>{% endif %}
+			</td>
 			<td>{{ autonomous_system.fqdn }}</td>
 			{% if not disable_institution %}
 			<td>{% include 'fragments/institution_code.html' with institution=autonomous_system.institution %}</td>

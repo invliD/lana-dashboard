@@ -10,7 +10,10 @@
 	<tbody>
 		{% for tunnel in tunnels %}
 		<tr>
-			<td><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a></td>
+			<td>
+				<a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a>
+				{% if tunnel.private %}<span class="tag tag-default">Private</span>{% endif %}
+			</td>
 			<td>
 				<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint1.autonomous_system.as_number %}">{{ tunnel.endpoint1.autonomous_system }}</a>
 				{% include 'fragments/institution_code.html' with institution=tunnel.endpoint1.autonomous_system.institution %}
