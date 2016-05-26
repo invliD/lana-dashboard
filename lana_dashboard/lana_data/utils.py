@@ -2,8 +2,10 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 
 
-def get_object_for_view_or_404(klass, request, *args, with_subclasses=False, **kwargs):
+def get_object_for_view_or_404(klass, request, *args, select_related=None, with_subclasses=False, **kwargs):
 	objs = klass.get_view_qs(request.user).filter(*args, **kwargs)
+	if select_related:
+		objs = objs.select_related(*select_related)
 	if with_subclasses:
 		objs = objs.select_subclasses()
 	num = len(objs)
@@ -17,8 +19,8 @@ def get_object_for_view_or_404(klass, request, *args, with_subclasses=False, **k
 	)
 
 
-def get_object_for_edit_or_40x(klass, request, *args, with_subclasses=False, **kwargs):
-	obj = get_object_for_view_or_404(klass, request, with_subclasses=with_subclasses, *args, **kwargs)
+def get_object_for_edit_or_40x(klass, request, *args, select_related=None, with_subclasses=False, **kwargs):
+	obj = get_object_for_view_or_404(klass, request, select_related=select_related, with_subclasses=with_subclasses, *args, **kwargs)
 	if not obj.can_edit(request.user):
 		raise PermissionDenied
 	return obj

@@ -79,7 +79,11 @@
 					<tr>
 						<th style="width: 45%;">Autonomous System:</th>
 						<td style="width: 55%;">
+							{% if endpoint.autonomous_system.show_link %}
 							<a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a>
+							{% else %}
+							{{ endpoint.autonomous_system }}
+							{% endif %}
 							{% include 'fragments/institution_code.html' with institution=endpoint.autonomous_system.institution %}
 						</td>
 					</tr>

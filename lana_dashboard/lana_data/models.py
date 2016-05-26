@@ -54,6 +54,9 @@ class AutonomousSystem(models.Model):
 	def __str__(self):
 		return "AS{}".format(self.as_number)
 
+	def can_view(self, user):
+		return not self.private or self.institution.owners.filter(id=user.id).exists()
+
 	def can_edit(self, user):
 		return self.institution.can_edit(user)
 

@@ -15,11 +15,19 @@
 				{% if tunnel.private %}<span class="tag tag-default">Private</span>{% endif %}
 			</td>
 			<td>
+				{% if tunnel.endpoint1.autonomous_system.show_link %}
 				<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint1.autonomous_system.as_number %}">{{ tunnel.endpoint1.autonomous_system }}</a>
+				{% else %}
+				{{ tunnel.endpoint1.autonomous_system }}
+				{% endif %}
 				{% include 'fragments/institution_code.html' with institution=tunnel.endpoint1.autonomous_system.institution %}
 			</td>
 			<td>
-				<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint2.autonomous_system.as_number %}">{{ tunnel.endpoint2.autonomous_system }}</a>
+				{% if tunnel.endpoint2.autonomous_system.show_link %}
+					<a href="{% url 'lana_data:autonomous_system-details' tunnel.endpoint2.autonomous_system.as_number %}">{{ tunnel.endpoint2.autonomous_system }}</a>
+				{% else %}
+					{{ tunnel.endpoint2.autonomous_system }}
+				{% endif %}
 				{% include 'fragments/institution_code.html' with institution=tunnel.endpoint2.autonomous_system.institution %}
 			</td>
 			<td>{{ tunnel.comment }}</td>

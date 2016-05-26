@@ -53,6 +53,10 @@ def list_tunnels_web(request):
 	)
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
+	for tunnel in tunnels:
+		for endpoint in [tunnel.endpoint1, tunnel.endpoint2]:
+			endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
+
 	return render(request, 'tunnels_list.html', {
 		'header_active': 'tunnels',
 		'tunnels': tunnels,
@@ -235,12 +239,20 @@ def show_tunnel_geojson(request, as_number1=None, as_number2=None):
 
 
 def show_tunnel_web(request, as_number1=None, as_number2=None):
-	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, select_related=[
+		'endpoint1',
+		'endpoint2',
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	], with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
-		tunnel.real_endpoint1.config_generation_url = tunnel.get_config_generation_url(1)
-		tunnel.real_endpoint2.config_generation_url = tunnel.get_config_generation_url(2)
+		for i, endpoint in enumerate([tunnel.real_endpoint1, tunnel.real_endpoint2]):
+			endpoint.config_generation_url = tunnel.get_config_generation_url(i + 1)
+
+	for i, endpoint in enumerate([tunnel.real_endpoint1, tunnel.real_endpoint2]):
+		endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
 
 	return render(request, 'tunnels_details.html', {
 		'header_active': 'tunnels',
