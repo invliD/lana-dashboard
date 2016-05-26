@@ -1,9 +1,11 @@
+from ipaddress import ip_network
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 
 from lana_dashboard.lana_data.forms import IPv4SubnetForm
@@ -41,7 +43,10 @@ def delete_ipv4(request, network):
 def edit_ipv4(request, network=None):
 	if network:
 		mode = 'edit'
-		subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
+		try:
+			subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
+		except ValidationError:
+			raise Http404
 	else:
 		mode = 'create'
 		subnet = IPv4Subnet()
@@ -84,7 +89,10 @@ def edit_ipv4(request, network=None):
 
 @login_required
 def show_ipv4(request, network):
-	subnet = get_object_for_view_or_404(IPv4Subnet, request, network=network)
+	try:
+		subnet = get_object_for_view_or_404(IPv4Subnet, request, network=network)
+	except ValidationError:
+		raise Http404
 
 	return render(request, 'ipv4_details.html', {
 		'header_active': 'ipv4',
