@@ -1,4 +1,6 @@
+from functools import reduce
 from ipaddress import ip_interface
+import operator
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -53,7 +55,7 @@ def search(request, query=None):
 		if len(results['ipv4_subnets']) == 1:
 			result_urls.append(reverse('lana_data:ipv4-details', kwargs={'network': results['ipv4_subnets'][0].network}))
 
-		if len(result_urls) == 1:
+		if len(result_urls) == 1 and len(reduce(operator.add, [list(r) for r in results.values()])) == 1:
 			return HttpResponseRedirect(result_urls[0])
 
 	return render(request, 'search.html', {
