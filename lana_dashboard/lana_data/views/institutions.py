@@ -114,6 +114,10 @@ def show_institution(request, code=None):
 	)
 	show_map = list_objects_for_view(AutonomousSystem, request, institution=institution).exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
+	for tunnel in tunnels:
+		for i, endpoint in enumerate([tunnel.endpoint1, tunnel.endpoint2]):
+			endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
+
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
 		'institution': institution,
