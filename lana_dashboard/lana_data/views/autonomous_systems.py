@@ -19,7 +19,7 @@ from lana_dashboard.lana_data.utils import (
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def list_autonomous_systems(request):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -105,7 +105,7 @@ def edit_autonomous_system(request, as_number=None):
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def show_autonomous_system(request, as_number=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':

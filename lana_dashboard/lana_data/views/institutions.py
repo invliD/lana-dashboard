@@ -121,7 +121,7 @@ def show_institution(request, code=None):
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def list_institution_autonomous_systems(request, code=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -137,7 +137,7 @@ def list_institution_autonomous_systems_geojson(request, code=None):
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def list_institution_tunnels(request, code=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':

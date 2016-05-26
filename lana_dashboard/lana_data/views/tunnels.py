@@ -30,7 +30,7 @@ from lana_dashboard.lana_data.utils import (
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def list_tunnels(request):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -224,7 +224,7 @@ def create_forms(protocol, tunnel=None, endpoint1=None, endpoint2=None, data=Non
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def show_tunnel(request, as_number1=None, as_number2=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
@@ -264,7 +264,7 @@ def show_tunnel_web(request, as_number1=None, as_number2=None):
 
 
 @login_required
-@vary_on_headers('Content-Type')
+@vary_on_headers('Accept')
 def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
 	accept = request.META.get('HTTP_ACCEPT')
 	if accept == 'application/vnd.geo+json':
