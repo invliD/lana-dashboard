@@ -23,7 +23,7 @@ from lana_dashboard.lana_data.utils import (
 
 @login_required
 def list_institutions(request):
-	institutions = list_objects_for_view(Institution, request)
+	institutions = list_objects_for_view(Institution, request).prefetch_related('owners')
 
 	return render(request, 'institutions_list.html', {
 		'header_active': 'institutions',
@@ -106,7 +106,12 @@ def show_institution(request, code=None):
 	institution = get_object_for_view_or_404(Institution, request, code=code)
 	autonomous_systems = list_objects_for_view(AutonomousSystem, request, institution=institution)
 	ipv4_subnets = list_objects_for_view(IPv4Subnet, request, institution=institution)
-	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__institution=institution) | Q(endpoint2__autonomous_system__institution=institution))
+	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__institution=institution) | Q(endpoint2__autonomous_system__institution=institution)).select_related(
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+		'endpoint1__autonomous_system__institution',
+		'endpoint2__autonomous_system__institution',
+	)
 	show_map = list_objects_for_view(AutonomousSystem, request, institution=institution).exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	return render(request, 'institutions_details.html', {
@@ -132,7 +137,7 @@ def list_institution_autonomous_systems(request, code=None):
 
 def list_institution_autonomous_systems_geojson(request, code=None):
 	institution = get_object_for_view_or_404(Institution, request, code=code)
-	autonomous_systems = list_objects_for_view(AutonomousSystem, request, institution=institution)
+	autonomous_systems = list_objects_for_view(AutonomousSystem, request, institution=institution).select_related('institution')
 	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
 
 
@@ -148,5 +153,8 @@ def list_institution_tunnels(request, code=None):
 
 def list_institution_tunnels_geojson(request, code=None):
 	institution = get_object_for_view_or_404(Institution, request, code=code)
-	tunnels = list_objects_for_view(Tunnel, request, endpoint1__autonomous_system__institution=institution).filter(endpoint2__autonomous_system__institution=institution)
+	tunnels = list_objects_for_view(Tunnel, request, endpoint1__autonomous_system__institution=institution).filter(endpoint2__autonomous_system__institution=institution).select_related(
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	)
 	return JsonResponse(geojson_from_tunnels(tunnels))

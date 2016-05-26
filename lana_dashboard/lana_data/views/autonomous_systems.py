@@ -29,12 +29,12 @@ def list_autonomous_systems(request):
 
 
 def list_autonomous_systems_geojson(request):
-	autonomous_systems = list_objects_for_view(AutonomousSystem, request)
+	autonomous_systems = list_objects_for_view(AutonomousSystem, request).select_related('institution')
 	return JsonResponse(geojson_from_autonomous_systems(autonomous_systems))
 
 
 def list_autonomous_systems_web(request):
-	autonomous_systems = list_objects_for_view(AutonomousSystem, request)
+	autonomous_systems = list_objects_for_view(AutonomousSystem, request).select_related('institution')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'autonomous_systems_list.html', {
@@ -63,7 +63,7 @@ def delete_autonomous_system(request, as_number):
 def edit_autonomous_system(request, as_number=None):
 	if as_number:
 		mode = 'edit'
-		autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, as_number=as_number)
+		autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, select_related=['institution'], as_number=as_number)
 	else:
 		mode = 'create'
 		autonomous_system = AutonomousSystem()
@@ -115,13 +115,16 @@ def show_autonomous_system(request, as_number=None):
 
 
 def show_autonomous_system_geojson(request, as_number=None):
-	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, as_number=as_number)
+	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, select_related=['institution'], as_number=as_number)
 	return JsonResponse(geojson_from_autonomous_systems([autonomous_system]))
 
 
 def show_autonomous_system_web(request, as_number=None):
-	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, as_number=as_number)
-	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number))
+	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, select_related=['institution'], as_number=as_number)
+	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number)).select_related(
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	)
 
 	for tunnel in tunnels:
 		if tunnel.endpoint1.autonomous_system.as_number == int(as_number):

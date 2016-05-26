@@ -40,7 +40,10 @@ def list_tunnels(request):
 
 
 def list_tunnels_geojson(request):
-	tunnels = list_objects_for_view(Tunnel, request)
+	tunnels = list_objects_for_view(Tunnel, request).select_related(
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	)
 	return JsonResponse(geojson_from_tunnels(tunnels))
 
 
@@ -49,7 +52,7 @@ def list_tunnels_web(request):
 		'endpoint1__autonomous_system',
 		'endpoint2__autonomous_system',
 		'endpoint1__autonomous_system__institution',
-		'endpoint2__autonomous_system__institution'
+		'endpoint2__autonomous_system__institution',
 	)
 	can_create = AutonomousSystem.objects.filter(institution__owners=request.user.id).exists()
 
@@ -68,7 +71,10 @@ def list_tunnels_web(request):
 def delete_tunnel(request, as_number1, as_number2):
 	if request.method != 'POST':
 		raise Http404
-	tunnel = get_object_for_edit_or_40x(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_edit_or_40x(Tunnel, request, select_related=[
+		'endpoint1',
+		'endpoint2',
+	], endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	with transaction.atomic():
 		tunnel.delete()
 		tunnel.endpoint1.delete()
@@ -234,17 +240,16 @@ def show_tunnel(request, as_number1=None, as_number2=None):
 
 
 def show_tunnel_geojson(request, as_number1=None, as_number2=None):
-	tunnel = get_object_for_view_or_404(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, select_related=[
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	], endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	return JsonResponse(geojson_from_tunnels([tunnel]))
 
 
 def show_tunnel_web(request, as_number1=None, as_number2=None):
-	tunnel = get_object_for_view_or_404(Tunnel, request, select_related=[
-		'endpoint1',
-		'endpoint2',
-		'endpoint1__autonomous_system',
-		'endpoint2__autonomous_system',
-	], with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	# FIXME: with_subclasses breaks select_related.
+	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
@@ -274,5 +279,8 @@ def list_tunnel_autonomous_systems(request, as_number1=None, as_number2=None):
 
 
 def list_tunnel_autonomous_systems_geojson(request, as_number1=None, as_number2=None):
-	tunnel = get_object_for_view_or_404(Tunnel, request, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, select_related=[
+		'endpoint1__autonomous_system',
+		'endpoint2__autonomous_system',
+	], endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
 	return JsonResponse(geojson_from_autonomous_systems([tunnel.endpoint1.autonomous_system, tunnel.endpoint2.autonomous_system]))

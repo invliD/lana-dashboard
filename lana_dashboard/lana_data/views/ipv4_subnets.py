@@ -19,7 +19,7 @@ from lana_dashboard.lana_data.utils import (
 
 @login_required
 def list_ipv4(request):
-	subnets = list_objects_for_view(IPv4Subnet, request)
+	subnets = list_objects_for_view(IPv4Subnet, request).select_related('institution')
 	can_create = Institution.objects.filter(owners=request.user.id).exists()
 
 	return render(request, 'ipv4_list.html', {
@@ -44,7 +44,7 @@ def edit_ipv4(request, network=None):
 	if network:
 		mode = 'edit'
 		try:
-			subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
+			subnet = get_object_for_edit_or_40x(IPv4Subnet, request, select_related=['institution'], network=network)
 		except ValidationError:
 			raise Http404
 	else:
@@ -90,7 +90,7 @@ def edit_ipv4(request, network=None):
 @login_required
 def show_ipv4(request, network):
 	try:
-		subnet = get_object_for_view_or_404(IPv4Subnet, request, network=network)
+		subnet = get_object_for_view_or_404(IPv4Subnet, request, select_related=['institution'], network=network)
 	except ValidationError:
 		raise Http404
 
