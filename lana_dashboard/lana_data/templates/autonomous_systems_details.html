@@ -4,7 +4,10 @@
 <li class="breadcrumb-item active">{{ autonomous_system }}</li>
 {% endblock %}
 {% block content %}
-	<h1>{{ autonomous_system }}</h1>
+	<h1>
+		{{ autonomous_system }}
+		{% if autonomous_system.private %}<span class="tag tag-default">Private</span>{% endif %}
+	</h1>
 	<div class="row">
 		<div class="col-xs-12 col-lg-6">
 			<table class="table">
