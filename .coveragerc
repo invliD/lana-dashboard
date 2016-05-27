@@ -1,0 +1,7 @@
+[run]
+branch = True
+omit = 
+	*/tests.py
+	*/migrations/*
+	lana_dashboard/wsgi.py
+source = lana_dashboard
