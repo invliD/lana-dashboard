@@ -44,7 +44,7 @@ class WhoisViewSet(ViewSet):
 		try:
 			interface = ip_interface(pk)
 			subnets = list_objects_for_view(IPv4Subnet, request, network__net_contains_or_equals=str(interface.network)).order_by('-network')[:1].select_related('institution')
-			if not subnets.exists():
+			if len(subnets) == 0:
 				raise Http404
 			subnet = subnets.first()
 			serializer = IPv4SubnetSerializer(subnet)
