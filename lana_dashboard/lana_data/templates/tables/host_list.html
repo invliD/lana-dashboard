@@ -2,7 +2,8 @@
 	<thead>
 	<tr>
 		<th>FQDN</th>
-		{% if not disable_institution %}
+		{% if not disable_autonomous_system %}
+		<th>AS</th>
 		<th>Institution</th>
 		{% endif %}
 		<th>Comment</th>
@@ -15,14 +16,21 @@
 				<a href="{% url 'lana_data:host-details' host.fqdn %}">{{ host.fqdn }}</a>
 				{% if host.private %}<span class="tag tag-default">Private</span>{% endif %}
 			</td>
-			{% if not disable_institution %}
+			{% if not disable_autonomous_system %}
+			<td>
+				{% if host.autonomous_system.show_link %}
+				<a href="{% url 'lana_data:autonomous_system-details' host.autonomous_system.as_number %}">{{ host.autonomous_system }}</a>
+				{% else %}
+				{{ host.autonomous_system }}
+				{% endif %}
+			</td>
 			<td>{% include 'fragments/institution_code.html' with institution=host.autonomous_system.institution %}</td>
 			{% endif %}
 			<td>{{ host.comment }}</td>
 		</tr>
 	{% empty %}
 		<tr>
-			<td colspan="{% if disable_institution %}2{% else %}3{% endif %}">{{ empty_message }}</td>
+			<td colspan="{% if disable_institution %}2{% else %}4{% endif %}">{{ empty_message }}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

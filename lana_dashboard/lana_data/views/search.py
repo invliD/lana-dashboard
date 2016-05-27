@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, IPv4Subnet
+from lana_dashboard.lana_data.models import AutonomousSystem, Host, Institution, IPv4Subnet
 from lana_dashboard.lana_data.utils import list_objects_for_view
 
 
@@ -43,6 +43,18 @@ def search(request, query=None):
 		results['autonomous_systems'] = list_objects_for_view(AutonomousSystem, request, db_query).select_related('institution')
 		if len(results['autonomous_systems']) == 1:
 			result_urls.append(reverse('lana_data:autonomous_system-details', kwargs={'as_number': results['autonomous_systems'][0].as_number}))
+
+		# Hosts
+		db_query = Q(fqdn__icontains=query) | Q(comment__icontains=query)
+		results['hosts'] = list_objects_for_view(Host, request, db_query).select_related(
+			'autonomous_system',
+			'autonomous_system__institution',
+		)
+		if len(results['hosts']) == 1:
+			result_urls.append(reverse('lana_data:host-details', kwargs={'fqdn': results['hosts'][0].fqdn}))
+		else:
+			for host in results['hosts']:
+				host.autonomous_system.show_link = host.autonomous_system.can_view(request.user)
 
 		# IP addresses / subnets
 		db_query = Q(network__contains=query) | Q(comment__icontains=query)
