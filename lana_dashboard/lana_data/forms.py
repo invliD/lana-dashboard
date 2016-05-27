@@ -5,6 +5,7 @@ from lana_dashboard.lana_data.models import (
 	AutonomousSystem,
 	FastdTunnel,
 	FastdTunnelEndpoint,
+	Host,
 	Institution,
 	IPv4Subnet,
 	Tunnel,
@@ -34,6 +35,12 @@ class AutonomousSystemForm(ModelForm):
 			'location_lat': NumberInput(attrs={'min': -90, 'max': 90}),
 			'location_lng': NumberInput(attrs={'min': -180, 'max': 180}),
 		}
+
+
+class HostForm(ModelForm):
+	class Meta:
+		model = Host
+		fields = ['fqdn', 'comment', 'autonomous_system', 'private']
 
 
 class TunnelProtocolForm(Form):

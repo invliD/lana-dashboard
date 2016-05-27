@@ -1,0 +1,16 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_systems' %}">Autonomous Systems</a></li>
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_system-details' original.as_number %}">AS{{ original.as_number }}</a></li>
+	{% if mode == 'create' %}
+		<li class="breadcrumb-item active">New</li>
+	{% else %}
+		<li class="breadcrumb-item"><a href="{% url 'lana_data:host-details' original.fqdn %}">{{ original.fqdn }}</a></li>
+		<li class="breadcrumb-item active">Edit</li>
+	{% endif %}
+{% endblock %}
+{% block content %}
+	<h1>{% if mode == 'create' %}Create new Host{% else %}Edit {{ original.fqdn }}{% endif %}</h1>
+	{% crispy form %}
+{% endblock %}

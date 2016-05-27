@@ -31,6 +31,11 @@
 					</tr>
 				</tbody>
 			</table>
+			{% if can_edit %}
+			<div class="m-b-1">
+				<a class="btn btn-primary" href="{% url 'lana_data:host-edit' host.fqdn %}">Edit Host</a>
+			</div>
+			{% endif %}
 		</div>
 		{% if host.autonomous_system.location_lat and host.autonomous_system.location_lng %}
 		<div class="col-xs-12 col-lg-6" style="min-height: 250px;">
