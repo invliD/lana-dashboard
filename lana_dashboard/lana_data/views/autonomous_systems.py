@@ -121,6 +121,7 @@ def show_autonomous_system_geojson(request, as_number=None):
 
 def show_autonomous_system_web(request, as_number=None):
 	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, select_related=['institution'], as_number=as_number)
+	hosts = list_objects_for_view(Host, request, autonomous_system=autonomous_system)
 	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__host__autonomous_system__as_number=as_number) | Q(endpoint2__host__autonomous_system__as_number=as_number)).select_related(
 		'endpoint1__host__autonomous_system',
 		'endpoint2__host__autonomous_system',
@@ -135,6 +136,7 @@ def show_autonomous_system_web(request, as_number=None):
 	return render(request, 'autonomous_systems_details.html', {
 		'header_active': 'autonomous_systems',
 		'autonomous_system': autonomous_system,
+		'hosts': hosts,
 		'tunnels': tunnels,
 		'can_edit': autonomous_system.can_edit(request.user),
 	})
