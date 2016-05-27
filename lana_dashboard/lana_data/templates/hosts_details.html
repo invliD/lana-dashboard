@@ -1,0 +1,47 @@
+{% extends "master.html" %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_systems' %}">Autonomous Systems</a></li>
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:autonomous_system-details' host.autonomous_system.as_number %}">{{ host.autonomous_system }}</a></li>
+	<li class="breadcrumb-item active">{{ host }}</li>
+{% endblock %}
+{% block content %}
+	<h1>
+		{{ host }}
+		{% if host.private %}<span class="tag tag-default">Private</span>{% endif %}
+	</h1>
+	<div class="row">
+		<div class="col-xs-12 col-lg-6">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>FQDN:</th>
+						<td>{{ host.fqdn }}</td>
+					</tr>
+					<tr>
+						<th>Comment:</th>
+						<td>{{ host.comment }}</td>
+					</tr>
+					<tr>
+						<th>Autonomous System:</th>
+						<td><a href="{% url 'lana_data:autonomous_system-details' host.autonomous_system.as_number %}">{{ host.autonomous_system }}</a></td>
+					</tr>
+					<tr>
+						<th>Institution:</th>
+						<td>{% include 'fragments/institution_name.html' with institution=host.autonomous_system.institution %}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		{% if host.autonomous_system.location_lat and host.autonomous_system.location_lng %}
+		<div class="col-xs-12 col-lg-6" style="min-height: 250px;">
+			<div id="map"></div>
+		</div>
+		<script>
+			$(function() {
+				var map = LANA.createMap({{ host.autonomous_system.location_lat }}, {{ host.autonomous_system.location_lng }}, 9);
+				LANA.loadGeoJSONPoints(map, '{% url 'lana_data:autonomous_system-details' host.autonomous_system.as_number %}');
+			});
+		</script>
+		{% endif %}
+	</div>
+{% endblock %}

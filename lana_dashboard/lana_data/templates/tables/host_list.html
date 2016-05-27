@@ -12,7 +12,7 @@
 	{% for host in hosts %}
 		<tr>
 			<td>
-				{{ host.fqdn }}
+				<a href="{% url 'lana_data:host-details' host.fqdn %}">{{ host.fqdn }}</a>
 				{% if host.private %}<span class="tag tag-default">Private</span>{% endif %}
 			</td>
 			{% if not disable_institution %}
