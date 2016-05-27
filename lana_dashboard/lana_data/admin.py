@@ -13,6 +13,11 @@ class AutonomousSystemAdmin(admin.ModelAdmin):
 	list_display = ('as_number', 'comment', 'institution')
 
 
+@admin.register(models.Host)
+class HostAdmin(admin.ModelAdmin):
+	list_display = ('fqdn', 'autonomous_system')
+
+
 @admin.register(models.IPv4Subnet)
 class IPv4SubnetAdmin(admin.ModelAdmin):
 	list_display = ('network', 'dns_server', 'comment', 'institution')
