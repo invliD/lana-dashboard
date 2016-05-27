@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('fqdn', models.CharField(max_length=255, unique=True, verbose_name='FQDN')),
+                ('comment', models.CharField(blank=True, max_length=255, verbose_name='Comment')),
                 ('autonomous_system', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='hosts', to='lana_data.AutonomousSystem', verbose_name='Autonomous System')),
             ],
             options={

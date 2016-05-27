@@ -15,7 +15,7 @@ class AutonomousSystemAdmin(admin.ModelAdmin):
 
 @admin.register(models.Host)
 class HostAdmin(admin.ModelAdmin):
-	list_display = ('fqdn', 'autonomous_system')
+	list_display = ('fqdn', 'comment', 'autonomous_system')
 
 
 @admin.register(models.IPv4Subnet)

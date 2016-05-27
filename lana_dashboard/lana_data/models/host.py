@@ -6,6 +6,7 @@ from lana_dashboard.lana_data.models.autonomous_system import AutonomousSystem
 
 class Host(models.Model):
 	fqdn = models.CharField(unique=True, max_length=255, verbose_name=_("FQDN"))
+	comment = models.CharField(max_length=255, blank=True, verbose_name=_("Comment"))
 
 	autonomous_system = models.ForeignKey(AutonomousSystem, models.DO_NOTHING, related_name='hosts', verbose_name=_("Autonomous System"))
 
