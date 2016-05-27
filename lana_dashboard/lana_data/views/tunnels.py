@@ -58,7 +58,7 @@ def list_tunnels_web(request):
 
 	for tunnel in tunnels:
 		for endpoint in [tunnel.endpoint1, tunnel.endpoint2]:
-			endpoint.host.autonomous_system.show_link = endpoint.host.autonomous_system.can_view(request.user)
+			endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
 
 	return render(request, 'tunnels_list.html', {
 		'header_active': 'tunnels',
@@ -92,8 +92,8 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 		protocol = tunnel.protocol
 		original = {
 			'protocol_name': tunnel.protocol_name,
-			'as_number1': tunnel.endpoint1.host.autonomous_system.as_number,
-			'as_number2': tunnel.endpoint2.host.autonomous_system.as_number,
+			'as_number1': tunnel.endpoint1.autonomous_system.as_number,
+			'as_number2': tunnel.endpoint2.autonomous_system.as_number,
 		}
 	else:
 		mode = 'create'
@@ -121,16 +121,16 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 				endpoint1 = endpoint1_form.save(commit=False)
 				endpoint2 = endpoint2_form.save(commit=False)
 
-				lower_as_number = min(endpoint1.host.autonomous_system.as_number, endpoint2.host.autonomous_system.as_number)
-				higher_as_number = max(endpoint1.host.autonomous_system.as_number, endpoint2.host.autonomous_system.as_number)
+				lower_as_number = min(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
+				higher_as_number = max(endpoint1.autonomous_system.as_number, endpoint2.autonomous_system.as_number)
 
 				error_message = None
 				exists_filter = Q(endpoint1__host__autonomous_system__as_number=lower_as_number, endpoint2__host__autonomous_system__as_number=higher_as_number)
 				if tunnel is not None:
 					exists_filter &= ~Q(id=tunnel.id)
-				if not endpoint1.host.autonomous_system.can_edit(request.user) and not endpoint2.host.autonomous_system.can_edit(request.user):
+				if not endpoint1.autonomous_system.can_edit(request.user) and not endpoint2.autonomous_system.can_edit(request.user):
 					error_message = "You cannot create a tunnel between two Autonomous Systems you don't manage."
-				elif endpoint1.host.autonomous_system.as_number == endpoint2.host.autonomous_system.as_number:
+				elif endpoint1.autonomous_system.as_number == endpoint2.autonomous_system.as_number:
 					error_message = "You cannot create a tunnel within one Autonomous System."
 				elif Tunnel.objects.filter(exists_filter).exists():
 					error_message = "A tunnel between these two Autonomous Systems already exists."
@@ -144,13 +144,13 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 					tunnel = tunnel_form.save(commit=False)
 					tunnel.endpoint1 = endpoint1
 					tunnel.endpoint2 = endpoint2
-					if tunnel.endpoint1.host.autonomous_system.as_number > tunnel.endpoint2.host.autonomous_system.as_number:
+					if tunnel.endpoint1.autonomous_system.as_number > tunnel.endpoint2.autonomous_system.as_number:
 						tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
 					tunnel.prepare_save()
 					tunnel.save()
 					return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
-						'as_number1': tunnel.endpoint1.host.autonomous_system.as_number,
-						'as_number2': tunnel.endpoint2.host.autonomous_system.as_number
+						'as_number1': tunnel.endpoint1.autonomous_system.as_number,
+						'as_number2': tunnel.endpoint2.autonomous_system.as_number
 					}))
 	else:
 		if mode == 'create':
@@ -250,14 +250,14 @@ def show_tunnel_geojson(request, as_number1=None, as_number2=None):
 def show_tunnel_web(request, as_number1=None, as_number2=None):
 	# FIXME: with_subclasses breaks select_related.
 	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__host__autonomous_system__as_number=as_number1, endpoint2__host__autonomous_system__as_number=as_number2)
-	show_map = tunnel.endpoint1.host.autonomous_system.location_lat is not None and tunnel.endpoint1.host.autonomous_system.location_lng is not None and tunnel.endpoint2.host.autonomous_system.location_lat is not None and tunnel.endpoint2.host.autonomous_system.location_lng is not None
+	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint2.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
 		for i, endpoint in enumerate([tunnel.real_endpoint1, tunnel.real_endpoint2]):
 			endpoint.config_generation_url = tunnel.get_config_generation_url(i + 1)
 
 	for i, endpoint in enumerate([tunnel.real_endpoint1, tunnel.real_endpoint2]):
-		endpoint.host.autonomous_system.show_link = endpoint.host.autonomous_system.can_view(request.user)
+		endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
 
 	return render(request, 'tunnels_details.html', {
 		'header_active': 'tunnels',

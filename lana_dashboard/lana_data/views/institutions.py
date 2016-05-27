@@ -116,7 +116,7 @@ def show_institution(request, code=None):
 
 	for tunnel in tunnels:
 		for i, endpoint in enumerate([tunnel.endpoint1, tunnel.endpoint2]):
-			endpoint.host.autonomous_system.show_link = endpoint.host.autonomous_system.can_view(request.user)
+			endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',

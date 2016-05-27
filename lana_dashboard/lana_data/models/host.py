@@ -21,6 +21,10 @@ class Host(models.Model):
 	def get_view_qs(cls, user):
 		return cls.objects.filter(Q(private=False) | Q(autonomous_system__institution__owners=user)).distinct('fqdn')
 
+	@property
+	def institution(self):
+		return self.autonomous_system.institution
+
 	def __str__(self):
 		return self.fqdn
 

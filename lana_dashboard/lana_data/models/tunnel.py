@@ -24,6 +24,14 @@ class TunnelEndpoint(models.Model):
 			return self.tunnel2
 		return None
 
+	@property
+	def autonomous_system(self):
+		return self.host.autonomous_system
+
+	@property
+	def institution(self):
+		return self.autonomous_system.institution
+
 	def can_edit(self, user):
 		return self.host.can_edit(user)
 

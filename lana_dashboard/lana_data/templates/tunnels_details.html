@@ -48,8 +48,8 @@
 			</table>
 			{% if can_edit %}
 			<div class="m-b-1">
-				<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number %}">Edit Tunnel</a>
-				{% url 'lana_data:tunnel-delete' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number as delete_url %}
+				<a class="btn btn-primary" href="{% url 'lana_data:tunnel-edit' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Edit Tunnel</a>
+				{% url 'lana_data:tunnel-delete' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number as delete_url %}
 				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Tunnel' %}
 			</div>
 			{% endif %}
@@ -61,10 +61,10 @@
 			<script>
 				$(function() {
 					var map = LANA.createMap(51.133333, 10.416667, 4);
-					LANA.loadGeoJSONPoints(map, '{% url 'lana_data:tunnel-autonomous_systems' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number %}', function() {
+					LANA.loadGeoJSONPoints(map, '{% url 'lana_data:tunnel-autonomous_systems' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}', function() {
 						LANA.fitBoundsToSource(map, 'markers');
 					});
-					LANA.loadGeoJSONLines(map, '{% url 'lana_data:tunnel-details' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number %}')
+					LANA.loadGeoJSONLines(map, '{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}')
 				});
 			</script>
 		{% endif %}
@@ -80,11 +80,11 @@
 						<th style="width: 45%;">Autonomous System:</th>
 						<td style="width: 55%;">
 							{% if endpoint.host.autonomous_system.show_link %}
-							<a href="{% url 'lana_data:autonomous_system-details' endpoint.host.autonomous_system.as_number %}">{{ endpoint.host.autonomous_system }}</a>
+							<a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a>
 							{% else %}
-							{{ endpoint.host.autonomous_system }}
+							{{ endpoint.autonomous_system }}
 							{% endif %}
-							{% include 'fragments/institution_code.html' with institution=endpoint.host.autonomous_system.institution %}
+							{% include 'fragments/institution_code.html' with institution=endpoint.autonomous_system.institution %}
 						</td>
 					</tr>
 					<tr>

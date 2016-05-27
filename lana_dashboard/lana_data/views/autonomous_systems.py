@@ -128,7 +128,7 @@ def show_autonomous_system_web(request, as_number=None):
 	)
 
 	for tunnel in tunnels:
-		if tunnel.endpoint1.host.autonomous_system.as_number == int(as_number):
+		if tunnel.endpoint1.autonomous_system.as_number == int(as_number):
 			tunnel.peer_endpoint = tunnel.endpoint2
 		else:
 			tunnel.peer_endpoint = tunnel.endpoint1
