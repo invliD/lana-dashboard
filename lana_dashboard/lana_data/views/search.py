@@ -28,7 +28,7 @@ def search(request, query=None):
 			result_urls.append(reverse('lana_data:institution-details', kwargs={'code': results['institutions'][0].code}))
 
 		# Autonomous Systems
-		db_query = Q(fqdn__icontains=query) | Q(comment__icontains=query)
+		db_query = Q(comment__icontains=query)
 
 		as_number = None
 		if query[:2].lower() == 'as':

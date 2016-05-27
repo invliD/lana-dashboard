@@ -13,3 +13,9 @@ class Host(models.Model):
 		ordering = ['fqdn']
 		verbose_name = ungettext_lazy("Host", "Hosts", 1)
 		verbose_name_plural = ungettext_lazy("Host", "Hosts", 2)
+
+	def __str__(self):
+		return self.fqdn
+
+	def can_edit(self, user):
+		return self.autonomous_system.can_edit(user)

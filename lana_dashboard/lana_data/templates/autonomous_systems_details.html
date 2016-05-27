@@ -62,10 +62,10 @@
 					{% for tunnel in tunnels %}
 					<tr>
 						<td>
-							<a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a>
+							<a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number %}">Details</a>
 							{% if tunnel.private %}<span class="tag tag-default">Private</span>{% endif %}
 						</td>
-						<td><a href="{% url 'lana_data:autonomous_system-details' tunnel.peer_endpoint.autonomous_system.as_number %}">{{ tunnel.peer_endpoint.autonomous_system }}</a></td>
+						<td><a href="{% url 'lana_data:autonomous_system-details' tunnel.peer_endpoint.host.autonomous_system.as_number %}">{{ tunnel.peer_endpoint.host.autonomous_system }}</a></td>
 						<td>{{ tunnel.comment }}</td>
 					</tr>
 					{% empty %}

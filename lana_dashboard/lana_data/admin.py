@@ -35,14 +35,14 @@ class VtunTunnelAdmin(TunnelAdmin):
 
 @admin.register(models.TunnelEndpoint)
 class TunnelEndpointAdmin(admin.ModelAdmin):
-	list_display = ('autonomous_system',)
+	list_display = ('host',)
 
 
 @admin.register(models.FastdTunnelEndpoint)
 class FastdTunnelEndpointAdmin(TunnelEndpointAdmin):
-	list_display = ('autonomous_system', 'port')
+	list_display = ('host', 'port')
 
 
 @admin.register(models.VtunTunnelEndpoint)
 class VtunTunnelEndpointAdmin(TunnelEndpointAdmin):
-	list_display = ('autonomous_system', 'port')
+	list_display = ('host', 'port')

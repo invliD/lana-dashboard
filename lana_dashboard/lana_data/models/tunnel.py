@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.managers import InheritanceManager
 import netfields
 
-from lana_dashboard.lana_data.models.autonomous_system import AutonomousSystem
+from lana_dashboard.lana_data.models.host import Host
 
 
 class TunnelEndpoint(models.Model):
@@ -12,7 +12,7 @@ class TunnelEndpoint(models.Model):
 	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
 
-	autonomous_system = models.ForeignKey(AutonomousSystem, related_name='tunnel_endpoints', verbose_name=_("Autonomous System"))
+	host = models.ForeignKey(Host, models.DO_NOTHING, related_name='tunnel_endpoints', verbose_name=_("Host"))
 
 	objects = netfields.NetManager()
 
@@ -25,7 +25,7 @@ class TunnelEndpoint(models.Model):
 		return None
 
 	def can_edit(self, user):
-		return self.autonomous_system.can_edit(user)
+		return self.host.can_edit(user)
 
 	def is_config_complete(self):
 		return False
@@ -51,14 +51,14 @@ class Tunnel(models.Model):
 	objects = InheritanceManager()
 
 	class Meta:
-		ordering = ['endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number']
+		ordering = ['endpoint1__host__autonomous_system__as_number', 'endpoint2__host__autonomous_system__as_number']
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects.filter(Q(private=False) | Q(endpoint1__autonomous_system__institution__owners=user) | Q(endpoint2__autonomous_system__institution__owners=user)).distinct('endpoint1__autonomous_system__as_number', 'endpoint2__autonomous_system__as_number')
+		return cls.objects.filter(Q(private=False) | Q(endpoint1__host__autonomous_system__institution__owners=user) | Q(endpoint2__host__autonomous_system__institution__owners=user)).distinct('endpoint1__host__autonomous_system__as_number', 'endpoint2__host__autonomous_system__as_number')
 
 	def __str__(self):
-		return "{}-{}".format(self.endpoint1.autonomous_system, self.endpoint2.autonomous_system)
+		return "{}-{}".format(self.endpoint1.host.autonomous_system, self.endpoint2.host.autonomous_system)
 
 	@property
 	def protocol(self):

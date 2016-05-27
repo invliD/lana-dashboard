@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block breadcrumbs %}
 	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnels' %}">Tunnels</a></li>
-	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">{{ tunnel }}</a></li>
+	<li class="breadcrumb-item"><a href="{% url 'lana_data:tunnel-details' tunnel.endpoint1.host.autonomous_system.as_number tunnel.endpoint2.host.autonomous_system.as_number %}">{{ tunnel }}</a></li>
 	<li class="breadcrumb-item active">Generate Fastd config</li>
 {% endblock %}
 {% block content %}

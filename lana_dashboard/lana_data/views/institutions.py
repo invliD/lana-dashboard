@@ -106,17 +106,17 @@ def show_institution(request, code=None):
 	institution = get_object_for_view_or_404(Institution, request, code=code)
 	autonomous_systems = list_objects_for_view(AutonomousSystem, request, institution=institution)
 	ipv4_subnets = list_objects_for_view(IPv4Subnet, request, institution=institution)
-	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__institution=institution) | Q(endpoint2__autonomous_system__institution=institution)).select_related(
-		'endpoint1__autonomous_system',
-		'endpoint2__autonomous_system',
-		'endpoint1__autonomous_system__institution',
-		'endpoint2__autonomous_system__institution',
+	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__host__autonomous_system__institution=institution) | Q(endpoint2__host__autonomous_system__institution=institution)).select_related(
+		'endpoint1__host__autonomous_system',
+		'endpoint2__host__autonomous_system',
+		'endpoint1__host__autonomous_system__institution',
+		'endpoint2__host__autonomous_system__institution',
 	)
 	show_map = list_objects_for_view(AutonomousSystem, request, institution=institution).exclude(location_lat__isnull=True).exclude(location_lng__isnull=True).exists()
 
 	for tunnel in tunnels:
 		for i, endpoint in enumerate([tunnel.endpoint1, tunnel.endpoint2]):
-			endpoint.autonomous_system.show_link = endpoint.autonomous_system.can_view(request.user)
+			endpoint.host.autonomous_system.show_link = endpoint.host.autonomous_system.can_view(request.user)
 
 	return render(request, 'institutions_details.html', {
 		'header_active': 'institutions',
@@ -157,8 +157,8 @@ def list_institution_tunnels(request, code=None):
 
 def list_institution_tunnels_geojson(request, code=None):
 	institution = get_object_for_view_or_404(Institution, request, code=code)
-	tunnels = list_objects_for_view(Tunnel, request, endpoint1__autonomous_system__institution=institution).filter(endpoint2__autonomous_system__institution=institution).select_related(
-		'endpoint1__autonomous_system',
-		'endpoint2__autonomous_system',
+	tunnels = list_objects_for_view(Tunnel, request, endpoint1__host__autonomous_system__institution=institution).filter(endpoint2__host__autonomous_system__institution=institution).select_related(
+		'endpoint1__host__autonomous_system',
+		'endpoint2__host__autonomous_system',
 	)
 	return JsonResponse(geojson_from_tunnels(tunnels))

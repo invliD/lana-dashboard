@@ -63,8 +63,8 @@ def geojson_from_tunnels(tunnels):
 		'features': []
 	}
 	for tunnel in tunnels:
-		as1 = tunnel.endpoint1.autonomous_system
-		as2 = tunnel.endpoint2.autonomous_system
+		as1 = tunnel.endpoint1.host.autonomous_system
+		as2 = tunnel.endpoint2.host.autonomous_system
 
 		if as1.location_lat is None or as1.location_lng is None or as2.location_lat is None or as2.location_lng is None:
 			continue

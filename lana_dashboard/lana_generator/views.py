@@ -10,7 +10,7 @@ from lana_dashboard.lana_generator.forms import FastdGeneratorForm
 
 
 def generate_fastd(request, as_number1, as_number2, endpoint_number):
-	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__autonomous_system__as_number=as_number1, endpoint2__autonomous_system__as_number=as_number2)
+	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__host__autonomous_system__as_number=as_number1, endpoint2__host__autonomous_system__as_number=as_number2)
 	if not isinstance(tunnel, FastdTunnel) or not tunnel.is_config_complete():
 		raise Http404
 	config = None

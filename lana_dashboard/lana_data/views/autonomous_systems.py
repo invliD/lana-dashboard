@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import AutonomousSystemForm
-from lana_dashboard.lana_data.models import AutonomousSystem, Institution, Tunnel, TunnelEndpoint
+from lana_dashboard.lana_data.models import AutonomousSystem, Host, Institution, Tunnel
 from lana_dashboard.lana_data.utils import (
 	geojson_from_autonomous_systems,
 	get_object_for_edit_or_40x,
@@ -50,9 +50,9 @@ def delete_autonomous_system(request, as_number):
 		raise Http404
 	autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, as_number=as_number)
 
-	tunnel_endpoints = TunnelEndpoint.objects.filter(autonomous_system=autonomous_system)
-	if tunnel_endpoints.exists():
-		messages.error(request, 'You cannot delete this Autonomous System. There are still Tunnels associated with it.')
+	hosts = Host.objects.filter(autonomous_system=autonomous_system)
+	if hosts.exists():
+		messages.error(request, 'You cannot delete this Autonomous System. There are still Hosts associated with it.')
 		return HttpResponseRedirect(reverse('lana_data:autonomous_system-details', kwargs={'as_number': autonomous_system.as_number}))
 
 	autonomous_system.delete()
@@ -121,13 +121,13 @@ def show_autonomous_system_geojson(request, as_number=None):
 
 def show_autonomous_system_web(request, as_number=None):
 	autonomous_system = get_object_for_view_or_404(AutonomousSystem, request, select_related=['institution'], as_number=as_number)
-	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__autonomous_system__as_number=as_number) | Q(endpoint2__autonomous_system__as_number=as_number)).select_related(
-		'endpoint1__autonomous_system',
-		'endpoint2__autonomous_system',
+	tunnels = list_objects_for_view(Tunnel, request, Q(endpoint1__host__autonomous_system__as_number=as_number) | Q(endpoint2__host__autonomous_system__as_number=as_number)).select_related(
+		'endpoint1__host__autonomous_system',
+		'endpoint2__host__autonomous_system',
 	)
 
 	for tunnel in tunnels:
-		if tunnel.endpoint1.autonomous_system.as_number == int(as_number):
+		if tunnel.endpoint1.host.autonomous_system.as_number == int(as_number):
 			tunnel.peer_endpoint = tunnel.endpoint2
 		else:
 			tunnel.peer_endpoint = tunnel.endpoint1

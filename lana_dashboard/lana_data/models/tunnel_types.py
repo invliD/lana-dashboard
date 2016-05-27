@@ -28,8 +28,8 @@ class FastdTunnel(Tunnel):
 		return self.endpoint2.fastdtunnelendpoint
 
 	def prepare_save(self):
-		as1 = self.endpoint1.autonomous_system.as_number
-		as2 = self.endpoint2.autonomous_system.as_number
+		as1 = self.endpoint1.host.autonomous_system.as_number
+		as2 = self.endpoint2.host.autonomous_system.as_number
 		if not self.real_endpoint1.port and as2 <= 65535:
 			self.real_endpoint1.port = as2
 			self.real_endpoint1.save()
@@ -48,8 +48,8 @@ class FastdTunnel(Tunnel):
 
 	def get_config_generation_url(self, endpoint_number):
 		return reverse('lana_generator:generate-fastd', kwargs={
-			'as_number1': self.endpoint1.autonomous_system.as_number,
-			'as_number2': self.endpoint2.autonomous_system.as_number,
+			'as_number1': self.endpoint1.host.autonomous_system.as_number,
+			'as_number2': self.endpoint2.host.autonomous_system.as_number,
 			'endpoint_number': endpoint_number,
 		})
 
