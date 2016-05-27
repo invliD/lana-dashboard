@@ -34,6 +34,8 @@
 			{% if can_edit %}
 			<div class="m-b-1">
 				<a class="btn btn-primary" href="{% url 'lana_data:host-edit' host.fqdn %}">Edit Host</a>
+				{% url 'lana_data:host-delete' host.fqdn as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Host' %}
 			</div>
 			{% endif %}
 		</div>
