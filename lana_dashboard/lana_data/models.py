@@ -49,7 +49,7 @@ class AutonomousSystem(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects.filter(Q(private=False) | Q(institution__owners=user))
+		return cls.objects.filter(Q(private=False) | Q(institution__owners=user)).distinct('as_number')
 
 	def __str__(self):
 		return "AS{}".format(self.as_number)
@@ -78,7 +78,7 @@ class IPv4Subnet(models.Model):
 
 	@classmethod
 	def get_view_qs(cls, user):
-		return cls.objects.filter(Q(private=False) | Q(institution__owners=user))
+		return cls.objects.filter(Q(private=False) | Q(institution__owners=user)).distinct('network')
 
 	def __str__(self):
 		return str(self.network)
