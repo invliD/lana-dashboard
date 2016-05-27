@@ -10,7 +10,7 @@ class InstitutionAdmin(admin.ModelAdmin):
 
 @admin.register(models.AutonomousSystem)
 class AutonomousSystemAdmin(admin.ModelAdmin):
-	list_display = ('as_number', 'fqdn', 'comment', 'institution')
+	list_display = ('as_number', 'comment', 'institution')
 
 
 @admin.register(models.IPv4Subnet)

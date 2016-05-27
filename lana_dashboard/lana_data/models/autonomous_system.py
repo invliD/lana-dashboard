@@ -7,7 +7,6 @@ from lana_dashboard.lana_data.models.institution import Institution
 
 class AutonomousSystem(models.Model):
 	as_number = models.BigIntegerField(unique=True, verbose_name=_("AS Number"))
-	fqdn = models.CharField(max_length=255, verbose_name=_("FQDN"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 	location_lat = models.FloatField(blank=True, null=True, verbose_name=_("Latitude"))
 	location_lng = models.FloatField(blank=True, null=True, verbose_name=_("Longitude"))

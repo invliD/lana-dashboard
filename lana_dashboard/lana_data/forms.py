@@ -28,7 +28,7 @@ class InstitutionForm(ModelForm):
 class AutonomousSystemForm(ModelForm):
 	class Meta:
 		model = AutonomousSystem
-		fields = ['as_number', 'fqdn', 'comment', 'institution', 'location_lat', 'location_lng', 'private']
+		fields = ['as_number', 'comment', 'institution', 'location_lat', 'location_lng', 'private']
 		widgets = {
 			'as_number': NumberInput(attrs={'min': 0, 'max': 4294967296}),
 			'location_lat': NumberInput(attrs={'min': -90, 'max': 90}),
