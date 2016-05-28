@@ -250,7 +250,6 @@ def show_tunnel_geojson(request, as_number1=None, as_number2=None):
 def show_tunnel_web(request, as_number1=None, as_number2=None):
 	# FIXME: with_subclasses breaks select_related.
 	tunnel = get_object_for_view_or_404(Tunnel, request, with_subclasses=True, endpoint1__host__autonomous_system__as_number=as_number1, endpoint2__host__autonomous_system__as_number=as_number2)
-	show_map = tunnel.endpoint1.autonomous_system.location_lat is not None and tunnel.endpoint1.autonomous_system.location_lng is not None and tunnel.endpoint2.autonomous_system.location_lat is not None and tunnel.endpoint2.autonomous_system.location_lng is not None
 
 	if tunnel.supports_config_generation() and tunnel.is_config_complete():
 		for i, endpoint in enumerate([tunnel.real_endpoint1, tunnel.real_endpoint2]):
@@ -264,7 +263,6 @@ def show_tunnel_web(request, as_number1=None, as_number2=None):
 		'tunnel': tunnel,
 		'endpoints': [tunnel.real_endpoint1, tunnel.real_endpoint2],
 		'can_edit': tunnel.can_edit(request.user),
-		'show_map': show_map,
 	})
 
 

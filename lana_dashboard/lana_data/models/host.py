@@ -25,6 +25,10 @@ class Host(models.Model):
 	def institution(self):
 		return self.autonomous_system.institution
 
+	@property
+	def has_geo(self):
+		return self.autonomous_system.has_geo
+
 	def __str__(self):
 		return self.fqdn
 

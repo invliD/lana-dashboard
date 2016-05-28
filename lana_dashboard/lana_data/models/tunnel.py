@@ -32,6 +32,10 @@ class TunnelEndpoint(models.Model):
 	def institution(self):
 		return self.autonomous_system.institution
 
+	@property
+	def has_geo(self):
+		return self.autonomous_system.has_geo
+
 	def can_edit(self, user):
 		return self.host.can_edit(user)
 
@@ -83,6 +87,10 @@ class Tunnel(models.Model):
 	@property
 	def real_endpoint2(self):
 		return self.endpoint2
+
+	@property
+	def has_geo(self):
+		return self.endpoint1.has_geo and self.endpoint2.has_geo
 
 	def can_edit(self, user):
 		return self.endpoint1.can_edit(user) or self.endpoint2.can_edit(user)

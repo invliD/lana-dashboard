@@ -34,7 +34,7 @@
 			</div>
 			{% endif %}
 		</div>
-		{% if autonomous_system.location_lat and autonomous_system.location_lng %}
+		{% if autonomous_system.has_geo %}
 		<div class="col-xs-12 col-lg-6" style="min-height: 250px;">
 			<div id="map"></div>
 		</div>

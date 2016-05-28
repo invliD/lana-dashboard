@@ -39,7 +39,7 @@ def geojson_from_autonomous_systems(autonomous_systems):
 		'features': [],
 	}
 	for autonomous_system in autonomous_systems:
-		if autonomous_system.location_lat is None or autonomous_system.location_lng is None:
+		if not autonomous_system.has_geo:
 			continue
 
 		obj['features'].append({
@@ -66,7 +66,7 @@ def geojson_from_tunnels(tunnels):
 		as1 = tunnel.endpoint1.autonomous_system
 		as2 = tunnel.endpoint2.autonomous_system
 
-		if as1.location_lat is None or as1.location_lng is None or as2.location_lat is None or as2.location_lng is None:
+		if not tunnel.has_geo:
 			continue
 
 		obj['features'].append({

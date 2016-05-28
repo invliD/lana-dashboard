@@ -23,6 +23,10 @@ class AutonomousSystem(models.Model):
 	def get_view_qs(cls, user):
 		return cls.objects.filter(Q(private=False) | Q(institution__owners=user)).distinct('as_number')
 
+	@property
+	def has_geo(self):
+		return self.location_lat is not None and self.location_lng is not None
+
 	def __str__(self):
 		return "AS{}".format(self.as_number)
 
