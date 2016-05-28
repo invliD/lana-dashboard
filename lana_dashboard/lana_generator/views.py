@@ -25,7 +25,6 @@ def generate_fastd(request, as_number1, as_number2, endpoint_number):
 			config = render_to_string('fastd.conf', {
 				'tunnel': tunnel,
 				'tunnel_name': form.cleaned_data['tunnel_name'],
-				'peer_name': form.cleaned_data['peer_name'],
 				'local_endpoint': local_endpoint,
 				'remote_endpoint': remote_endpoint,
 				'remote_host': remote_endpoint.external_hostname or remote_endpoint.external_ipv4.ip,
