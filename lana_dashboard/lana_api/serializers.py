@@ -1,6 +1,15 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, SlugRelatedField
 
-from lana_dashboard.lana_data.models import Institution, IPv4Subnet
+from lana_dashboard.lana_data.models import (
+	FastdTunnel,
+	FastdTunnelEndpoint,
+	Institution,
+	IPv4Subnet,
+	Tunnel,
+	TunnelEndpoint,
+	VtunTunnel,
+	VtunTunnelEndpoint,
+)
 
 
 class InstitutionSerializer(ModelSerializer):
@@ -15,3 +24,51 @@ class IPv4SubnetSerializer(ModelSerializer):
 	class Meta:
 		model = IPv4Subnet
 		fields = ['network', 'comment', 'institution']
+
+
+class TunnelSerializer(ModelSerializer):
+	class Meta:
+		model = Tunnel
+		fields = ['mode', 'encryption_method', 'mtu']
+
+
+class FastdTunnelSerializer(TunnelSerializer):
+	class Meta(TunnelSerializer.Meta):
+		model = FastdTunnel
+
+
+class VtunTunnelSerializer(TunnelSerializer):
+	class Meta(TunnelSerializer.Meta):
+		model = VtunTunnel
+		fields = ['transport', 'mode', 'encryption_method', 'compression', 'mtu']
+
+
+class TunnelEndpointSerializer(ModelSerializer):
+	fqdn = SlugRelatedField(slug_field='fqdn', source='host', read_only=True)
+	external_ipv4 = SerializerMethodField()
+	internal_ipv4 = SerializerMethodField()
+
+	class Meta:
+		model = TunnelEndpoint
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4']
+
+	def get_external_ipv4(self, obj):
+		return str(obj.external_ipv4.ip) if obj.external_ipv4 is not None else None
+
+	def get_internal_ipv4(self, obj):
+		if obj.tunnel.mode == Tunnel.MODE_TUN:
+			return str(obj.internal_ipv4.ip) if obj.internal_ipv4 is not None else None
+		else:
+			return str(obj.internal_ipv4)
+
+
+class FastdTunnelEndpointSerializer(TunnelEndpointSerializer):
+	class Meta(TunnelEndpointSerializer.Meta):
+		model = FastdTunnelEndpoint
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
+
+
+class VtunTunnelEndpointSerializer(TunnelEndpointSerializer):
+	class Meta(TunnelEndpointSerializer.Meta):
+		model = VtunTunnelEndpoint
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port']
