@@ -77,8 +77,12 @@
 			<table class="table">
 				<tbody>
 					<tr>
-						<th style="width: 45%;">Autonomous System:</th>
-						<td style="width: 55%;">
+						<th style="width: 45%;">Host:</th>
+						<td style="width: 55%;"><a href="{% url 'lana_data:host-details' endpoint.host.fqdn %}">{{ endpoint.host }}</a></td>
+					</tr>
+					<tr>
+						<th>Autonomous System:</th>
+						<td>
 							{% if endpoint.host.autonomous_system.show_link %}
 							<a href="{% url 'lana_data:autonomous_system-details' endpoint.autonomous_system.as_number %}">{{ endpoint.autonomous_system }}</a>
 							{% else %}
