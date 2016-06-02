@@ -25,7 +25,7 @@ def forward_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lana_data', '0004_private'),
+        ('lana_data', '0003_release'),
     ]
 
     operations = [
@@ -66,5 +66,20 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='tunnelendpoint',
             name='autonomous_system',
+        ),
+        migrations.AddField(
+            model_name='autonomoussystem',
+            name='private',
+            field=models.BooleanField(default=False, verbose_name='Private'),
+        ),
+        migrations.AddField(
+            model_name='ipv4subnet',
+            name='private',
+            field=models.BooleanField(default=False, verbose_name='Private'),
+        ),
+        migrations.AddField(
+            model_name='tunnel',
+            name='private',
+            field=models.BooleanField(default=False, verbose_name='Private'),
         ),
     ]
