@@ -17,7 +17,7 @@ class IntegrationTestCase(TestCase):
 		self.client = Client()
 		self.client.login(username='admin', password='pwd')
 
-		self.i1 = Institution(code='t1', name='Test Institution 1')
+		self.i1 = Institution(code='t1', name='Test Institution 1', abuse_email='abuse@example.net')
 		self.i1.save()
 		self.i1.owners.add(self.user)
 		self.i1.save()
@@ -61,6 +61,7 @@ class InstitutionIntegrationTests(IntegrationTestCase):
 			'code': 't3',
 			'name': 'Created Institution',
 			'color': '#000000',
+			'abuse_email': 'abuse@example.com',
 		})
 		self.assertEqual(response.status_code, 302)
 		institutions = Institution.objects.all()
@@ -75,6 +76,7 @@ class InstitutionIntegrationTests(IntegrationTestCase):
 			'code': self.i1.code,
 			'name': 'Edited Institution',
 			'color': self.i1.color,
+			'abuse_email': self.i1.abuse_email,
 		})
 		self.assertEqual(response.status_code, 302)
 		institution = Institution.objects.get(code='t1')
