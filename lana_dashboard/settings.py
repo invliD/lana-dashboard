@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'colorfield',
 	'crispy_forms',
+	'kombu.transport.django',
 	'netfields',
 	'rest_framework',
 	'static_precompiler',
@@ -161,6 +162,11 @@ REST_FRAMEWORK = {
 	),
 	'VIEW_NAME_FUNCTION': 'lana_dashboard.lana_api.views.get_view_name',
 }
+
+# Celery settings
+BROKER_URL = 'django://'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
 
 # LANA settings
 
