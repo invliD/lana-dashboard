@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'colorfield',
 	'crispy_forms',
+	'djcelery_email',
 	'kombu.transport.django',
 	'netfields',
 	'rest_framework',
@@ -167,6 +168,10 @@ REST_FRAMEWORK = {
 BROKER_URL = 'django://'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
+
+# Email settings
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # LANA settings
 
