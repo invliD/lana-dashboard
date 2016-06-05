@@ -1,0 +1,9 @@
+Dear managers of {{ tunnel.endpoint1.institution.name }}{% if tunnel.endpoint1.institution.code != tunnel.endpoint2.institition.code %} and {{ tunnel.endpoint2.institution.name }}{% endif %},
+{% if mode == 'create' %}
+A Tunnel between {{ tunnel.endpoint1.autonomous_system }} and {{ tunnel.endpoint2.autonomous_system }} was created by {{ editor.get_full_name }}.
+{% else %}
+The Tunnel between {{ tunnel.endpoint1.autonomous_system }} and {{ tunnel.endpoint2.autonomous_system }} was modified by {{ editor.get_full_name }}.
+{% endif %}Please check {{ url }} for more details.
+
+Best regards,
+LANA.
