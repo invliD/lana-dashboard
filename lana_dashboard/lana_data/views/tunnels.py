@@ -142,15 +142,16 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 					endpoint1_form.add_error('autonomous_system', error_message)
 					endpoint2_form.add_error('autonomous_system', error_message)
 				else:
-					endpoint1.save()
-					endpoint2.save()
-					tunnel = tunnel_form.save(commit=False)
-					tunnel.endpoint1 = endpoint1
-					tunnel.endpoint2 = endpoint2
-					if tunnel.endpoint1.autonomous_system.as_number > tunnel.endpoint2.autonomous_system.as_number:
-						tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
-					tunnel.prepare_save()
-					tunnel.save()
+					with transaction.atomic():
+						endpoint1.save()
+						endpoint2.save()
+						tunnel = tunnel_form.save(commit=False)
+						tunnel.endpoint1 = endpoint1
+						tunnel.endpoint2 = endpoint2
+						if tunnel.endpoint1.autonomous_system.as_number > tunnel.endpoint2.autonomous_system.as_number:
+							tunnel.endpoint1, tunnel.endpoint2 = tunnel.endpoint2, tunnel.endpoint1
+						tunnel.prepare_save()
+						tunnel.save()
 
 					# Send email to participating managers
 					managers = set(tunnel.endpoint1.institution.owners.all()) | set(tunnel.endpoint2.institution.owners.all())
