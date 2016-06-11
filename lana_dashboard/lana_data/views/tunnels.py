@@ -139,8 +139,8 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 					error_message = "A tunnel between these two Autonomous Systems already exists."
 
 				if error_message:
-					endpoint1_form.add_error('autonomous_system', error_message)
-					endpoint2_form.add_error('autonomous_system', error_message)
+					endpoint1_form.add_error('host', error_message)
+					endpoint2_form.add_error('host', error_message)
 				else:
 					with transaction.atomic():
 						endpoint1.save()
