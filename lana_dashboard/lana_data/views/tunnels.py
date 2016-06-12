@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.template.context_processors import csrf
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
+from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import (
@@ -71,9 +72,8 @@ def list_tunnels_web(request):
 
 
 @login_required
+@require_POST
 def delete_tunnel(request, as_number1, as_number2):
-	if request.method != 'POST':
-		raise Http404
 	tunnel = get_object_for_edit_or_40x(Tunnel, request, select_related=[
 		'endpoint1',
 		'endpoint2',

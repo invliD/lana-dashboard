@@ -3,11 +3,11 @@ from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import InstitutionForm
@@ -32,9 +32,8 @@ def list_institutions(request):
 
 
 @login_required
+@require_POST
 def delete_institution(request, code):
-	if request.method != 'POST':
-		raise PermissionDenied
 	institution = get_object_for_edit_or_40x(Institution, request, code=code)
 
 	error = False

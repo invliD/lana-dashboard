@@ -32,7 +32,7 @@ class InstitutionIntegrationTests(IntegrationTestCase):
 
 	def test_delete_institution_get(self):
 		response = self.client.get(reverse('lana_data:institution-delete', kwargs={'code': 't1'}))
-		self.assertEqual(response.status_code, 403)
+		self.assertEqual(response.status_code, 405)
 
 	def test_delete_institution_as(self):
 		AutonomousSystem(as_number=1, institution=self.i1).save()

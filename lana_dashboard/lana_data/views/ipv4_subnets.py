@@ -1,11 +1,12 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 from lana_dashboard.lana_data.forms import IPv4SubnetForm
 from lana_dashboard.lana_data.models import Host, Institution, IPv4Subnet
@@ -29,9 +30,8 @@ def list_ipv4(request):
 
 
 @login_required
+@require_POST
 def delete_ipv4(request, network):
-	if request.method != 'POST':
-		raise PermissionDenied
 	subnet = get_object_for_edit_or_40x(IPv4Subnet, request, network=network)
 
 	subnet.delete()

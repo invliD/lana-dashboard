@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers
 
 from lana_dashboard.lana_data.forms import AutonomousSystemForm
@@ -45,9 +46,8 @@ def list_autonomous_systems_web(request):
 
 
 @login_required
+@require_POST
 def delete_autonomous_system(request, as_number):
-	if request.method != 'POST':
-		raise Http404
 	autonomous_system = get_object_for_edit_or_40x(AutonomousSystem, request, as_number=as_number)
 
 	hosts = Host.objects.filter(autonomous_system=autonomous_system)

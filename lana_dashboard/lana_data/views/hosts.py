@@ -2,8 +2,9 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 from lana_dashboard.lana_data.forms import HostForm
 from lana_dashboard.lana_data.models import AutonomousSystem, Host
@@ -11,9 +12,8 @@ from lana_dashboard.lana_data.utils import get_object_for_edit_or_40x, get_objec
 
 
 @login_required
+@require_POST
 def delete_host(request, fqdn):
-	if request.method != 'POST':
-		raise Http404
 	host = get_object_for_edit_or_40x(Host, request, fqdn=fqdn)
 
 	host.delete()
