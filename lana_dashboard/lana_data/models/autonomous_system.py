@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import Q
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 
 from lana_dashboard.lana_data.models.institution import Institution
 

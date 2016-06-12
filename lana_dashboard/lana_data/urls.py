@@ -1,5 +1,7 @@
 from django.conf.urls import url
+
 from lana_dashboard.lana_data import views
+
 
 urlpatterns = [
 	url(r'^institutions/$', views.list_institutions, name='institutions'),

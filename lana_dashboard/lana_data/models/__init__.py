@@ -1,6 +1,6 @@
-from .autonomous_system import *
-from .host import *
-from .institution import *
-from .ipv4_subnet import *
-from .tunnel import *
-from .tunnel_types import *
+from .autonomous_system import *  # noqa
+from .host import *  # noqa
+from .institution import *  # noqa
+from .ipv4_subnet import *  # noqa
+from .tunnel import *  # noqa
+from .tunnel_types import *  # noqa

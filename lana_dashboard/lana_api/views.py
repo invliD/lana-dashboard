@@ -2,8 +2,8 @@ from ipaddress import ip_interface
 
 from django.db.models import Q
 from django.http import Http404
-from rest_framework.settings import api_settings
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.views import get_view_name as base_get_view_name
 from rest_framework.viewsets import ViewSet
 
@@ -102,8 +102,8 @@ class WhoisViewSet(ViewSet):
 	Allows querying LANA for a given IP address or network. If found, the smallest subnet that contains the given
 	address or network will be returned, including its Institution.
 	"""
-	authentication_classes = [StaticTokenWhoisAuthentication,] + api_settings.DEFAULT_AUTHENTICATION_CLASSES
-	permission_classes = or_permission([StaticTokenWhoisPermission,] + and_permission(api_settings.DEFAULT_PERMISSION_CLASSES))
+	authentication_classes = [StaticTokenWhoisAuthentication, ] + api_settings.DEFAULT_AUTHENTICATION_CLASSES
+	permission_classes = or_permission([StaticTokenWhoisPermission, ] + and_permission(api_settings.DEFAULT_PERMISSION_CLASSES))
 	lookup_value_regex = '[0-9\./]+'
 
 	@classmethod

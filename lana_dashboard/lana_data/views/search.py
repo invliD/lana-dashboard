@@ -78,5 +78,5 @@ def search(request, query=None):
 	return render(request, 'search.html', {
 		'query': query,
 		'results': results,
-		'total_results': sum(len(v) for k,v in results.items()),
+		'total_results': sum(len(v) for k, v in results.items()),
 	})
