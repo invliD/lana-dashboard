@@ -45,7 +45,12 @@ def search(request, query=None):
 			result_urls.append(reverse('lana_data:autonomous_system-details', kwargs={'as_number': results['autonomous_systems'][0].as_number}))
 
 		# Hosts
-		db_query = Q(fqdn__icontains=query) | Q(comment__icontains=query)
+		db_query = Q(fqdn__icontains=query) | Q(internal_ipv4__contains=query) | Q(tunnel_ipv4__contains=query) | Q(comment__icontains=query)
+		try:
+			interface = ip_interface(query)
+			db_query |= Q(internal_ipv4__net_contained_or_equal=interface) | Q(tunnel_ipv4__net_contained_or_equal=interface)
+		except ValueError:
+			pass
 		results['hosts'] = list_objects_for_view(Host, request, db_query).select_related(
 			'autonomous_system',
 			'autonomous_system__institution',
@@ -60,7 +65,7 @@ def search(request, query=None):
 		db_query = Q(network__contains=query) | Q(comment__icontains=query)
 		try:
 			interface = ip_interface(query)
-			db_query |= Q(network__net_contains_or_equals=str(interface.network))
+			db_query |= Q(network__net_contains_or_equals=interface.network)
 		except ValueError:
 			pass
 		results['ipv4_subnets'] = list_objects_for_view(IPv4Subnet, request, db_query).select_related('institution')
