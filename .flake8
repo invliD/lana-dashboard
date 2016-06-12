@@ -1,0 +1,6 @@
+[flake8]
+ignore = W191,E501
+exclude = lana_dashboard/static,lana_dashboard/staticfiles,lana_dashboard/*/migrations,lana_dashboard/localsettings.py
+
+application-import-names = lana_dashboard
+import-order-style = google

@@ -4,4 +4,5 @@ omit =
 	*/tests.py
 	*/migrations/*
 	lana_dashboard/wsgi.py
+	lana_dashboard/management/commands/lint.py
 source = lana_dashboard
