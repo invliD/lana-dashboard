@@ -18,6 +18,16 @@
 						<td>{{ institution.code }}</td>
 					</tr>
 					<tr>
+						<th>AS Range:</th>
+						<td>
+							{% if institution.as_range %}
+							[{{ institution.as_range.lower }}-{{ institution.as_range.upper }})
+							{% else %}
+							<em>None</em>
+							{% endif %}
+						</td>
+					</tr>
+					<tr>
 						<th>Abuse email:</th>
 						<td>
 							{% if institution.abuse_email %}

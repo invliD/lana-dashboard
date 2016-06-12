@@ -18,7 +18,7 @@ from lana_dashboard.lana_data.models import (
 class InstitutionForm(ModelForm):
 	class Meta:
 		model = Institution
-		fields = ['code', 'name', 'color', 'abuse_email', 'owners']
+		fields = ['code', 'name', 'as_range', 'color', 'abuse_email', 'owners']
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
