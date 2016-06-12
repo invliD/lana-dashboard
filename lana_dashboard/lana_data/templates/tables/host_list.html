@@ -2,6 +2,7 @@
 	<thead>
 	<tr>
 		<th>FQDN</th>
+		<th>Internal IPv4</th>
 		{% if not disable_autonomous_system %}
 		<th>AS</th>
 		<th>Institution</th>
@@ -16,6 +17,7 @@
 				<a href="{% url 'lana_data:host-details' host.fqdn %}">{{ host.fqdn }}</a>
 				{% if host.private %}<span class="tag tag-default">Private</span>{% endif %}
 			</td>
+			<td>{{ host.internal_ipv4.ip|default:'<em>None</em>' }}</td>
 			{% if not disable_autonomous_system %}
 			<td>
 				{% if host.autonomous_system.show_link %}
@@ -30,7 +32,7 @@
 		</tr>
 	{% empty %}
 		<tr>
-			<td colspan="{% if disable_institution %}2{% else %}4{% endif %}">{{ empty_message }}</td>
+			<td colspan="{% if disable_institution %}3{% else %}5{% endif %}">{{ empty_message }}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

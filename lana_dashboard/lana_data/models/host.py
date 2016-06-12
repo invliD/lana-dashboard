@@ -1,16 +1,23 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+import netfields
 
 from lana_dashboard.lana_data.models.autonomous_system import AutonomousSystem
 
 
 class Host(models.Model):
 	fqdn = models.CharField(unique=True, max_length=255, verbose_name=_("FQDN"))
+	external_hostname = models.CharField(max_length=255, blank=True, verbose_name=_("External hostname"))
+	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
+	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
+	tunnel_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Tunnel IPv4 address"))
 	comment = models.CharField(max_length=255, blank=True, verbose_name=_("Comment"))
 
 	private = models.BooleanField(default=False, verbose_name=_("Private"))
 	autonomous_system = models.ForeignKey(AutonomousSystem, models.DO_NOTHING, related_name='hosts', verbose_name=_("Autonomous System"))
+
+	objects = netfields.NetManager()
 
 	class Meta:
 		ordering = ['fqdn']

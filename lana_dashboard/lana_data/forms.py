@@ -40,7 +40,7 @@ class AutonomousSystemForm(ModelForm):
 class HostForm(ModelForm):
 	class Meta:
 		model = Host
-		fields = ['fqdn', 'comment', 'autonomous_system', 'private']
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'tunnel_ipv4', 'comment', 'autonomous_system', 'private']
 
 
 class TunnelProtocolForm(Form):
@@ -81,13 +81,13 @@ class VtunTunnelForm(TunnelForm):
 class TunnelEndpointForm(ModelForm):
 	class Meta:
 		model = TunnelEndpoint
-		fields = ['host', 'external_hostname', 'external_ipv4', 'internal_ipv4']
+		fields = ['host', 'override_internal_ipv4']
 
 
 class FastdTunnelEndpointForm(TunnelEndpointForm):
 	class Meta(TunnelEndpointForm.Meta):
 		model = FastdTunnelEndpoint
-		fields = ['host', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
+		fields = ['host', 'override_internal_ipv4', 'port', 'public_key']
 		widgets = {
 			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
 		}
@@ -96,7 +96,7 @@ class FastdTunnelEndpointForm(TunnelEndpointForm):
 class VtunTunnelEndpointForm(TunnelEndpointForm):
 	class Meta(TunnelEndpointForm.Meta):
 		model = VtunTunnelEndpoint
-		fields = ['host', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port']
+		fields = ['host', 'override_internal_ipv4', 'port']
 		widgets = {
 			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
 		}

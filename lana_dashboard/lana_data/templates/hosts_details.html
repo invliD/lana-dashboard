@@ -17,6 +17,28 @@
 						<th>FQDN:</th>
 						<td>{{ host.fqdn }}</td>
 					</tr>
+					{% if host.external_hostname %}
+					<tr>
+						<th>External hostname:</th>
+						<td>{{ host.external_hostname }}</td>
+					</tr>
+					{% endif %}
+					{% if host.external_ipv4 %}
+					<tr>
+						<th>External IPv4:</th>
+						<td>{{ host.external_ipv4.ip }}</td>
+					</tr>
+					{% endif %}
+					<tr>
+						<th>Internal IPv4:</th>
+						<td>{{ host.internal_ipv4.ip|default:'<em>None</em>' }}</td>
+					</tr>
+					{% if host.tunnel_ipv4 %}
+					<tr>
+						<th>Tunnel IPv4:</th>
+						<td>{{ host.tunnel_ipv4.ip }}</td>
+					</tr>
+					{% endif %}
 					<tr>
 						<th>Comment:</th>
 						<td>{{ host.comment }}</td>

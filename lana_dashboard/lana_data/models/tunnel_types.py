@@ -90,7 +90,7 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
 
 	def is_config_complete(self):
-		return ((bool(self.external_hostname) or bool(self.external_ipv4)) and
+		return ((bool(self.host.external_hostname) or bool(self.host.external_ipv4)) and
 				bool(self.internal_ipv4) and
 				bool(self.port) and
 				bool(self.public_key))

@@ -8,9 +8,7 @@ from lana_dashboard.lana_data.models.host import Host
 
 
 class TunnelEndpoint(models.Model):
-	external_hostname = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("External hostname"))
-	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
-	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
+	override_internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Override internal IPv4 address"))
 
 	host = models.ForeignKey(Host, models.DO_NOTHING, related_name='tunnel_endpoints', verbose_name=_("Host"))
 
@@ -31,6 +29,10 @@ class TunnelEndpoint(models.Model):
 	@property
 	def institution(self):
 		return self.autonomous_system.institution
+
+	@property
+	def internal_ipv4(self):
+		return self.override_internal_ipv4 or self.host.tunnel_ipv4
 
 	@property
 	def has_geo(self):

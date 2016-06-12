@@ -45,6 +45,7 @@ class VtunTunnelSerializer(TunnelSerializer):
 
 class TunnelEndpointSerializer(ModelSerializer):
 	fqdn = SlugRelatedField(slug_field='fqdn', source='host', read_only=True)
+	external_hostname = SerializerMethodField()
 	external_ipv4 = SerializerMethodField()
 	internal_ipv4 = SerializerMethodField()
 
@@ -52,8 +53,11 @@ class TunnelEndpointSerializer(ModelSerializer):
 		model = TunnelEndpoint
 		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4']
 
+	def get_external_hostname(self, obj):
+		return obj.host.external_hostname if obj.host.external_hostname != '' else None
+
 	def get_external_ipv4(self, obj):
-		return str(obj.external_ipv4.ip) if obj.external_ipv4 is not None else None
+		return str(obj.host.external_ipv4.ip) if obj.host.external_ipv4 is not None else None
 
 	def get_internal_ipv4(self, obj):
 		if obj.tunnel.mode == Tunnel.MODE_TUN:
