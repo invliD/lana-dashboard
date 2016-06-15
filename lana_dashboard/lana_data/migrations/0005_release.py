@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import django.contrib.postgres.fields.ranges
 from django.db import migrations, models
 import netfields.fields
 
@@ -46,10 +47,16 @@ def forward_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lana_data', '0005_abuse_email'),
+        ('lana_data', '0004_release'),
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='institution',
+            name='abuse_email',
+            field=models.EmailField(default='abuse@example.com', max_length=254, verbose_name='Abuse Email'),
+            preserve_default=False,
+        ),
         migrations.AddField(
             model_name='host',
             name='external_hostname',
@@ -88,5 +95,10 @@ class Migration(migrations.Migration):
             model_name='tunnelendpoint',
             name='override_internal_ipv4',
             field=netfields.fields.InetAddressField(blank=True, max_length=39, null=True, verbose_name='Override internal IPv4 address'),
+        ),
+        migrations.AddField(
+            model_name='institution',
+            name='as_range',
+            field=django.contrib.postgres.fields.ranges.BigIntegerRangeField(blank=True, null=True, verbose_name='AS Range'),
         ),
     ]
