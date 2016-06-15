@@ -1,4 +1,4 @@
-coveralls
+coveralls ==1.1
 
-flake8
-flake8-import-order
+flake8 ==2.5.5
+flake8-import-order ==0.8
