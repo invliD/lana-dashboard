@@ -31,6 +31,7 @@ from lana_dashboard.lana_data.utils import (
 	get_object_for_view_or_404,
 	list_objects_for_view,
 )
+from lana_dashboard.usermanagement.utils import send_email
 
 
 @login_required
@@ -174,7 +175,7 @@ def edit_tunnel(request, as_number1=None, as_number2=None):
 
 						with mail.get_connection() as connection:
 							for manager in managers:
-								mail.EmailMessage(subject, body, to=(manager.email,), connection=connection).send()
+								send_email(manager, subject, body, connection=connection)
 
 					return HttpResponseRedirect(reverse('lana_data:tunnel-details', kwargs={
 						'as_number1': tunnel.endpoint1.autonomous_system.as_number,

@@ -9,4 +9,4 @@ class ContactInformationForm(forms.ModelForm):
 
 	class Meta:
 		model = ContactInformation
-		fields = ['email', 'show_email', 'skype_user', 'xmpp_address', 'additional_text']
+		fields = ['email', 'show_email', 'skype_user', 'xmpp_address', 'pgp_key', 'additional_text']
