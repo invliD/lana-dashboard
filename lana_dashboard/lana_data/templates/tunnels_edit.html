@@ -63,5 +63,21 @@
 				$('#endpoint2-form').empty();
 			}
 		});
+
+		function update_override_state(endpoint) {
+			var dynamic_ipv4 = $('#id_endpoint' + endpoint + '-dynamic_ipv4').is(':checked');
+			var override_ipv4_input = $('#id_endpoint' + endpoint + '-override_internal_ipv4');
+			override_ipv4_input.prop('disabled', dynamic_ipv4);
+			if (dynamic_ipv4) {
+				override_ipv4_input.val('');
+			}
+		}
+		function dynamic_override_event(endpoint) {
+			$('#endpoint' + endpoint + '-form').on('change', '#id_endpoint' + endpoint + '-dynamic_ipv4', update_override_state.bind(undefined, endpoint));
+		}
+		for (var i = 1; i <= 2; i++) {
+			dynamic_override_event(i);
+			update_override_state(i);
+		}
 	</script>
 {% endblock %}

@@ -101,7 +101,13 @@
 					</tr>
 					<tr>
 						<th>Internal IPv4:</th>
-						<td>{{ endpoint.internal_ipv4.ip|default:'<em>None</em>' }}</td>
+						<td>
+							{% if endpoint.dynamic_ipv4 %}
+							<em>Dynamic</em>
+							{% else %}
+							{{ endpoint.internal_ipv4.ip|default:'<em>None</em>' }}
+							{% endif %}
+						</td>
 					</tr>
 					{% if endpoint.fastdtunnelendpoint or endpoint.vtuntunnelendpoint %}
 					<tr>
