@@ -9,7 +9,7 @@ from pgp.message import TextMessage
 
 
 def send_email(recipient, subject, body, connection=None):
-	key = recipient.contact_information.pgp_key
+	key = recipient.contact_information.pgp_key if hasattr(recipient, 'contact_information') else None
 	if key:
 		headers, body = encrypt_email(key, body)
 	else:
