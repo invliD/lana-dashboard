@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -7,7 +8,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from lana_dashboard.lana_data.forms import HostForm
-from lana_dashboard.lana_data.models import AutonomousSystem, Host
+from lana_dashboard.lana_data.models import AutonomousSystem, Host, TunnelEndpoint
 from lana_dashboard.lana_data.utils import get_object_for_edit_or_40x, get_object_for_view_or_404
 
 
@@ -15,6 +16,11 @@ from lana_dashboard.lana_data.utils import get_object_for_edit_or_40x, get_objec
 @require_POST
 def delete_host(request, fqdn):
 	host = get_object_for_edit_or_40x(Host, request, fqdn=fqdn)
+
+	tunnel_endpoints = TunnelEndpoint.objects.filter(host=host)
+	if tunnel_endpoints.exists():
+		messages.error(request, 'You cannot delete this Host. There are still Tunnels associated with it.')
+		return HttpResponseRedirect(reverse('lana_data:host-details', kwargs={'fqdn': host.fqdn}))
 
 	host.delete()
 	return HttpResponseRedirect(reverse('lana_data:autonomous_system-details', kwargs={'as_number': host.autonomous_system.as_number}))
