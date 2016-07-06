@@ -50,7 +50,7 @@
 	<h2>Hosts</h2>
 	<div class="row">
 		<div class="col-xs-12 col-lg-8">
-			{% include 'tables/host_list.html' with disable_autonomous_system=True empty_message='This institution does not have any hosts.' %}
+			{% include 'tables/host_list.html' with disable_autonomous_system=True empty_message='There are not hosts in this Autonomous System.' %}
 			{% if can_edit %}
 			<p>
 				<a class="btn btn-primary" href="{% url 'lana_data:host-create' autonomous_system.as_number %}">Create Host</a>
