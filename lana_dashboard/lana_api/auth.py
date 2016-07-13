@@ -1,9 +1,15 @@
 from functools import reduce
 
 from django.conf import settings
-from rest_framework.authentication import BaseAuthentication
+from rest_framework.authentication import BaseAuthentication, TokenAuthentication as BaseTokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import BasePermission
+
+from lana_dashboard.lana_api.models import Token
+
+
+class TokenAuthentication(BaseTokenAuthentication):
+	model = Token
 
 
 class StaticTokenWhoisAuthentication(BaseAuthentication):

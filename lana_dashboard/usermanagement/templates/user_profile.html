@@ -44,6 +44,7 @@
 			{% if profile.username == user.username %}
 			<p>
 				<a class="btn btn-primary" href="{% url 'usermanagement:profile-edit' profile.username %}">Edit user profile</a>
+				<a class="btn btn-secondary" href="{% url 'usermanagement:tokens' profile.username %}">Tokens</a>
 			</p>
 			{% endif %}
 		</div>

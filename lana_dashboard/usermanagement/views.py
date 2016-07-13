@@ -5,9 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_POST
 
+from lana_dashboard.lana_api.models import Token
 from lana_dashboard.lana_data.models import Institution
 from lana_dashboard.lana_data.utils import list_objects_for_view
 from lana_dashboard.usermanagement.forms import ContactInformationForm
@@ -87,3 +89,46 @@ def edit_user_profile(request, username):
 		'profile': user,
 		'form': form,
 	})
+
+
+@login_required
+def list_tokens(request, username):
+	user = get_object_or_404(get_user_model(), username=username)
+	if user.username != request.user.username:
+		raise PermissionDenied
+
+	tokens = Token.objects.filter(user=user)
+
+	return render(request, 'tokens_list.html', {
+		'profile': user,
+		'tokens': tokens,
+	})
+
+
+@login_required
+@require_POST
+def create_token(request, username):
+	user = get_object_or_404(get_user_model(), username=username)
+	if user.username != request.user.username:
+		raise PermissionDenied
+
+	token = Token(user=user)
+	token.save()
+
+	return HttpResponseRedirect(reverse('usermanagement:tokens', kwargs={'username': user.username}))
+
+
+@login_required
+@require_POST
+def delete_token(request, username, token):
+	user = get_object_or_404(get_user_model(), username=username)
+	if user.username != request.user.username:
+		raise PermissionDenied
+
+	try:
+		token = Token.objects.get(key=token)
+		token.delete()
+	except Token.DoesNotExist as e:
+		raise Http404 from e
+
+	return HttpResponseRedirect(reverse('usermanagement:tokens', kwargs={'username': user.username}))
