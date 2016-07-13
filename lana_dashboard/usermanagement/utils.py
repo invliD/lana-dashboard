@@ -3,9 +3,22 @@ from email import encoders
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
+from django.shortcuts import get_object_or_404
 from pgp import armor, read_key
 from pgp.message import TextMessage
+
+
+def require_own_username(view):
+	def wrapped_view(request, username, *args, **kwargs):
+		user = get_object_or_404(get_user_model(), username=username)
+		if user.username != request.user.username:
+			raise PermissionDenied
+		return view(request, user, *args, **kwargs)
+
+	return wrapped_view
 
 
 def send_email(recipient, subject, body, connection=None):

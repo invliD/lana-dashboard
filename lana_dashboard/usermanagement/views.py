@@ -3,7 +3,6 @@ from crispy_forms.layout import Submit
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -13,6 +12,7 @@ from lana_dashboard.lana_api.models import Token
 from lana_dashboard.lana_data.models import Institution
 from lana_dashboard.lana_data.utils import list_objects_for_view
 from lana_dashboard.usermanagement.forms import ContactInformationForm
+from lana_dashboard.usermanagement.utils import require_own_username
 
 
 def login(request):
@@ -53,11 +53,8 @@ def show_user_profile(request, username):
 
 
 @login_required
-def edit_user_profile(request, username):
-	user = get_object_or_404(get_user_model(), username=username)
-	if user.username != request.user.username:
-		raise PermissionDenied
-
+@require_own_username
+def edit_user_profile(request, user):
 	instance = user.contact_information if hasattr(user, 'contact_information') else None
 	initial = {
 		'email': user.email,
@@ -92,11 +89,8 @@ def edit_user_profile(request, username):
 
 
 @login_required
-def list_tokens(request, username):
-	user = get_object_or_404(get_user_model(), username=username)
-	if user.username != request.user.username:
-		raise PermissionDenied
-
+@require_own_username
+def list_tokens(request, user):
 	tokens = Token.objects.filter(user=user)
 
 	return render(request, 'tokens_list.html', {
@@ -106,12 +100,9 @@ def list_tokens(request, username):
 
 
 @login_required
+@require_own_username
 @require_POST
-def create_token(request, username):
-	user = get_object_or_404(get_user_model(), username=username)
-	if user.username != request.user.username:
-		raise PermissionDenied
-
+def create_token(request, user):
 	token = Token(user=user)
 	token.save()
 
@@ -119,12 +110,9 @@ def create_token(request, username):
 
 
 @login_required
+@require_own_username
 @require_POST
-def delete_token(request, username, token):
-	user = get_object_or_404(get_user_model(), username=username)
-	if user.username != request.user.username:
-		raise PermissionDenied
-
+def delete_token(request, user, token):
 	try:
 		token = Token.objects.get(key=token)
 		token.delete()
