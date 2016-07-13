@@ -9,7 +9,7 @@ urlpatterns = [
 	url(r'^institutions/(?P<code>.+)/autonomous_systems/$', views.list_institution_autonomous_systems, name='institution-autonomous_systems'),
 	url(r'^institutions/(?P<code>.+)/tunnels/$', views.list_institution_tunnels, name='institution-tunnels'),
 	url(r'^institutions/(?P<code>.+)/$', views.show_institution, name='institution-details'),
-	url(r'^institutions/(?P<code>.+)/delete', views.delete_institution, name='institution-delete'),
+	url(r'^institutions/(?P<code>.+)/delete$', views.delete_institution, name='institution-delete'),
 	url(r'^institutions/(?P<code>.+)/edit$', views.edit_institution, name='institution-edit'),
 
 	url(r'^autonomous-systems/$', views.list_autonomous_systems, name='autonomous_systems'),
@@ -33,7 +33,7 @@ urlpatterns = [
 	url(r'^tunnels/create$', views.edit_tunnel, name='tunnel-create'),
 	url(r'^tunnels/create/form$', views.generate_tunnel_form, name='tunnel-create-form'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/$', views.show_tunnel, name='tunnel-details'),
-	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/delete', views.delete_tunnel, name='tunnel-delete'),
+	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/delete$', views.delete_tunnel, name='tunnel-delete'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/edit$', views.edit_tunnel, name='tunnel-edit'),
 	url(r'^tunnels/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/autonomous_systems/$', views.list_tunnel_autonomous_systems, name='tunnel-autonomous_systems'),
 
