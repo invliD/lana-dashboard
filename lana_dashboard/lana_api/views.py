@@ -121,3 +121,11 @@ class WhoisViewSet(ViewSet):
 			return Response(serializer.data)
 		except ValueError:
 			raise Http404
+
+
+class IPv4SubnetViewSet(ViewSet):
+
+	def list(self, request):
+		queryset = list_objects_for_view(IPv4Subnet, request)
+		serializer = IPv4SubnetSerializer(queryset, many=True)
+		return Response(serializer.data)
