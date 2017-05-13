@@ -23,6 +23,11 @@ class IPv4SubnetAdmin(admin.ModelAdmin):
 	list_display = ('network', 'dns_server', 'comment', 'institution')
 
 
+@admin.register(models.TunnelPeering)
+class TunnelPeeringAdmin(admin.ModelAdmin):
+	list_display = ('tunnel', 'bfd_enabled')
+
+
 @admin.register(models.Tunnel)
 class TunnelAdmin(admin.ModelAdmin):
 	list_display = ('comment', 'endpoint1', 'endpoint2')

@@ -1,0 +1,15 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item">Peerings</li>
+{% if mode == 'create' %}
+<li class="breadcrumb-item active">New</li>
+{% else %}
+<li class="breadcrumb-item"><a href="{% url 'lana_data:peering-details' original.as_number1 original.as_number2 %}">AS{{ original.as_number1 }}-AS{{ original.as_number2 }}</a></li>
+<li class="breadcrumb-item active">Edit</li>
+{% endif %}
+{% endblock %}
+{% block content %}
+	<h1>{% if mode == 'create' %}Create new Peering{% else %}Edit AS{{ original.as_number1 }}-AS{{ original.as_number2 }}{% endif %}</h1>
+	{% crispy form %}
+{% endblock %}

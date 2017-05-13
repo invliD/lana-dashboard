@@ -8,6 +8,7 @@ from lana_dashboard.lana_data.models import (
 	Host,
 	Institution,
 	IPv4Subnet,
+	Peering,
 	Tunnel,
 	TunnelEndpoint,
 	VtunTunnel,
@@ -41,6 +42,12 @@ class HostForm(ModelForm):
 	class Meta:
 		model = Host
 		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'tunnel_ipv4', 'comment', 'autonomous_system', 'private']
+
+
+class PeeringForm(ModelForm):
+	class Meta:
+		model = Peering
+		fields = ['bfd_enabled', 'private']
 
 
 class TunnelProtocolForm(Form):

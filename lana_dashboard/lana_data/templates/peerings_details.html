@@ -1,0 +1,81 @@
+{% extends "master.html" %}
+{% block breadcrumbs %}
+	<li class="breadcrumb-item">Peerings</li>
+	<li class="breadcrumb-item active">{{ peering }}</li>
+{% endblock %}
+{% block content %}
+	<h1>
+		{{ peering }}
+		{% if peering.private %}<span class="tag tag-default">Private</span>{% endif %}
+	</h1>
+	<div class="row">
+		<div class="col-xs-12 col-lg-6">
+			<table class="table">
+				<tbody>
+					{% if peering.tunnel %}
+					<tr>
+						<th>Tunnel:</th>
+						<td>
+							<a href="{% url 'lana_data:tunnel-details' peering.tunnel.endpoint1.autonomous_system.as_number peering.tunnel.endpoint2.autonomous_system.as_number %}">{{ peering.tunnel }}</a>
+						</td>
+					</tr>
+					{% endif %}
+					<tr>
+						<th>BFD enabled:</th>
+						<td><em>{% if peering.bfd_enabled %}Yes{% else %}No{% endif %}</td>
+					</tr>
+					<tr>
+						<th>Comment:</th>
+						<td>{{ peering.comment }}</td>
+					</tr>
+				</tbody>
+			</table>
+			{% if can_edit %}
+			<div class="m-b-1">
+				<a class="btn btn-primary" href="{% url 'lana_data:peering-edit' peering.host1.autonomous_system.as_number peering.host2.autonomous_system.as_number %}">Edit Peering</a>
+				{% url 'lana_data:peering-delete' peering.host1.autonomous_system.as_number peering.host2.autonomous_system.as_number as delete_url %}
+				{% include 'fragments/delete-confirm.html' with url=delete_url object_name='Peering' %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	<h2 class="hidden-md-down">Hosts</h2>
+	<div class="row">
+		{% for host in hosts %}
+		<div class="col-xs-12 col-lg-6">
+			<h2 class="hidden-lg-up">Host {{ forloop.counter }}</h2>
+			<table class="table">
+				<tbody>
+					<tr>
+						<th style="width: 45%;">Name:</th>
+						<td style="width: 55%;"><a href="{% url 'lana_data:host-details' host.fqdn %}">{{ host }}</a></td>
+					</tr>
+					<tr>
+						<th>Autonomous System:</th>
+						<td>
+							{% if host.autonomous_system.show_link %}
+							<a href="{% url 'lana_data:autonomous_system-details' host.autonomous_system.as_number %}">{{ host.autonomous_system }}</a>
+							{% else %}
+							{{ host.autonomous_system }}
+							{% endif %}
+							{% include 'fragments/institution_code.html' with institution=host.autonomous_system.institution %}
+						</td>
+					</tr>
+					<tr>
+						<th>External hostname:</th>
+						<td>{{ host.external_hostname|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>External IPv4:</th>
+						<td>{{ host.external_ipv4.ip|default:'<em>None</em>' }}</td>
+					</tr>
+					<tr>
+						<th>Internal IPv4:</th>
+						<td>{{ host.internal_ipv4.ip|default:'<em>None</em>' }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}

@@ -29,6 +29,11 @@ urlpatterns = [
 	url(r'^ipv4/(?P<network>.+)/delete$', views.delete_ipv4, name='ipv4-delete'),
 	url(r'^ipv4/(?P<network>.+)/edit$', views.edit_ipv4, name='ipv4-edit'),
 
+	url(r'^peerings/create$', views.edit_peering, name='peering-create'),
+	url(r'^peerings/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/$', views.show_peering, name='peering-details'),
+	url(r'^peerings/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/delete$', views.delete_peering, name='peering-delete'),
+	url(r'^peerings/AS(?P<as_number1>\d+)-AS(?P<as_number2>\d+)/edit$', views.edit_peering, name='peering-edit'),
+
 	url(r'^tunnels/$', views.list_tunnels, name='tunnels'),
 	url(r'^tunnels/create$', views.edit_tunnel, name='tunnel-create'),
 	url(r'^tunnels/create/form$', views.generate_tunnel_form, name='tunnel-create-form'),

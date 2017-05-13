@@ -44,6 +44,19 @@
 						<th>MTU:</th>
 						<td>{{ tunnel.mtu|default:'<em>None</em>' }}</td>
 					</tr>
+					<tr>
+						<th>Peering:</th>
+						<td>
+						{% if tunnel.peering %}
+							<a href="{% url 'lana_data:peering-details' tunnel.endpoint1.autonomous_system.as_number tunnel.endpoint2.autonomous_system.as_number %}">Details</a>
+						{% else %}
+							{% if can_edit %}
+							<a class="btn btn-primary" href="{% url 'lana_data:peering-create' %}?tunnel={{ tunnel }}">Create</a>
+							{% else %}
+							<em>No</em>
+							{% endif %}
+						{% endif %}
+					</tr>
 				</tbody>
 			</table>
 			{% if can_edit %}
