@@ -22,7 +22,7 @@ class InstitutionSerializer(ModelSerializer):
 
 
 class AutonomousSystemSerializer(ModelSerializer):
-	institution = InstitutionSerializer()
+	institution = SlugRelatedField(slug_field='code', read_only=True)
 
 	class Meta:
 		model = AutonomousSystem
