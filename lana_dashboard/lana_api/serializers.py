@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, SlugRelatedField
 
 from lana_dashboard.lana_data.models import (
+	AutonomousSystem,
 	FastdTunnel,
 	FastdTunnelEndpoint,
 	Host,
@@ -14,14 +15,29 @@ from lana_dashboard.lana_data.models import (
 )
 
 
+class InstitutionSerializer(ModelSerializer):
+	class Meta:
+		model = Institution
+		fields = ['name', 'code', 'abuse_email']
+
+
+class AutonomousSystemSerializer(ModelSerializer):
+	institution = InstitutionSerializer()
+
+	class Meta:
+		model = AutonomousSystem
+		fields = ['as_number', 'institution']
+
+
 class HostSerializer(ModelSerializer):
+	autonomous_system = AutonomousSystemSerializer()
 	external_hostname = SerializerMethodField()
 	external_ipv4 = SerializerMethodField()
 	internal_ipv4 = SerializerMethodField()
 
 	class Meta:
 		model = Host
-		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4']
+		fields = ['fqdn', 'autonomous_system', 'external_hostname', 'external_ipv4', 'internal_ipv4']
 
 	def get_external_hostname(self, obj):
 		return obj.external_hostname if obj.external_hostname != '' else None
@@ -31,12 +47,6 @@ class HostSerializer(ModelSerializer):
 
 	def get_internal_ipv4(self, obj):
 		return str(obj.internal_ipv4.ip) if obj.internal_ipv4 is not None else None
-
-
-class InstitutionSerializer(ModelSerializer):
-	class Meta:
-		model = Institution
-		fields = ['name', 'code', 'abuse_email']
 
 
 class IPv4SubnetSerializer(ModelSerializer):
