@@ -42,5 +42,13 @@ class TunnelPeering(Peering):
 		return self.tunnel.endpoint1.host
 
 	@property
+	def internal_ipv4_1(self):
+		return self.tunnel.endpoint1.internal_ipv4
+
+	@property
 	def host2(self):
 		return self.tunnel.endpoint2.host
+
+	@property
+	def internal_ipv4_2(self):
+		return self.tunnel.endpoint2.internal_ipv4

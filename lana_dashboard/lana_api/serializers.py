@@ -3,13 +3,34 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField, S
 from lana_dashboard.lana_data.models import (
 	FastdTunnel,
 	FastdTunnelEndpoint,
+	Host,
 	Institution,
 	IPv4Subnet,
+	Peering,
 	Tunnel,
 	TunnelEndpoint,
 	VtunTunnel,
 	VtunTunnelEndpoint,
 )
+
+
+class HostSerializer(ModelSerializer):
+	external_hostname = SerializerMethodField()
+	external_ipv4 = SerializerMethodField()
+	internal_ipv4 = SerializerMethodField()
+
+	class Meta:
+		model = Host
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4']
+
+	def get_external_hostname(self, obj):
+		return obj.external_hostname if obj.external_hostname != '' else None
+
+	def get_external_ipv4(self, obj):
+		return str(obj.external_ipv4.ip) if obj.external_ipv4 is not None else None
+
+	def get_internal_ipv4(self, obj):
+		return str(obj.internal_ipv4.ip) if obj.internal_ipv4 is not None else None
 
 
 class InstitutionSerializer(ModelSerializer):
@@ -24,6 +45,12 @@ class IPv4SubnetSerializer(ModelSerializer):
 	class Meta:
 		model = IPv4Subnet
 		fields = ['network', 'comment', 'institution']
+
+
+class PeeringSerializer(ModelSerializer):
+	class Meta:
+		model = Peering
+		fields = ['bfd_enabled']
 
 
 class TunnelSerializer(ModelSerializer):
