@@ -1,3 +1,4 @@
+from collections import defaultdict
 from ipaddress import ip_interface
 
 from django.db.models import Q
@@ -113,8 +114,19 @@ class HieraViewSet(ViewSet):
 		peerings = list_objects_for_view(Peering, request, Q(tunnelpeering__tunnel__endpoint1__host=host) | Q(tunnelpeering__tunnel__endpoint2__host=host), with_subclasses=True)
 		serialized_peerings = [self.serialize_peering(p, host) for p in peerings]
 
+		institutions = [(p.host1.institution, p.host2.institution) for p in peerings]
+		institutions = set([c for t in institutions for c in t])
+
+		ipv4_subnets = list_objects_for_view(IPv4Subnet, request, institution__in=institutions).select_related('institution')
+		serialized_ipv4_subnets = defaultdict(list)
+		for subnet in ipv4_subnets:
+			serialized_ipv4_subnets[subnet.institution.code].append(str(subnet.network))
+
 		return Response({
 			'lana': {
+				'subnets': {
+					'ipv4': serialized_ipv4_subnets,
+				},
 				'peerings': serialized_peerings,
 				'tunnels': {
 					'fastd': serialized_fastd_tunnels,
