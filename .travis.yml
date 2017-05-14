@@ -16,6 +16,6 @@ script:
 
   - python manage.py lint
   - bash -c "! python manage.py makemigrations -e --dry-run"
-  - coverage run manage.py test lana_dashboard
+  - coverage run manage.py test lana_dashboard.lana_data.tests
 after_success:
   - coveralls
