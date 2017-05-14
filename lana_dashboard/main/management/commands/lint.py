@@ -1,9 +1,8 @@
 import os
-import sys
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from flake8.engine import get_style_guide
+from flake8.main.application import Application as Flake8
 
 
 class Command(BaseCommand):
@@ -11,7 +10,6 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		os.chdir(os.path.join(os.path.join(settings.BASE_DIR, '..')))
-		style = get_style_guide(config_file='.flake8')
-		report = style.check_files(['lana_dashboard'])
-		if report.total_errors > 0:
-			sys.exit(1)
+		flake8 = Flake8()
+		flake8.run(['flake8', 'lana_dashboard'])
+		flake8.exit()
