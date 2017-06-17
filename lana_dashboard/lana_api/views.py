@@ -23,6 +23,7 @@ from lana_dashboard.lana_api.serializers import (
 	VtunTunnelEndpointSerializer,
 	VtunTunnelSerializer,
 )
+from lana_dashboard.lana_api.utils import reduce_networks
 from lana_dashboard.lana_data.models import FastdTunnel, Host, IPv4Subnet, Peering, VtunTunnel
 from lana_dashboard.lana_data.utils import get_object_for_view_or_404, list_objects_for_view
 
@@ -118,9 +119,10 @@ class HieraViewSet(ViewSet):
 		institutions = set([c for t in institutions for c in t])
 
 		ipv4_subnets = list_objects_for_view(IPv4Subnet, request, institution__in=institutions).select_related('institution')
-		serialized_ipv4_subnets = defaultdict(list)
+		ipv4_networks = defaultdict(list)
 		for subnet in ipv4_subnets:
-			serialized_ipv4_subnets[subnet.institution.code].append(str(subnet.network))
+			ipv4_networks[subnet.institution.code].append(subnet.network)
+		serialized_ipv4_subnets = {i: [str(n) for n in reduce_networks(ipv4_networks[i])] for i in ipv4_networks}
 
 		return Response({
 			'lana': {
