@@ -22,9 +22,11 @@ from lana_dashboard.lana_api.serializers import (
 	PeeringSerializer,
 	VtunTunnelEndpointSerializer,
 	VtunTunnelSerializer,
+	WireGuardTunnelEndpointSerializer,
+	WireGuardTunnelSerializer,
 )
 from lana_dashboard.lana_api.utils import reduce_networks
-from lana_dashboard.lana_data.models import FastdTunnel, Host, IPv4Subnet, Peering, VtunTunnel
+from lana_dashboard.lana_data.models import FastdTunnel, Host, IPv4Subnet, Peering, VtunTunnel, WireGuardTunnel
 from lana_dashboard.lana_data.utils import get_object_for_view_or_404, list_objects_for_view
 
 
@@ -112,6 +114,20 @@ class HieraViewSet(ViewSet):
 		)
 		serialized_vtun_tunnels = [self.serialize_tunnel(VtunTunnelSerializer, VtunTunnelEndpointSerializer, t, host) for t in vtun_tunnels]
 
+		wireguard_tunnels = list_objects_for_view(WireGuardTunnel, request, Q(endpoint1__host=host) | Q(endpoint2__host=host)).select_related(
+			'endpoint1',
+			'endpoint2',
+			'endpoint1__wireguardtunnelendpoint',
+			'endpoint2__wireguardtunnelendpoint',
+			'endpoint1__wireguardtunnelendpoint__host',
+			'endpoint2__wireguardtunnelendpoint__host',
+			'endpoint1__wireguardtunnelendpoint__tunnel1',
+			'endpoint2__wireguardtunnelendpoint__tunnel1',
+			'endpoint1__wireguardtunnelendpoint__tunnel2',
+			'endpoint2__wireguardtunnelendpoint__tunnel2',
+		)
+		serialized_wireguard_tunnels = [self.serialize_tunnel(WireGuardTunnelSerializer, WireGuardTunnelEndpointSerializer, t, host) for t in wireguard_tunnels]
+
 		peerings = list_objects_for_view(Peering, request, Q(tunnelpeering__tunnel__endpoint1__host=host) | Q(tunnelpeering__tunnel__endpoint2__host=host), with_subclasses=True)
 		serialized_peerings = [self.serialize_peering(p, host) for p in peerings]
 
@@ -133,6 +149,7 @@ class HieraViewSet(ViewSet):
 				'tunnels': {
 					'fastd': serialized_fastd_tunnels,
 					'vtun': serialized_vtun_tunnels,
+					'wireguard': serialized_wireguard_tunnels,
 				}
 			},
 		})

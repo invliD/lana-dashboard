@@ -12,6 +12,8 @@ from lana_dashboard.lana_data.models import (
 	TunnelEndpoint,
 	VtunTunnel,
 	VtunTunnelEndpoint,
+	WireGuardTunnel,
+	WireGuardTunnelEndpoint,
 )
 
 
@@ -80,6 +82,11 @@ class VtunTunnelSerializer(TunnelSerializer):
 		fields = ['transport', 'mode', 'encryption_method', 'compression', 'mtu']
 
 
+class WireGuardTunnelSerializer(TunnelSerializer):
+	class Meta(TunnelSerializer.Meta):
+		model = WireGuardTunnel
+
+
 class TunnelEndpointSerializer(ModelSerializer):
 	fqdn = SlugRelatedField(slug_field='fqdn', source='host', read_only=True)
 	external_hostname = SerializerMethodField()
@@ -113,3 +120,9 @@ class VtunTunnelEndpointSerializer(TunnelEndpointSerializer):
 	class Meta(TunnelEndpointSerializer.Meta):
 		model = VtunTunnelEndpoint
 		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port']
+
+
+class WireGuardTunnelEndpointSerializer(TunnelEndpointSerializer):
+	class Meta(TunnelEndpointSerializer.Meta):
+		model = WireGuardTunnelEndpoint
+		fields = ['fqdn', 'external_hostname', 'external_ipv4', 'internal_ipv4', 'port', 'public_key']
