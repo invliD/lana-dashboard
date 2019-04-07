@@ -122,13 +122,13 @@
 							{% endif %}
 						</td>
 					</tr>
-					{% if endpoint.fastdtunnelendpoint or endpoint.vtuntunnelendpoint %}
+					{% if endpoint.fastdtunnelendpoint or endpoint.vtuntunnelendpoint or endpoint.wireguardtunnelendpoint %}
 					<tr>
 						<th>Port:</th>
 						<td>{{ endpoint.port|default:'<em>None</em>' }}</td>
 					</tr>
 					{% endif %}
-					{% if endpoint.fastdtunnelendpoint %}
+					{% if endpoint.fastdtunnelendpoint or endpoint.wireguardtunnelendpoint %}
 					<tr>
 						<th>Public key:</th>
 						<td style="word-break: break-all;">{{ endpoint.public_key|default:'<em>None</em>' }}</td>

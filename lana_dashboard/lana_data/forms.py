@@ -13,6 +13,8 @@ from lana_dashboard.lana_data.models import (
 	TunnelEndpoint,
 	VtunTunnel,
 	VtunTunnelEndpoint,
+	WireGuardTunnel,
+	WireGuardTunnelEndpoint,
 )
 
 
@@ -55,6 +57,7 @@ class TunnelProtocolForm(Form):
 		(None, '---------'),
 		('fastd', _("Fastd tunnel")),
 		('vtun', _("VTun tunnel")),
+		('wireguard', _("WireGuard tunnel")),
 		('other', _("Other")),
 	), required=False)
 
@@ -85,6 +88,11 @@ class VtunTunnelForm(TunnelForm):
 		fields = ['transport', 'mode', 'comment', 'encryption_method', 'compression', 'mtu', 'private']
 
 
+class WireGuardTunnelForm(TunnelForm):
+	class Meta(TunnelForm.Meta):
+		model = WireGuardTunnel
+
+
 class TunnelEndpointForm(ModelForm):
 	class Meta:
 		model = TunnelEndpoint
@@ -104,6 +112,15 @@ class VtunTunnelEndpointForm(TunnelEndpointForm):
 	class Meta(TunnelEndpointForm.Meta):
 		model = VtunTunnelEndpoint
 		fields = ['host', 'override_internal_ipv4', 'dynamic_ipv4', 'port']
+		widgets = {
+			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
+		}
+
+
+class WireGuardTunnelEndpointForm(TunnelEndpointForm):
+	class Meta(TunnelEndpointForm.Meta):
+		model = WireGuardTunnelEndpoint
+		fields = ['host', 'override_internal_ipv4', 'dynamic_ipv4', 'port', 'public_key']
 		widgets = {
 			'port': NumberInput(attrs={'min': 1, 'max': 65535}),
 		}

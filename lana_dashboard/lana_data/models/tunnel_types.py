@@ -81,6 +81,39 @@ class VtunTunnel(Tunnel):
 			return self.endpoint2.vtuntunnelendpoint
 
 
+class WireGuardTunnel(Tunnel):
+
+	@property
+	def protocol(self):
+		return 'wireguard'
+
+	@property
+	def protocol_name(self):
+		return _("WireGuard tunnel")
+
+	@property
+	def real_endpoint1(self):
+		if isinstance(self.endpoint1, WireGuardTunnelEndpoint):
+			return self.endpoint1
+		return self.endpoint1.wireguardtunnelendpoint
+
+	@property
+	def real_endpoint2(self):
+		if isinstance(self.endpoint2, WireGuardTunnelEndpoint):
+			return self.endpoint2
+		return self.endpoint2.wireguardtunnelendpoint
+
+	def prepare_save(self):
+		as1 = self.endpoint1.autonomous_system.as_number
+		as2 = self.endpoint2.autonomous_system.as_number
+		if not self.real_endpoint1.port and as2 <= 65535:
+			self.real_endpoint1.port = as2
+			self.real_endpoint1.save()
+		if not self.real_endpoint2.port and as1 <= 65535:
+			self.real_endpoint2.port = as1
+			self.real_endpoint2.save()
+
+
 class FastdTunnelEndpoint(TunnelEndpoint):
 	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535.'))
 
@@ -92,3 +125,9 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 
 class VtunTunnelEndpoint(TunnelEndpoint):
 	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
+
+
+class WireGuardTunnelEndpoint(TunnelEndpoint):
+	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535.'))
+
+	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))

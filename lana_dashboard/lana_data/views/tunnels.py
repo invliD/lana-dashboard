@@ -21,6 +21,8 @@ from lana_dashboard.lana_data.forms import (
 	TunnelProtocolForm,
 	VtunTunnelEndpointForm,
 	VtunTunnelForm,
+	WireGuardTunnelEndpointForm,
+	WireGuardTunnelForm,
 )
 from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
 from lana_dashboard.lana_data.utils import (
@@ -229,6 +231,9 @@ def create_forms(protocol, tunnel=None, endpoint1=None, endpoint2=None, data=Non
 	elif protocol == 'vtun':
 		tunnel_form_type = VtunTunnelForm
 		endpoint_form_type = VtunTunnelEndpointForm
+	elif protocol == 'wireguard':
+		tunnel_form_type = WireGuardTunnelForm
+		endpoint_form_type = WireGuardTunnelEndpointForm
 	elif protocol == 'other':
 		tunnel_form_type = TunnelForm
 		endpoint_form_type = TunnelEndpointForm
