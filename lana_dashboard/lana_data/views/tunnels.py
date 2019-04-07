@@ -22,7 +22,6 @@ from lana_dashboard.lana_data.forms import (
 	VtunTunnelEndpointForm,
 	VtunTunnelForm,
 )
-
 from lana_dashboard.lana_data.models import AutonomousSystem, Tunnel
 from lana_dashboard.lana_data.utils import (
 	geojson_from_autonomous_systems,

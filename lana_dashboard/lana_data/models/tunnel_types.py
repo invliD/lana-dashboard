@@ -41,12 +41,7 @@ class FastdTunnel(Tunnel):
 		return True
 
 	def is_config_complete(self):
-		return (
-			bool(self.encryption_method) and
-			bool(self.mtu) and
-			self.real_endpoint1.is_config_complete() and
-			self.real_endpoint2.is_config_complete()
-		)
+		return bool(self.encryption_method) and bool(self.mtu) and self.real_endpoint1.is_config_complete() and self.real_endpoint2.is_config_complete()
 
 	def get_config_generation_url(self, endpoint_number):
 		return reverse('lana_generator:generate-fastd', kwargs={
@@ -92,12 +87,7 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
 
 	def is_config_complete(self):
-		return (
-			(bool(self.host.external_hostname) or bool(self.host.external_ipv4)) and
-			bool(self.internal_ipv4) and
-			bool(self.port) and
-			bool(self.public_key)
-		)
+		return (bool(self.host.external_hostname) or bool(self.host.external_ipv4)) and bool(self.internal_ipv4) and bool(self.port) and bool(self.public_key)
 
 
 class VtunTunnelEndpoint(TunnelEndpoint):

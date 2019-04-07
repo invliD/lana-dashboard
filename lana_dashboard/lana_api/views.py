@@ -145,7 +145,7 @@ class WhoisViewSet(ViewSet):
 	"""
 	authentication_classes = [StaticTokenWhoisAuthentication, ] + api_settings.DEFAULT_AUTHENTICATION_CLASSES
 	permission_classes = or_permission([StaticTokenWhoisPermission, ] + and_permission(api_settings.DEFAULT_PERMISSION_CLASSES))
-	lookup_value_regex = '[0-9\./]+'
+	lookup_value_regex = '[0-9\\./]+'
 
 	@classmethod
 	def get_breadcrumb_name(cls):
