@@ -11,9 +11,6 @@ install:
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
 script:
-  # See https://github.com/andreyfedoseev/django-static-precompiler/issues/81
-  - sed -i '/^\/\/.*@import/d' lana_dashboard/static/bootstrap/scss/_reboot.scss
-
   - python manage.py lint
   - bash -c "! python manage.py makemigrations -e --dry-run"
   - coverage run manage.py test lana_dashboard.lana_data.tests
