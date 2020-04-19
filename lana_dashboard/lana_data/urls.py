@@ -3,6 +3,7 @@ from django.conf.urls import url
 from lana_dashboard.lana_data import views
 
 
+app_name = "lana_data"
 urlpatterns = [
 	url(r'^institutions/$', views.list_institutions, name='institutions'),
 	url(r'^institutions/create$', views.edit_institution, name='institution-create'),

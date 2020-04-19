@@ -2,13 +2,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import login_required
 from django.core import mail
-from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template.context_processors import csrf
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers

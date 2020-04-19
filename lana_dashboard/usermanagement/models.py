@@ -6,7 +6,7 @@ from .validators import validate_pgp_key
 
 
 class ContactInformation(models.Model):
-	user = models.OneToOneField(settings.AUTH_USER_MODEL, models.CASCADE, primary_key=True, related_name='contact_information', verbose_name=_("Contact Information"))
+	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name='contact_information', verbose_name=_("Contact Information"))
 
 	show_email = models.BooleanField(default=False, verbose_name=_("Show email"))
 	skype_user = models.CharField(max_length=64, blank=True, verbose_name=_("Skype User"))

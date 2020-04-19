@@ -1,11 +1,12 @@
-from django.core.urlresolvers import reverse
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from lana_dashboard.lana_data.models.tunnel import Tunnel, TunnelEndpoint
 
 
 class FastdTunnel(Tunnel):
+	objects = models.Manager()
 
 	@property
 	def protocol(self):
@@ -58,6 +59,8 @@ class VtunTunnel(Tunnel):
 	), verbose_name=_("Transport protocol"))
 	compression = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Compression"))
 
+	objects = models.Manager()
+
 	@property
 	def protocol(self):
 		return 'vtun'
@@ -82,6 +85,7 @@ class VtunTunnel(Tunnel):
 
 
 class WireGuardTunnel(Tunnel):
+	objects = models.Manager()
 
 	@property
 	def protocol(self):
@@ -119,6 +123,8 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
 
+	objects = models.Manager()
+
 	def is_config_complete(self):
 		return (bool(self.host.external_hostname) or bool(self.host.external_ipv4)) and bool(self.internal_ipv4) and bool(self.port) and bool(self.public_key)
 
@@ -126,8 +132,12 @@ class FastdTunnelEndpoint(TunnelEndpoint):
 class VtunTunnelEndpoint(TunnelEndpoint):
 	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"))
 
+	objects = models.Manager()
+
 
 class WireGuardTunnelEndpoint(TunnelEndpoint):
 	port = models.IntegerField(blank=True, null=True, verbose_name=_("Port"), help_text=_('Defaults to remote AS number if ≤ 65535.'))
 
 	public_key = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Public key"))
+
+	objects = models.Manager()

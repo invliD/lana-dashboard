@@ -15,7 +15,7 @@ class Host(models.Model):
 	comment = models.CharField(max_length=255, blank=True, verbose_name=_("Comment"))
 
 	private = models.BooleanField(default=False, verbose_name=_("Private"))
-	autonomous_system = models.ForeignKey(AutonomousSystem, models.DO_NOTHING, related_name='hosts', verbose_name=_("Autonomous System"))
+	autonomous_system = models.ForeignKey(AutonomousSystem, on_delete=models.CASCADE, related_name='hosts', verbose_name=_("Autonomous System"))
 
 	objects = netfields.NetManager()
 

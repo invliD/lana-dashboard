@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 	'lana_dashboard.lana_generator',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',

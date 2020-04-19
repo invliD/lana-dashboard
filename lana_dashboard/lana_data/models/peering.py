@@ -29,6 +29,8 @@ class Peering(models.Model):
 class TunnelPeering(Peering):
 	tunnel = models.OneToOneField(Tunnel, on_delete=models.CASCADE, related_name='peering', verbose_name=_("Tunnel"))
 
+	objects = models.Manager()
+
 	class Meta:
 		ordering = ['tunnel__endpoint1__host__autonomous_system__as_number', 'tunnel__endpoint2__host__autonomous_system__as_number']
 		verbose_name = ungettext_lazy("Tunnel Peering", "Tunnel Peerings", 1)

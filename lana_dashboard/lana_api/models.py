@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 
 class Token(models.Model):
 	key = models.CharField(_("Key"), max_length=40, primary_key=True)
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE, related_name='auth_tokens', verbose_name=_("User"))
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='auth_tokens', verbose_name=_("User"))
 	created = models.DateTimeField(_("Created"), auto_now_add=True)
 
 	class Meta:

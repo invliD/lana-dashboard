@@ -11,7 +11,7 @@ class TunnelEndpoint(models.Model):
 	override_internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Override internal IPv4 address"))
 	dynamic_ipv4 = models.BooleanField(default=False, verbose_name=_("Dynamic IPv4 address"))
 
-	host = models.ForeignKey(Host, models.DO_NOTHING, related_name='tunnel_endpoints', verbose_name=_("Host"))
+	host = models.ForeignKey(Host, models.CASCADE, related_name='tunnel_endpoints', verbose_name=_("Host"))
 
 	objects = netfields.NetManager()
 

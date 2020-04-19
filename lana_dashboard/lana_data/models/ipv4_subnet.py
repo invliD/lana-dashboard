@@ -12,7 +12,7 @@ class IPv4Subnet(models.Model):
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	private = models.BooleanField(default=False, verbose_name=_("Private"))
-	institution = models.ForeignKey(Institution, related_name='ipv4_subnets', verbose_name=_("Institution"))
+	institution = models.ForeignKey(Institution, on_delete=models.CASCADE, related_name='ipv4_subnets', verbose_name=_("Institution"))
 
 	objects = netfields.NetManager()
 

@@ -2,8 +2,8 @@ import json
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from lana_dashboard.lana_data.models import AutonomousSystem, Host, Institution, IPv4Subnet, Tunnel, TunnelEndpoint
 

@@ -12,7 +12,7 @@ class AutonomousSystem(models.Model):
 	location_lng = models.FloatField(blank=True, null=True, verbose_name=_("Longitude"))
 
 	private = models.BooleanField(default=False, verbose_name=_("Private"))
-	institution = models.ForeignKey(Institution, related_name='autonomous_systems', verbose_name=_("Institution"))
+	institution = models.ForeignKey(Institution, on_delete=models.CASCADE, related_name='autonomous_systems', verbose_name=_("Institution"))
 
 	class Meta:
 		ordering = ['as_number']
