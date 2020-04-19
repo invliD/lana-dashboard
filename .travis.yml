@@ -1,7 +1,7 @@
 language: python
 sudo: false
 python:
-  - "3.4"
+  - "3.5"
 addons:
   postgresql: "9.4"
 cache: pip
@@ -15,6 +15,6 @@ before_script:
 script:
   - python manage.py lint
   - python manage.py makemigrations --check
-  - coverage run manage.py test lana_dashboard.lana_data.tests
+  - coverage run manage.py test lana_dashboard.main.tests lana_dashboard.lana_data.tests
 after_success:
   - coveralls

@@ -60,7 +60,7 @@ class InstitutionIntegrationTests(IntegrationTestCase):
 		response = self.client.post(reverse('lana_data:institution-create'), {
 			'code': 't3',
 			'name': 'Created Institution',
-			'color': '000000',
+			'color': '#000000',
 			'abuse_email': 'abuse@example.com',
 		})
 		self.assertEqual(response.status_code, 302)
@@ -75,7 +75,7 @@ class InstitutionIntegrationTests(IntegrationTestCase):
 		response = self.client.post(reverse('lana_data:institution-edit', kwargs={'code': 't1'}), {
 			'code': self.i1.code,
 			'name': 'Edited Institution',
-			'color': self.i1.color[1:],
+			'color': self.i1.color,
 			'abuse_email': self.i1.abuse_email,
 		})
 		self.assertEqual(response.status_code, 302)

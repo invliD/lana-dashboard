@@ -6,7 +6,7 @@ from lana_dashboard.lana_data.utils import list_objects_for_view
 
 
 def index(request):
-	show_map = request.user.is_authenticated() and list_objects_for_view(AutonomousSystem, request, location_lat__isnull=False, location_lng__isnull=False).exists()
+	show_map = request.user.is_authenticated and list_objects_for_view(AutonomousSystem, request, location_lat__isnull=False, location_lng__isnull=False).exists()
 	return render(request, 'index.html', {
 		'show_map': show_map,
 	})
