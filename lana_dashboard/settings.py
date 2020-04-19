@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 	'colorfield',
 	'crispy_forms',
 	'djcelery_email',
-	'kombu.transport.django',
 	'netfields',
 	'rest_framework',
 	'static_precompiler',
@@ -166,7 +165,7 @@ REST_FRAMEWORK = {
 }
 
 # Celery settings
-BROKER_URL = 'django://'
+BROKER_URL = 'memory://'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 

@@ -30,13 +30,13 @@ from lana_dashboard.lana_data.models import FastdTunnel, Host, IPv4Subnet, Peeri
 from lana_dashboard.lana_data.utils import get_object_for_view_or_404, list_objects_for_view
 
 
-def get_view_name(view_cls, suffix=None):
-	if view_cls.__name__ == 'APIRoot':
+def get_view_name(view):
+	if view.__class__.__name__ == 'APIRootView':
 		return 'API'
-	elif hasattr(view_cls, 'get_breadcrumb_name'):
-		return view_cls.get_breadcrumb_name()
+	elif hasattr(view, 'get_breadcrumb_name'):
+		return view.get_breadcrumb_name()
 	else:
-		return base_get_view_name(view_cls, suffix=suffix)
+		return base_get_view_name(view)
 
 
 class HieraViewSet(ViewSet):
