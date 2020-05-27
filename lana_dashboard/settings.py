@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 	'netfields',
 	'rest_framework',
 	'static_precompiler',
+	'mozilla_django_oidc',
 
 	'lana_dashboard.main',
 	'lana_dashboard.usermanagement',
@@ -59,6 +60,7 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'mozilla_django_oidc.middleware.SessionRefresh',
 ]
 
 ROOT_URLCONF = 'lana_dashboard.urls'
@@ -94,6 +96,10 @@ DATABASES = {
 	}
 }
 
+AUTHENTICATION_BACKENDS = [
+	'django.contrib.auth.backends.ModelBackend',
+	'lana_dashboard.usermanagement.oidc.AuthenticationBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -114,6 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Internationalization
@@ -171,6 +178,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 # Email settings
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# OIDC
+OIDC_RP_SCOPES = 'openid email profile'
 
 # LANA settings
 

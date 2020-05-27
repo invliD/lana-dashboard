@@ -32,4 +32,5 @@ urlpatterns = [
 	url(r'^lana/', include(data_urls, namespace='lana_data')),
 	url(r'^config/', include(generator_urls, namespace='lana_generator')),
 	url(r'^users/', include(user_urls, namespace='usermanagement')),
+	url(r'^oidc/', include('mozilla_django_oidc.urls')),
 ]

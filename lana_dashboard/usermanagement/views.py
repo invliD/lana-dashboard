@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.conf import settings
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -7,6 +8,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from mozilla_django_oidc.views import OIDCAuthenticationRequestView
 
 from lana_dashboard.lana_api.models import Token
 from lana_dashboard.lana_data.models import Institution
@@ -15,7 +17,10 @@ from lana_dashboard.usermanagement.forms import ContactInformationForm
 from lana_dashboard.usermanagement.utils import require_own_username
 
 
-def login(request):
+def login(request, *args, **kwargs):
+	if getattr(settings, 'OIDC_RP_CLIENT_ID', None) is not None:
+		return OIDCAuthenticationRequestView.as_view()(request, *args, **kwargs)
+
 	if request.method == 'POST':
 		form = AuthenticationForm(request, data=request.POST)
 		if form.is_valid():
