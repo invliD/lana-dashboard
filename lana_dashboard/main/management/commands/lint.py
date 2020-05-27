@@ -11,5 +11,5 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		os.chdir(os.path.join(os.path.join(settings.BASE_DIR, '..')))
 		flake8 = Flake8()
-		flake8.run(['flake8', 'lana_dashboard'])
+		flake8.run(['lana_dashboard'])
 		flake8.exit()
