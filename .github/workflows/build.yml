@@ -17,6 +17,8 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+    env:
+      PGHOST: localhost
     steps:
       - name: Checkout
         uses: actions/checkout@v2
