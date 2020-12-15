@@ -33,5 +33,7 @@ jobs:
           pip install -r requirements-test.txt
       - name: Lint
         run: python manage.py lint
+      - name: Create database
+        run: psql -c 'create database lana;' -U postgres
       - name: Check for missing migrations
         run: python manage.py makemigrations --check
