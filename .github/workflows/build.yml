@@ -20,6 +20,7 @@ jobs:
     env:
       PGHOST: localhost
       PGPASSWORD: postgres
+      PGUSERNAME: postgres
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,6 +38,6 @@ jobs:
       - name: Lint
         run: python manage.py lint
       - name: Create database
-        run: psql -c 'create database lana;' -U postgres
+        run: psql -c 'create database lana;'
       - name: Check for missing migrations
         run: python manage.py makemigrations --check
