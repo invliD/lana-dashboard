@@ -19,6 +19,7 @@ jobs:
           - 5432:5432
     env:
       PGHOST: localhost
+      PGPASSWORD: postgres
     steps:
       - name: Checkout
         uses: actions/checkout@v2
