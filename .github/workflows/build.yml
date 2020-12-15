@@ -51,3 +51,5 @@ jobs:
         run: coverage run manage.py test lana_dashboard.main.tests lana_dashboard.lana_data.tests
       - name: Send coverage
         run: coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
