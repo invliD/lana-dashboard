@@ -49,3 +49,5 @@ jobs:
         run: python manage.py makemigrations --check
       - name: Run tests
         run: coverage run manage.py test lana_dashboard.main.tests lana_dashboard.lana_data.tests
+      - name: Send coverage
+        run: coveralls
