@@ -9,7 +9,7 @@ from lana_dashboard.lana_data.models.autonomous_system import AutonomousSystem
 class Host(models.Model):
 	fqdn = models.CharField(unique=True, max_length=255, verbose_name=_("FQDN"))
 	external_hostname = models.CharField(max_length=255, blank=True, verbose_name=_("External hostname"))
-	external_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("External IPv4 address"))
+	external_ipv4 = netfields.InetAddressField(blank=True, null=True, store_prefix_length=False, verbose_name=_("External IPv4 address"))
 	internal_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Internal IPv4 address"))
 	tunnel_ipv4 = netfields.InetAddressField(blank=True, null=True, verbose_name=_("Tunnel IPv4 address"))
 	comment = models.CharField(max_length=255, blank=True, verbose_name=_("Comment"))

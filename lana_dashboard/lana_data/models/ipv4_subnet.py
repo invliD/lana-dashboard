@@ -8,7 +8,7 @@ from lana_dashboard.lana_data.models.institution import Institution
 
 class IPv4Subnet(models.Model):
 	network = netfields.CidrAddressField(unique=True, verbose_name=_("Network"))
-	dns_server = netfields.InetAddressField(blank=True, null=True, verbose_name=_("DNS Server"))
+	dns_server = netfields.InetAddressField(blank=True, null=True, store_prefix_length=False, verbose_name=_("DNS Server"))
 	comment = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Comment"))
 
 	private = models.BooleanField(default=False, verbose_name=_("Private"))

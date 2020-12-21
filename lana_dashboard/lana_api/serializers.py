@@ -34,7 +34,6 @@ class AutonomousSystemSerializer(ModelSerializer):
 class HostSerializer(ModelSerializer):
 	autonomous_system = AutonomousSystemSerializer()
 	external_hostname = SerializerMethodField()
-	external_ipv4 = SerializerMethodField()
 	internal_ipv4 = SerializerMethodField()
 
 	class Meta:
@@ -43,9 +42,6 @@ class HostSerializer(ModelSerializer):
 
 	def get_external_hostname(self, obj):
 		return obj.external_hostname if obj.external_hostname != '' else None
-
-	def get_external_ipv4(self, obj):
-		return str(obj.external_ipv4.ip) if obj.external_ipv4 is not None else None
 
 	def get_internal_ipv4(self, obj):
 		return str(obj.internal_ipv4.ip) if obj.internal_ipv4 is not None else None
@@ -101,7 +97,7 @@ class TunnelEndpointSerializer(ModelSerializer):
 		return obj.host.external_hostname if obj.host.external_hostname != '' else None
 
 	def get_external_ipv4(self, obj):
-		return str(obj.host.external_ipv4.ip) if obj.host.external_ipv4 is not None else None
+		return str(obj.host.external_ipv4) if obj.host.external_ipv4 is not None else None
 
 	def get_internal_ipv4(self, obj):
 		if obj.tunnel.mode == Tunnel.MODE_TUN:
